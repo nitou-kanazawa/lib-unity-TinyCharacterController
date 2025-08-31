@@ -1,0 +1,18 @@
+# top-most EditorConfig file
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = false
+trim_trailing_whitespace = false
+
+[*.cs]
+indent_size = 4
+
+
+# C# code style settings
+[*.{cs}]
+dotnet_diagnostic.IDE0130.severity = none  # 名前空間とフォルダ構造の不一致警告を無効

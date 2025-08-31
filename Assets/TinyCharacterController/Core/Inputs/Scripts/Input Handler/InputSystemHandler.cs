@@ -13,6 +13,7 @@ namespace Nitou.TCC.Inputs
     {
         // �A�N�V�������X�g
         [SerializeField] InputActionAsset inputActionsAsset = null;
+        
         private readonly Dictionary<string, InputAction> _inputActionsDictionary = new();
 
         [Space]

@@ -23,9 +23,7 @@ namespace Nitou.BachProcessor
         private readonly List<IEarlyUpdate> _updates = new();
         private readonly List<IPostUpdate> _lateUpdates = new();
 
-
-        /// ----------------------------------------------------------------------------
-        // Static Method
+        #region Static
 
         /// <summary>
         /// Register a system for processing.
@@ -73,10 +71,9 @@ namespace Nitou.BachProcessor
         /// <param name="earlyUpdate">The callback to register, called before the timing</param>
         /// <param name="postUpdate">The callback to register, called after the timing</param>
         private static void RegisterCallback(ref PlayerLoopSystem loopSystem, Type timing,
-                PlayerLoopSystem.UpdateFunction earlyUpdate,
-                PlayerLoopSystem.UpdateFunction postUpdate)
+                                             PlayerLoopSystem.UpdateFunction earlyUpdate,
+                                             PlayerLoopSystem.UpdateFunction postUpdate)
         {
-
             var earlyUpdateSystem = new PlayerLoopSystem { updateDelegate = earlyUpdate, type = typeof(GameControllerManager) };
             var postUpdateSystem = new PlayerLoopSystem() { updateDelegate = postUpdate, type = typeof(GameControllerManager) };
 
@@ -102,8 +99,9 @@ namespace Nitou.BachProcessor
             loopSystem.subSystemList[index].subSystemList = list.ToArray();
         }
 
+        #endregion
 
-        /// ----------------------------------------------------------------------------
+
         // Private Method
 
         /// <summary>

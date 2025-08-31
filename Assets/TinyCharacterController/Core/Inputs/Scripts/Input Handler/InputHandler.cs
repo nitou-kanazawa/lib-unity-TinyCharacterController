@@ -3,14 +3,11 @@
 namespace Nitou.TCC.Inputs
 {
     /// <summary>
-    /// This abstract class contains all the input methods that are used by the character brain. 
-    /// This is the base class for all the input detection methods available.
+    /// この抽象クラスは，キャラクターブレインで使用されるすべての入力メソッドを含んでいます．
+    /// これは，利用可能なすべての入力検出メソッドの基底クラスです．
     /// </summary>
     public abstract class InputHandler : MonoBehaviour
     {
-        // ----------------------------------------------------------------------------
-        // Public Method (値の取得)
-
         /// <summary>
         /// Bool型アクションの取得
         /// </summary>

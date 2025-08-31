@@ -97,3 +97,7 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# Sirenix関連ファイルの除外
+/[Aa]ssets/[Pp]lugins/Sirenix/
+/[Aa]ssets/[Pp]lugins/Sirenix.meta

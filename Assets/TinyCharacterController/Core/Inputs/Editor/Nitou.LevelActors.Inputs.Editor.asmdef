@@ -1,0 +1,19 @@
+{
+    "name": "Nitou.LevelActors.Inputs.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:957d667169b382a479e051a59f944304",
+        "GUID:14d14a38d1c9a1f43b1b739aba632d1e"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

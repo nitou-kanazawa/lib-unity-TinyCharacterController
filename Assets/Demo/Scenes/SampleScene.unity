@@ -148,7 +148,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 941cd1bade9ee428cbf8dc33883c67b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Alchemy::Alchemy.Hierarchy.HierarchySeparator
-  hierarchyObjectMode: 0
 --- !u!4 &42256468
 Transform:
   m_ObjectHideFlags: 0
@@ -599,7 +598,7 @@ GameObject:
   - component: {fileID: 1374444873}
   - component: {fileID: 1374444872}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Actor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -619,8 +618,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Nitou.TCC.Utils::Nitou.TCC.Utils.MovementReference
   _mode: 0
   _externalReference: {fileID: 0}
-  _offset: {x: 0, y: 0.01, z: 0}
-  _radius: 1.5
 --- !u!4 &1374444873
 Transform:
   m_ObjectHideFlags: 0
@@ -896,7 +893,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 941cd1bade9ee428cbf8dc33883c67b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Alchemy::Alchemy.Hierarchy.HierarchySeparator
-  hierarchyObjectMode: 0
 --- !u!4 &2030903671
 Transform:
   m_ObjectHideFlags: 0

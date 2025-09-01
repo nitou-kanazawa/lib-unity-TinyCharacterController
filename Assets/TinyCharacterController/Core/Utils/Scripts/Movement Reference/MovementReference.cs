@@ -1,11 +1,11 @@
 using System;
 using UnityEngine;
-using Alchemy.Inspector;
+using Sirenix.OdinInspector;
 
 namespace Nitou.TCC.Utils
 {
     /// <summary>
-    /// �A�N�^�[�ړ������̊�Ƃ�����W�n�D
+    /// 
     /// </summary>
     public enum MovementReferenceMode
     {
@@ -21,23 +21,20 @@ namespace Nitou.TCC.Utils
 
 
     /// <summary>
-    /// �L�����N�^�[�ړ������̎Q�ƁD
+    /// 
     /// </summary>
     [System.Serializable]
     [DisallowMultipleComponent]
     public sealed class MovementReference : MonoBehaviour, IMovementInputModifier
     {
-        [Title("Reference Mode")]
-        
-        [EnumButtons, HideLabel] 
-        [SerializeField, Indent]
+        [TitleGroup("Reference Mode")] [EnumToggleButtons, HideLabel] [SerializeField, Indent]
         private MovementReferenceMode _mode = MovementReferenceMode.World;
 
-        [Space] 
-        [ShowIf("IsExternalReferenceMode")] 
-        [SerializeField, Indent]
+        [Space] [TitleGroup("Reference Mode")] [ShowIf("_mode", MovementReferenceMode.External)] [SerializeField, Indent]
         private Transform _externalReference = null;
 
+
+        // ----------------------------------------------------------------------------
 
         #region Properity
 
@@ -74,13 +71,12 @@ namespace Nitou.TCC.Utils
         /// </summary>
         public Vector3 ModifieredInputVector { get; private set; }
 
-        /// <summary>
-        /// 基準座標系が外部かどうか．
-        /// </summary>
-        public bool IsExternalReferenceMode => _mode is MovementReferenceMode.External;
-
         #endregion
 
+
+        // ----------------------------------------------------------------------------
+
+        #region Public Methods
 
         /// <summary>
         /// �Q�ƃ��[�h��ݒ肷��D
@@ -115,6 +111,8 @@ namespace Nitou.TCC.Utils
         {
             ModifieredInputVector = Vector3.zero;
         }
+
+        #endregion
 
 
         // Private Method 
@@ -156,15 +154,12 @@ namespace Nitou.TCC.Utils
         }
 
 
-        [Title("Debug")] 
-        [SerializeField, Indent]
+#if UNITY_EDITOR && USE_NITOU_GIZMOS
+        [Title("Debug")] [SerializeField, Indent]
         private Vector3 _offset = Vector3.up * 0.01f;
 
         [SerializeField, Indent] private float _radius = 1.5f;
-#if UNITY_EDITOR && USE_NITOU_GIZMOS
-
         private void OnValidate() => UpdateMovementReferenceData();
-
         private void OnDrawGizmos()
         {
             var pos = transform.position + _offset;

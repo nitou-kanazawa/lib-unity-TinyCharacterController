@@ -1,0 +1,22 @@
+{
+    "name": "Nitou.TCC.Controller",
+    "rootNamespace": "nitou.TCC.Controller",
+    "references": [
+        "GUID:957d667169b382a479e051a59f944304",
+        "GUID:bbf791a4b3949d24e8c1ffc518c3bba7",
+        "GUID:d8b63aba1907145bea998dd612889d6b",
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:2665a8d13d1b3f18800f46e256720795",
+        "GUID:e0cd26848372d4e5c891c569017e11f1",
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

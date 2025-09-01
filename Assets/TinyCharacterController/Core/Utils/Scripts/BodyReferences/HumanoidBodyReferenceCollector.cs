@@ -1,6 +1,5 @@
 using UnityEngine;
-using Alchemy;
-using Alchemy.Inspector;
+using Sirenix.OdinInspector;
 
 namespace Nitou.TCC.Utils.Humanoid
 {

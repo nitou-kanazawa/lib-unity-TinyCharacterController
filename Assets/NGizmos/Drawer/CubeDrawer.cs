@@ -1,4 +1,3 @@
-using Mono.Cecil.Cil;
 using UnityEngine;
 
 namespace Nitou.NGizmos
@@ -11,8 +10,11 @@ namespace Nitou.NGizmos
         /// <summary>
         /// キューブを描画する
         /// </summary>
-        public static void DrawGizmo(Vector3 center, Quaternion rotation, Vector3 size, DrawMode mode = DrawMode.Wire)
+        public static void DrawCube(Vector3 center, Quaternion rotation, Vector3 size, DrawMode mode = DrawMode.Wire)
         {
+            if (size.x < 0 || size.y < 0 || size.z < 0)
+                return;
+                
             if (rotation.Equals(default))
             {
                 rotation = Quaternion.identity;

@@ -39,6 +39,27 @@ namespace Nitou.NGizmos
         /// </summary>
         public const int DEFAULT_CIRCLE_SEGMENTS = 20;
 
+        /// <summary>
+        /// 半径に基づいて適切な分割数を計算する
+        /// </summary>
+        /// <param name="radius">半径</param>
+        /// <param name="defaultSegments">デフォルト分割数</param>
+        /// <returns>最適化された分割数</returns>
+        public static int CalculateOptimalSegments(float radius, int defaultSegments = DEFAULT_CIRCLE_SEGMENTS)
+        {
+            if (radius <= 0f) return MIN_SEGMENT;
+            
+            // 半径が小さい場合は分割数を減らす（最小は3）
+            if (radius < 0.1f) return MIN_SEGMENT;
+            if (radius < 0.5f) return Mathf.Max(MIN_SEGMENT, defaultSegments / 2);
+            if (radius < 1.0f) return Mathf.Max(MIN_SEGMENT, (int)(defaultSegments * 0.75f));
+            
+            // 半径が大きい場合は分割数を増やす（最大は60）
+            if (radius > 10f) return Mathf.Min(60, (int)(defaultSegments * 1.5f));
+            
+            return defaultSegments;
+        }
+
 
         /// <summary>
         /// 円周上の座標リストを生成する．
@@ -72,6 +93,9 @@ namespace Nitou.NGizmos
         /// </summary>
         public static Vector3 GetCirclePoint(float radius, float angle, PlaneType type = PlaneType.ZX)
         {
+            if (radius < 0f)
+                throw new System.ArgumentOutOfRangeException(nameof(radius), "半径は0以上である必要があります");
+                
             var cos = radius * Mathf.Cos(angle);
             var sin = radius * Mathf.Sin(angle);
 
@@ -94,6 +118,9 @@ namespace Nitou.NGizmos
         {
             if (resultPoints == null)
                 throw new System.ArgumentNullException(nameof(resultPoints));
+                
+            if (radius < 0f)
+                throw new System.ArgumentOutOfRangeException(nameof(radius), "半径は0以上である必要があります");
 
             var pointCount = Mathf.Max(segments, MIN_SEGMENT);
             var deltaAngle = (Mathf.PI * 2) / pointCount;

@@ -53,29 +53,45 @@ namespace Nitou.NGizmos
         #region 円弧
 
         /// <summary>
-        /// 円弧を描画する
+        /// 円弧を描画する（改良版）
         /// </summary>
         public static void DrawWireArc(float radius, float angle, int segments = 20)
         {
-            var from = Vector3.forward * radius;
-            var step = Mathf.RoundToInt(angle / segments);
-            for (int i = 0; i <= angle; i += step)
+            if (radius <= 0f || Mathf.Abs(angle) < 0.1f)
+                return;
+
+            var angleRad = angle * Mathf.Deg2Rad;
+            var stepCount = Mathf.Max(2, (int)(segments * Mathf.Abs(angle) / 360f));
+            var deltaAngle = angleRad / stepCount;
+
+            for (int i = 0; i < stepCount; i++)
             {
-                var to = new Vector3(
-                    x: radius * Mathf.Sin(i * Mathf.Deg2Rad),
-                    y: 0,
-                    z: radius * Mathf.Cos(i * Mathf.Deg2Rad)
+                var angle1 = i * deltaAngle;
+                var angle2 = (i + 1) * deltaAngle;
+
+                var point1 = new Vector3(
+                    radius * Mathf.Cos(angle1),
+                    0f,
+                    radius * Mathf.Sin(angle1)
                 );
-                Gizmos.DrawLine(from, to);
-                from = to;
+                var point2 = new Vector3(
+                    radius * Mathf.Cos(angle2),
+                    0f,
+                    radius * Mathf.Sin(angle2)
+                );
+
+                Gizmos.DrawLine(point1, point2);
             }
         }
 
         /// <summary>
-        /// 円弧を描画する
+        /// 円弧を描画する（改良版）
         /// </summary>
         public static void DrawWireArc(Vector3 center, Quaternion rotation, float radius, float angle, int segments = 20)
         {
+            if (radius <= 0f || Mathf.Abs(angle) < 0.1f)
+                return;
+
             if (rotation.Equals(default))
             {
                 rotation = Quaternion.identity;
@@ -205,7 +221,7 @@ namespace Nitou.NGizmos
                         Quaternion.LookRotation(direction),
                         radius,
                         arrowHeadLength,
-                        GizmoConstans.CIRCLE_SEGMENTS);
+                        GizmoConstans.ARROW_SEGMENTS);
                     break;
                 }
             }
@@ -243,7 +259,7 @@ namespace Nitou.NGizmos
                         Quaternion.LookRotation(direction),
                         radius,
                         arrowHeadLength,
-                        GizmoConstans.CIRCLE_SEGMENTS);
+                        GizmoConstans.ARROW_SEGMENTS);
                     break;
                 }
             }

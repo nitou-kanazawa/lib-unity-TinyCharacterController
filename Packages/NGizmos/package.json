@@ -1,0 +1,16 @@
+{
+  "name": "com.nitou.ngizmo",
+  "version": "0.8.0",
+  "displayName": "NGizmo",
+  "description": "Simple gizomo library.",
+  "author": {
+    "name": "Nitou",
+    "url": "https://github.com/nitou-kanazawa"
+  },
+  "unity": "6000.2",
+  "license": "MIT",
+  "dependencies": {
+  },
+  "category": "Gizmo",
+  "keywords": []
+}

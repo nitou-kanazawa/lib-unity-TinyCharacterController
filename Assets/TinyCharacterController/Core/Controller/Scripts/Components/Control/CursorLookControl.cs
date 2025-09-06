@@ -46,7 +46,7 @@ namespace Nitou.TCC.Controller.Control
 
         [SerializeField, Indent] private float _planeOffset;
 
-        [Title("Character orientation control")] [SerializeField, Indent]
+        [Title("Character orientation control")] [GUIColor("green")] [SerializeField, Indent]
         private int _turnPriority = 1;
 
         [PropertyRange(-1, 100)] [SerializeField, Indent]
@@ -120,7 +120,6 @@ namespace Nitou.TCC.Controller.Control
         // ----------------------------------------------------------------------------
 
         float ITurn.YawAngle => YawRotation.eulerAngles.y;
-
         int IPriority<ITurn>.Priority => _turnPriority;
 
 
@@ -162,7 +161,7 @@ namespace Nitou.TCC.Controller.Control
 
         // ----------------------------------------------------------------------------
         // Public Method
-        
+
         /// <summary>
         /// 基準カメラを設定する．
         /// </summary>

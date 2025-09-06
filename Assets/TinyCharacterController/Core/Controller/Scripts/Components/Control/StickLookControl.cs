@@ -13,8 +13,7 @@ namespace Nitou.TCC.Controller.Components
     /// If <see cref="TurnPriority"/> is high, the character is turned in the direction of the stick movement.
     /// </summary>
     [AddComponentMenu(MenuList.MenuControl + nameof(StickLookControl))]
-    [RequireComponent(typeof(CharacterSettings))]
-    public class StickLookControl : MonoBehaviour,
+    public sealed class StickLookControl : MonoBehaviour,
                                     ITurn
     {
         private CharacterSettings _settings;
@@ -23,6 +22,7 @@ namespace Nitou.TCC.Controller.Components
         /// Rotation priority. When the priority is higher than the priority of other components,
         /// it turns in the direction specified by the stick.
         /// </summary>
+        [GUIColor("green")]
         [SerializeField, Indent] private int _turnPriority;
 
         /// <summary>

@@ -55,7 +55,7 @@ namespace Nitou.TCC.Controller.Control
         /// If this value is -1, the character will change direction immediately.
         /// </summary>
         [PropertyRange(-1, 50)] [SerializeField, Indent]
-        int _turnSpeed;
+        private int _turnSpeed;
 
         [Title("Input Settings")]
         /// <summary>
@@ -64,19 +64,22 @@ namespace Nitou.TCC.Controller.Control
         /// </summary>
         [PropertyRange(0, 1)]
         [SerializeField, Indent]
-        float _standbyTime = 0.05f;
+        private float _standbyTime = 0.05f;
 
         [Title("Priority Settings")]
         /// <summary>
         /// Move Priority
         /// </summary>
+        [GUIColor("green")]
         [SerializeField, Indent]
-        int _movePriority;
+        private int _movePriority;
 
         /// <summary>
         /// Turn Priority
         /// </summary>
-        [SerializeField, Indent] int _turnPriority;
+        [GUIColor("green")]
+        [SerializeField, Indent]
+        private int _turnPriority;
 
         [Title("Callbacks")]
         /// <summary>

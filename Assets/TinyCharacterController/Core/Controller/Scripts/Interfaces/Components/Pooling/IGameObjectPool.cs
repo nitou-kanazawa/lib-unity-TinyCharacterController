@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 namespace Nitou.TCC.Controller.Interfaces.Components
 {
     /// <summary>
-    /// An interface for registration in <see cref="TinyCharacterController.Manager.GameObjectPoolManager"/>.
+    /// An interface for registration in <see cref="TCC.Manager.GameObjectPoolManager"/>.
     /// Used for constructing GameObject pools.
     /// Utilized for object acquisition, return, destruction, and also for searching objects from the manager.
     /// </summary>

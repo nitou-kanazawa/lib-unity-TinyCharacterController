@@ -924,8 +924,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Demo::TestActor
   _input: {fileID: 1909371299}
   _move: {fileID: 1483841922}
+  _jump: {fileID: 1483841923}
   _cursorControl: {fileID: 1483841921}
-  _extraForce: {fileID: 0}
+  _groundCheck: {fileID: 183421451}
 --- !u!1 &1483841919
 GameObject:
   m_ObjectHideFlags: 0
@@ -977,7 +978,7 @@ MonoBehaviour:
   _originOffset: {x: 0, y: 0, z: 0}
   _planeAxis: {x: 0, y: 1, z: 0}
   _planeOffset: 0
-  _turnPriority: 1
+  _turnPriority: 3
   _turnSpeed: 30
 --- !u!114 &1483841922
 MonoBehaviour:
@@ -991,15 +992,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9715d8a047006654c9665d19c9dc86cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Nitou.TCC.Controller::Nitou.TCC.Controller.Control.MoveControl
+  _movePriority: 1
   _moveSpeed: 4
   _brakePower: 12
   _accelerator: 6
   _angle: 45
   _lockAxis: {x: 0, y: 0, z: 0}
-  _movePriority: 1
   _moveStopThreshold: 0.2
-  _turnSpeed: 15
   _turnPriority: 1
+  _turnSpeed: 15
   _turnStopThreshold: 0
 --- !u!114 &1483841923
 MonoBehaviour:

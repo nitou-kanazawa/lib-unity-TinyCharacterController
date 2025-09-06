@@ -24,10 +24,17 @@ namespace Nitou.TCC.Controller.Control
     {
         [Title("Movement settings")]
         /// <summary>
-        /// �A�N�^�[�̍ő�ړ����x�D
+        /// Determines if MoveControl is used to move the character.
+        /// If a higher value than other Priority is set, this component is used.
         /// </summary>
         [SerializeField, Indent]
-        private float _moveSpeed = 4;
+        [GUIColor("green")]
+        private int _movePriority = 1;
+
+        /// <summary>
+        /// �A�N�^�[�̍ő�ړ����x�D
+        /// </summary>
+        [SerializeField, Indent] private float _moveSpeed = 4;
 
         /// <summary>
         /// �u���[�L�́D
@@ -51,11 +58,6 @@ namespace Nitou.TCC.Controller.Control
         /// </summary>
         [SerializeField, Indent] private Vector3 _lockAxis = Vector3.zero;
 
-        /// <summary>
-        /// Determines if MoveControl is used to move the character.
-        /// If a higher value than other Priority is set, this component is used.
-        /// </summary>
-        [SerializeField, Indent] private int _movePriority = 1;
 
         /// <summary>
         /// Threshold to determine if the character is in motion.
@@ -66,17 +68,18 @@ namespace Nitou.TCC.Controller.Control
 
         [Title("Turning Settings")]
         /// <summary>
-        /// �A�N�^�[��]���x�D�iPriority�������Ƃ��̂ݓK�p�j
-        /// </summary>
-        [PropertyRange(-1, 50)]
-        [SerializeField, Indent]
-        private int _turnSpeed = 15;
-
-        /// <summary>
         /// Determines if MoveControl is used for character orientation.
         /// If a higher value is set compared to other priorities, this component is used.
         /// </summary>
-        [SerializeField, Indent] private int _turnPriority = 1;
+        [SerializeField, Indent]
+        [GUIColor("green")]
+        private int _turnPriority = 1;
+
+        /// <summary>
+        /// �A�N�^�[��]���x�D�iPriority�������Ƃ��̂ݓK�p�j
+        /// </summary>
+        [PropertyRange(-1, 50)] [SerializeField, Indent]
+        private int _turnSpeed = 15;
 
         /// <summary>
         /// Threshold to determine if the character's orientation has reached.
@@ -223,8 +226,9 @@ namespace Nitou.TCC.Controller.Control
         /// Movement is determined based on <see cref="_moveStopThreshold"/>.
         /// </summary>
         public bool IsMove { get; private set; }
+
         #endregion Property
-        
+
 
         /// ----------------------------------------------------------------------------
         /// <summary>

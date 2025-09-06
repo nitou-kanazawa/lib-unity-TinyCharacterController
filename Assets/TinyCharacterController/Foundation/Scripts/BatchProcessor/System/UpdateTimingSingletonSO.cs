@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Playables;
 
-namespace Nitou.BachProcessor
+namespace Nitou.BatchProcessor
 {
     /// <summary>
     /// 更新タイミング

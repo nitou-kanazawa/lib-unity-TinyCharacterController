@@ -1,4 +1,4 @@
-namespace Nitou.BachProcessor
+namespace Nitou.BatchProcessor
 {
     /// <summary>
     /// バッチ処理の対象コンポーネントのインターフェース．

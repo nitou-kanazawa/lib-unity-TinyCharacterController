@@ -46,7 +46,7 @@ namespace Nitou.TCC.Controller.Check
         private int _maxSlope = 60;
 
         // references
-        private ActorSettings _actorSettings;
+        private CharacterSettings _characterSettings;
         private ITransform _transform;
 
         // 内部処理用
@@ -139,15 +139,15 @@ namespace Nitou.TCC.Controller.Check
             using var _ = new ProfilerScope(nameof(GroundCheck));
 
             var preGroundObject = GroundObject;
-            var offset = _actorSettings.Radius * 2;
+            var offset = _characterSettings.Radius * 2;
             var origin = new Vector3(0, offset, 0) + (_transform?.Position ?? transform.position);
             var groundCheckDistance = _ambiguousDistance + offset;
 
             // Perform ground detection while ignoring the character's own collider.
             var groundCheckCount = Physics.SphereCastNonAlloc(
-                origin, _actorSettings.Radius, Vector3.down, _hits,
+                origin, _characterSettings.Radius, Vector3.down, _hits,
                 groundCheckDistance,
-                _actorSettings.EnvironmentLayer, QueryTriggerInteraction.Ignore);
+                _characterSettings.EnvironmentLayer, QueryTriggerInteraction.Ignore);
 
             var isHit = ClosestHit(_hits, groundCheckCount, groundCheckDistance, out _groundCheckHit);
 
@@ -156,7 +156,7 @@ namespace Nitou.TCC.Controller.Check
             {
                 var inLimitAngle = Vector3.Angle(Vector3.up, _groundCheckHit.normal) < _maxSlope;
 
-                DistanceFromGround = _groundCheckHit.distance - (offset - _actorSettings.Radius);
+                DistanceFromGround = _groundCheckHit.distance - (offset - _characterSettings.Radius);
                 IsOnGround = DistanceFromGround < _ambiguousDistance;
                 IsFirmlyOnGround = DistanceFromGround <= _preciseDistance && inLimitAngle;
                 GroundContactPoint = _groundCheckHit.point;
@@ -199,10 +199,10 @@ namespace Nitou.TCC.Controller.Check
         public bool Raycast(Vector3 position, float distance, out RaycastHit hit)
         {
             var groundCheckCount = Physics.RaycastNonAlloc(position, Vector3.down, _hits, distance,
-                _actorSettings.EnvironmentLayer, QueryTriggerInteraction.Ignore);
+                _characterSettings.EnvironmentLayer, QueryTriggerInteraction.Ignore);
 
             // 最も近いオブジェクト
-            return _actorSettings.ClosestHit(_hits, groundCheckCount, distance, out hit);
+            return _characterSettings.ClosestHit(_hits, groundCheckCount, distance, out hit);
         }
 
 
@@ -210,10 +210,10 @@ namespace Nitou.TCC.Controller.Check
         // Private Method
         private void GatherComponents()
         {
-            _actorSettings = GetComponentInParent<ActorSettings>() ?? throw new System.NullReferenceException(nameof(_actorSettings));
+            _characterSettings = GetComponentInParent<CharacterSettings>() ?? throw new System.NullReferenceException(nameof(_characterSettings));
 
             // Components
-            _actorSettings.TryGetComponent(out _transform);
+            _characterSettings.TryGetComponent(out _transform);
         }
 
         private bool ClosestHit(IReadOnlyList<RaycastHit> hits, int count, float maxDistance, out RaycastHit closestHit)
@@ -225,7 +225,7 @@ namespace Nitou.TCC.Controller.Check
             foreach (var hit in hits.Take(count))
             {
                 var isOverOriginHeight = (hit.distance == 0);
-                if (isOverOriginHeight || hit.distance > min || _actorSettings.IsOwnCollider(hit.collider) || hit.collider == null)
+                if (isOverOriginHeight || hit.distance > min || _characterSettings.IsOwnCollider(hit.collider) || hit.collider == null)
                     continue;
 
                 min = hit.distance;
@@ -241,7 +241,7 @@ namespace Nitou.TCC.Controller.Check
 #if UNITY_EDITOR
         private void Reset()
         {
-            _ambiguousDistance = GetComponentInParent<ActorSettings>().Height * 0.35f;
+            _ambiguousDistance = GetComponentInParent<CharacterSettings>().Height * 0.35f;
         }
 
 #if TCC_USE_NGIZMOS
@@ -250,26 +250,26 @@ namespace Nitou.TCC.Controller.Check
         {
             void DrawHitRangeGizmos(Vector3 startPosition, Vector3 endPosition)
             {
-                var leftOffset = new Vector3(_actorSettings.Radius, 0, 0);
-                var rightOffset = new Vector3(-_actorSettings.Radius, 0, 0);
-                var forwardOffset = new Vector3(0, 0, _actorSettings.Radius);
-                var backOffset = new Vector3(0, 0, -_actorSettings.Radius);
+                var leftOffset = new Vector3(_characterSettings.Radius, 0, 0);
+                var rightOffset = new Vector3(-_characterSettings.Radius, 0, 0);
+                var forwardOffset = new Vector3(0, 0, _characterSettings.Radius);
+                var backOffset = new Vector3(0, 0, -_characterSettings.Radius);
 
                 Gizmos.DrawLine(startPosition + leftOffset, endPosition + leftOffset);
                 Gizmos.DrawLine(startPosition + rightOffset, endPosition + rightOffset);
                 Gizmos.DrawLine(startPosition + forwardOffset, endPosition + forwardOffset);
                 Gizmos.DrawLine(startPosition + backOffset, endPosition + backOffset);
-                NGizmo.DrawSphere(startPosition, _actorSettings.Radius, Color.yellow);
-                NGizmo.DrawSphere(endPosition, _actorSettings.Radius, Color.yellow);
+                NGizmo.DrawSphere(startPosition, _characterSettings.Radius, Color.yellow);
+                NGizmo.DrawSphere(endPosition, _characterSettings.Radius, Color.yellow);
             }
 
-            if (_actorSettings == null)
+            if (_characterSettings == null)
             {
-                _actorSettings = gameObject.GetComponentInParent<ActorSettings>();
+                _characterSettings = gameObject.GetComponentInParent<CharacterSettings>();
             }
 
             var position = transform.position;
-            var offset = _actorSettings.Height * 0.5f;
+            var offset = _characterSettings.Height * 0.5f;
 
 
             if (Application.isPlaying)
@@ -277,10 +277,10 @@ namespace Nitou.TCC.Controller.Check
                 Gizmos.color = IsOnGround ? Color.red : Gizmos.color;
                 Gizmos.color = IsFirmlyOnGround ? Color.blue : Gizmos.color;
 
-                var topPosition = new Vector3 { y = _actorSettings.Radius - _preciseDistance };
+                var topPosition = new Vector3 { y = _characterSettings.Radius - _preciseDistance };
                 var bottomPosition = IsOnGround
-                    ? new Vector3 { y = _actorSettings.Radius - DistanceFromGround }
-                    : new Vector3 { y = _actorSettings.Radius - _ambiguousDistance };
+                    ? new Vector3 { y = _characterSettings.Radius - DistanceFromGround }
+                    : new Vector3 { y = _characterSettings.Radius - _ambiguousDistance };
 
                 DrawHitRangeGizmos(position + topPosition, position + bottomPosition);
 
@@ -294,8 +294,8 @@ namespace Nitou.TCC.Controller.Check
             }
             else
             {
-                var topPosition = new Vector3 { y = _actorSettings.Radius - _preciseDistance };
-                var bottomPosition = new Vector3 { y = _actorSettings.Radius - _ambiguousDistance };
+                var topPosition = new Vector3 { y = _characterSettings.Radius - _preciseDistance };
+                var bottomPosition = new Vector3 { y = _characterSettings.Radius - _ambiguousDistance };
                 DrawHitRangeGizmos(position + topPosition, position + bottomPosition);
             }
         }

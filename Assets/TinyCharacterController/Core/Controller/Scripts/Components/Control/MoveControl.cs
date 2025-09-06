@@ -86,7 +86,7 @@ namespace Nitou.TCC.Controller.Control
         [Range(0, 1)] [SerializeField, Indent] private float _turnStopThreshold = 0;
 
         // references
-        private ActorSettings _actorSettings;
+        private CharacterSettings _characterSettings;
         private IBrain _brain;
         private IGroundContact _groundCheck;
         private Transform _transform;
@@ -113,7 +113,7 @@ namespace Nitou.TCC.Controller.Control
         /// <summary>
         /// 
         /// </summary>
-        public MovementReference MovementReference => _actorSettings.MovementReference;
+        public MovementReference MovementReference => _characterSettings.MovementReference;
 
         /// <summary>
         /// ���݂̈ړ����x�D
@@ -258,12 +258,12 @@ namespace Nitou.TCC.Controller.Control
         private void Awake()
         {
             // ActorSettings
-            _actorSettings = gameObject.GetComponentInParent<ActorSettings>() ?? throw new System.NullReferenceException(nameof(_actorSettings));
+            _characterSettings = gameObject.GetComponentInParent<CharacterSettings>() ?? throw new System.NullReferenceException(nameof(_characterSettings));
 
             // Components
-            _actorSettings.TryGetComponent<Transform>(out _transform);
-            _actorSettings.TryGetComponent<IBrain>(out _brain);
-            _hasGroundCheck = _actorSettings.TryGetActorComponent(ActorComponent.Check, out _groundCheck);
+            _characterSettings.TryGetComponent<Transform>(out _transform);
+            _characterSettings.TryGetComponent<IBrain>(out _brain);
+            _hasGroundCheck = _characterSettings.TryGetActorComponent(ActorComponent.Check, out _groundCheck);
         }
 
         private void OnDestroy() {

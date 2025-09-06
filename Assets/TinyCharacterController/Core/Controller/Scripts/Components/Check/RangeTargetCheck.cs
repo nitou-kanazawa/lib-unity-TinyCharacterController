@@ -52,7 +52,7 @@ namespace Nitou.TCC.Controller.Check
         private float _maxDistance = -1;
         private bool _useScreenCheck = true;
         private LayerMask _raycastHitLayer;
-        private ActorSettings _settings;
+        private CharacterSettings _settings;
         private ITransform _transform;
 
         // 
@@ -396,7 +396,7 @@ namespace Nitou.TCC.Controller.Check
 
         private void GatherComponents()
         {
-            _settings = GetComponentInParent<ActorSettings>();
+            _settings = GetComponentInParent<CharacterSettings>();
             _transform = _settings.GetComponent<ITransform>();
         }
 

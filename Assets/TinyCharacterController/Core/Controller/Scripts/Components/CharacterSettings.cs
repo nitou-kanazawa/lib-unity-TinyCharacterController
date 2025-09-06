@@ -13,8 +13,8 @@ namespace Nitou.TCC.Controller.Core
     /// </summary>
     [SelectionBase]
     [DisallowMultipleComponent]
-    [AddComponentMenu(MenuList.MenuBrain + nameof(ActorSettings))]
-    public sealed class ActorSettings : MonoBehaviour
+    [AddComponentMenu(MenuList.MenuBrain + nameof(CharacterSettings))]
+    public sealed class CharacterSettings : MonoBehaviour
     {
         [Title("Body Settings")] [SerializeField, Indent]
         private float _mass = 1;
@@ -277,7 +277,7 @@ namespace Nitou.TCC.Controller.Core
         /// <summary>
         /// Actorコンポーネントを設定したGameObjectから取得する
         /// </summary>
-        public static T GetActorComponent<T>(this ActorSettings settings, ActorComponent type)
+        public static T GetActorComponent<T>(this CharacterSettings settings, ActorComponent type)
         {
             // コンポーネント
             Transform holder = type switch
@@ -295,7 +295,7 @@ namespace Nitou.TCC.Controller.Core
         /// <summary>
         /// Actorコンポーネントを設定したGameObjectから取得する
         /// </summary>
-        public static bool TryGetActorComponent<T>(this ActorSettings settings, ActorComponent type, out T component)
+        public static bool TryGetActorComponent<T>(this CharacterSettings settings, ActorComponent type, out T component)
         {
             // コンポーネント
             Transform holder = type switch

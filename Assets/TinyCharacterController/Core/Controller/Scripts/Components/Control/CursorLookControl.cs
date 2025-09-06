@@ -11,71 +11,61 @@ using Nitou.Gizmo;
 namespace Nitou.TCC.Controller.Control
 {
     /// <summary>
-    /// This component updates the character's orientation based on the cursor position. <br/>
+    /// カーソル位置に基づいてキャラクターの向きを更新するコンポーネント。 <br/>
     /// 
-    /// If the component has high priority, the character will look in the direction of the cursor.
-    /// The coordinates at which the character gazes are calculated based on <see cref="LookTargetPoint"/>.
-    /// If you want to use side view instead of top-down, change <see cref="_planeAxis"/>.
+    /// このコンポーネントが高い優先度を持つ場合、キャラクターはカーソルの方向を向きます。
+    /// キャラクターが注視する座標は<see cref="LookTargetPoint"/>に基づいて計算されます。
+    /// トップダウンではなくサイドビューを使用したい場合は、<see cref="_planeAxis"/>を変更してください。
     /// </summary>
     [AddComponentMenu(MenuList.MenuControl + nameof(CursorLookControl))]
     [DisallowMultipleComponent]
-    public sealed class CursorLookControl : MonoBehaviour, ITurn, IUpdateComponent
+    public sealed class CursorLookControl : MonoBehaviour,
+                                            ITurn, IUpdateComponent
     {
-        [Required]
-        [SerializeField, Indent]private  Camera _camera;
+        [Required] [SerializeField, Indent] private Camera _camera;
 
         [Title("Cursor behavior settings")]
         /// <summary>
-        /// �J�[�\����F������ő勗���D
-        /// Used to limit the range of movement of the camera.
-        /// For example, if you want the camera to follow the cursor position.
+        /// カーソルの最大距離．
+        /// カメラの移動範囲を制限するために使用されます。
+        /// 例えば、カメラをカーソル位置に追従させたい場合など。
         /// </summary>
         [Tooltip("Maximum distance of cursor")]
         [SerializeField, Indent]
         private float _maxDistance = 3;
 
         /// <summary>
-        /// Offset to compensate for orientation to the cursor.
-        /// For (0,0,0), orientation from the root of the model.
-        /// Adjust to gun height if you want to calculate orientation based on gun height.
+        /// カーソルへの向きを補正するためのオフセット．
+        /// (0,0,0)の場合、モデルのルートからの向き．
+        /// 例えば，銃の高さに基づいて向きを計算したい場合は，銃の高さに調整する．
         /// </summary>
-        [SerializeField, Indent]private  Vector3 _originOffset = Vector3.zero;
+        [SerializeField, Indent] private Vector3 _originOffset = Vector3.zero;
 
         [Title("Plane settings")] [SerializeField, Indent]
         private Vector3 _planeAxis = Vector3.up;
 
         [SerializeField, Indent] private float _planeOffset;
 
-        [Title("Character orientation control")]
-        /// <summary>
-        /// Rotation Priority. Face the cursor direction when it is higher than the priority of other components.
-        /// </summary>
-        [SerializeField, Indent]
+        [Title("Character orientation control")] [SerializeField, Indent]
         private int _turnPriority = 1;
 
-        /// <summary>
-        /// Speed at which the cursor is oriented. If the value is -1, the orientation is fixed.
-        /// </summary>
         [PropertyRange(-1, 100)] [SerializeField, Indent]
         private int _turnSpeed = 30;
 
 
         private Vector2 _mousePosition;
         private ITransform _transform;
-        private ActorSettings _actorSettings;
+        private CharacterSettings _characterSettings;
 
 
         // ----------------------------------------------------------------------------
 
         #region Property
 
-        /// <summary>
-        /// ���������D
-        /// </summary>
         int IUpdateComponent.Order => Order.Control;
 
         /// <summary>
-        /// Turn Speed
+        /// カーソルに向く速度。値が-1の場合、向きは固定されます。
         /// </summary>
         public int TurnSpeed
         {
@@ -84,7 +74,8 @@ namespace Nitou.TCC.Controller.Control
         }
 
         /// <summary>
-        /// 
+        /// 回転の優先度。
+        /// 他のコンポーネントの優先度よりも高い場合、カーソル方向を向きます。
         /// </summary>
         public int TurnPriority
         {
@@ -93,29 +84,29 @@ namespace Nitou.TCC.Controller.Control
         }
 
         /// <summary>
-        /// CursorPosition centered on the character and limited to MaxDistance distance.
-        /// Avoid the problem of the cursor leaving indefinitely in cases where the camera is tracking the cursor.
+        /// キャラクターを中心としてMaxDistance距離に制限されたカーソル位置。
+        /// カメラがカーソルを追跡している場合に、カーソルが無限に離れていく問題を回避します。
         /// </summary>
         public Vector3 LimitedPosition { get; private set; }
 
         /// <summary>
-        /// �J�[�\���̃��[���h���W�D
+        /// カーソルのワールド座標
         /// </summary>
         public Vector3 CursorPosition { get; private set; }
 
         /// <summary>
-        /// �J�[�\���̉�]�p�x�D(��������)
+        /// カーソルへの回転（水平回転）
         /// </summary>
         public Quaternion YawRotation { get; private set; }
 
         /// <summary>
-        ///  �J�[�\���̉�]�p�x�D(��������)
+        /// カーソルへの回転（垂直回転）
         /// </summary>
         public Quaternion PitchRotation { get; private set; }
 
         /// <summary>
-        /// Direction of the judgment plane.
-        /// Set (0, 1, 0) for a top viewpoint or (0, 0, 1) for a side viewpoint.
+        /// 判定平面の方向。
+        /// トップビューの場合は(0, 1, 0)、サイドビューの場合は(0, 0, 1)を設定します。
         /// </summary>
         public Vector3 PlaneAxis
         {
@@ -138,10 +129,10 @@ namespace Nitou.TCC.Controller.Control
         private void Awake()
         {
             // ActorSettings
-            _actorSettings = gameObject.GetComponentInParent<ActorSettings>() ?? throw new System.NullReferenceException(nameof(_actorSettings));
+            _characterSettings = gameObject.GetComponentInParent<CharacterSettings>() ?? throw new System.NullReferenceException(nameof(_characterSettings));
 
             // Components
-            _actorSettings.TryGetComponent<ITransform>(out _transform);
+            _characterSettings.TryGetComponent<ITransform>(out _transform);
 
             LimitedPosition = transform.position;
             YawRotation = Quaternion.AngleAxis(0, Vector3.up);
@@ -171,16 +162,21 @@ namespace Nitou.TCC.Controller.Control
 
         // ----------------------------------------------------------------------------
         // Public Method
+        
+        /// <summary>
+        /// 基準カメラを設定する．
+        /// </summary>
+        /// <param name="camera"></param>
         public void SetCamera(Camera camera)
         {
             _camera = camera;
         }
 
         /// <summary>
-        /// Face the direction of the screen coordinates
-        /// Note that this is not immediately reflected. The value is reflected at the time of Update.
+        /// スクリーン座標の方向を向きます。
+        /// 注意：これは即座に反映されません。値はUpdateの時点で反映されます。
         /// </summary>
-        /// <param name="screenPosition">look position</param>
+        /// <param name="screenPosition">注視位置</param>
         public void LookTargetPoint(Vector2 screenPosition)
         {
             _mousePosition = screenPosition;

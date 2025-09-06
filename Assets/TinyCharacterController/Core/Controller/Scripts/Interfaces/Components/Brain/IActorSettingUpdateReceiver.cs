@@ -12,6 +12,6 @@ namespace Nitou.TCC.Controller.Interfaces.Components {
         /// <summary>
         /// CharacterSettings values have changed
         /// </summary>
-        void OnUpdateSettings(ActorSettings settings);
+        void OnUpdateSettings(CharacterSettings settings);
     }
 }

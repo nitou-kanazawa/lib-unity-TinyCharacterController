@@ -57,7 +57,7 @@ namespace Nitou.TCC.Controller.Check
         [SerializeField, Indent] private UnityEvent _onChangeInRange;
 
         // references
-        private ActorSettings _actorSettings;
+        private CharacterSettings _characterSettings;
         private ITransform _transform;
 
         // 定数
@@ -89,7 +89,7 @@ namespace Nitou.TCC.Controller.Check
         /// <summary>
         ///     Height to the head.
         /// </summary>
-        private float Height => _actorSettings.Height + _headPositionOffset;
+        private float Height => _characterSettings.Height + _headPositionOffset;
 
         /// <summary>
         ///     Returns true if the head is in contact with other objects.
@@ -131,7 +131,7 @@ namespace Nitou.TCC.Controller.Check
 
             // Prepare parameters needed for Raycast.
             // Cast the ray from the center of the body to avoid contact with the ground.
-            var offset = _actorSettings.Height * 0.5f;
+            var offset = _characterSettings.Height * 0.5f;
             IsObjectOverhead = DetectCollidersAboveHead(offset, out var closestHit);
 
             if (IsObjectOverhead)
@@ -158,10 +158,10 @@ namespace Nitou.TCC.Controller.Check
 
         void IComponentCondition.OnConditionCheck(List<string> messageList)
         {
-            if (_actorSettings == null)
-                TryGetComponent(out _actorSettings);
+            if (_characterSettings == null)
+                TryGetComponent(out _characterSettings);
 
-            if (_actorSettings.Height > MaxHeight)
+            if (_characterSettings.Height > MaxHeight)
                 messageList.Add("Max Range should be set to a value greater than or equal to _settings.Height.");
         }
 
@@ -170,10 +170,10 @@ namespace Nitou.TCC.Controller.Check
         // Private Method
         private void GatherComponents()
         {
-            _actorSettings = GetComponentInParent<ActorSettings>() ?? throw new System.NullReferenceException(nameof(_actorSettings));
+            _characterSettings = GetComponentInParent<CharacterSettings>() ?? throw new System.NullReferenceException(nameof(_characterSettings));
 
             // Components
-            _actorSettings.TryGetComponent(out _transform);
+            _characterSettings.TryGetComponent(out _transform);
         }
 
         /// <summary>
@@ -206,13 +206,13 @@ namespace Nitou.TCC.Controller.Check
             var preContactHead = IsHeadContact;
 
             // Distance is the sum of RaycastHit's distance, the offset at the start of the Cast, and the SphereCast's offset.
-            DistanceFromRootPosition = closestHit.distance + offset + _actorSettings.Radius + _headPositionOffset;
+            DistanceFromRootPosition = closestHit.distance + offset + _characterSettings.Radius + _headPositionOffset;
             ContactPoint = closestHit.point;
             ContactedObject = closestHit.collider.gameObject;
 
             // If the distance from the ground is lower than the height setting, consider it a collision.
             // Also, if the collision detection is different from the previous frame, consider it a hit in the current frame.
-            IsHeadContact = DistanceFromRootPosition < _actorSettings.Height + _headPositionOffset;
+            IsHeadContact = DistanceFromRootPosition < _characterSettings.Height + _headPositionOffset;
             IsHitCollisionInThisFrame = !preContactHead && IsHeadContact;
         }
 
@@ -226,15 +226,15 @@ namespace Nitou.TCC.Controller.Check
         private bool DetectCollidersAboveHead(float offset, out RaycastHit closestHit)
         {
             var ray = new Ray(_transform.Position + new Vector3(0, offset + _headPositionOffset, 0), Vector3.up);
-            var rayDistance = MaxHeight + _headPositionOffset - offset - _actorSettings.Radius;
+            var rayDistance = MaxHeight + _headPositionOffset - offset - _characterSettings.Radius;
 
             // Perform a SphereCast upward to check for the presence of colliders above the head.
-            var count = Physics.SphereCastNonAlloc(ray, _actorSettings.Radius, Result,
-                rayDistance, _actorSettings.EnvironmentLayer,
+            var count = Physics.SphereCastNonAlloc(ray, _characterSettings.Radius, Result,
+                rayDistance, _characterSettings.EnvironmentLayer,
                 QueryTriggerInteraction.Ignore);
 
             // Get the closest Raycast excluding the Collider owned by itself.
-            var isHit = _actorSettings.ClosestHit(Result, count, rayDistance, out closestHit);
+            var isHit = _characterSettings.ClosestHit(Result, count, rayDistance, out closestHit);
             return isHit;
         }
 
@@ -244,7 +244,7 @@ namespace Nitou.TCC.Controller.Check
         // TODO: Gizmosの修正
         private void OnDrawGizmosSelected()
         {
-            if (_actorSettings == null)
+            if (_characterSettings == null)
             {
                 GatherComponents();
             }
@@ -254,12 +254,12 @@ namespace Nitou.TCC.Controller.Check
                 Gizmos.color = Color.red;
 
             var position = transform.position;
-            var headPosition = position + new Vector3(0, Height - _actorSettings.Radius, 0);
+            var headPosition = position + new Vector3(0, Height - _characterSettings.Radius, 0);
 
             if (Application.isPlaying)
             {
                 // Represent the position where collision is detected based on DistanceFromRootPosition.
-                var offset = _actorSettings.Radius;
+                var offset = _characterSettings.Radius;
                 var contactPosition = position + new Vector3(0, DistanceFromRootPosition - offset, 0);
                 DrawHitRangeGizmos(headPosition, contactPosition);
 
@@ -278,10 +278,10 @@ namespace Nitou.TCC.Controller.Check
             // Represent capsule-shaped Gizmos.
             void DrawHitRangeGizmos(in Vector3 startPosition, in Vector3 endPosition)
             {
-                var leftOffset = new Vector3(_actorSettings.Radius, 0, 0);
-                var rightOffset = new Vector3(-_actorSettings.Radius, 0, 0);
-                var forwardOffset = new Vector3(0, 0, _actorSettings.Radius);
-                var backOffset = new Vector3(0, 0, -_actorSettings.Radius);
+                var leftOffset = new Vector3(_characterSettings.Radius, 0, 0);
+                var rightOffset = new Vector3(-_characterSettings.Radius, 0, 0);
+                var forwardOffset = new Vector3(0, 0, _characterSettings.Radius);
+                var backOffset = new Vector3(0, 0, -_characterSettings.Radius);
 
                 // Represent vertical lines before and after the capsule.
                 Gizmos.DrawLine(startPosition + leftOffset, endPosition + leftOffset);
@@ -290,14 +290,14 @@ namespace Nitou.TCC.Controller.Check
                 Gizmos.DrawLine(startPosition + backOffset, endPosition + backOffset);
 
                 // Represent circular shapes above and below the capsule.
-                Gizmos.DrawWireSphere(startPosition, _actorSettings.Radius);
-                Gizmos.DrawWireSphere(endPosition, _actorSettings.Radius);
+                Gizmos.DrawWireSphere(startPosition, _characterSettings.Radius);
+                Gizmos.DrawWireSphere(endPosition, _characterSettings.Radius);
 
                 // Fill the color with the circular shapes above and below the capsule.
                 var color = Colors.Yellow;
                 color.a = 0.4f;
-                NGizmo.DrawSphere(startPosition, _actorSettings.Radius, color);
-                NGizmo.DrawSphere(endPosition, _actorSettings.Radius, color);
+                NGizmo.DrawSphere(startPosition, _characterSettings.Radius, color);
+                NGizmo.DrawSphere(endPosition, _characterSettings.Radius, color);
             }
         }
 #endif

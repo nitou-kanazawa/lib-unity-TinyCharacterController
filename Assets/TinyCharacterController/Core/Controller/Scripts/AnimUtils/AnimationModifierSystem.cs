@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.LowLevel;
 using UnityEngine.PlayerLoop;
-using Nitou.BachProcessor;
+using Nitou.BatchProcessor;
 using Nitou.TCC.Controller.Interfaces.Components;
 
 

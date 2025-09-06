@@ -1,7 +1,7 @@
 using Unity.Mathematics;
 using UnityEngine;
 using Sirenix.OdinInspector;
-using Nitou.BachProcessor;
+using Nitou.BatchProcessor;
 using Nitou.TCC.Controller.Interfaces.Components;
 using Nitou.TCC.Controller.Shared;
 using Nitou.TCC.Utils;
@@ -20,7 +20,7 @@ namespace Nitou.TCC.Controller.Core
     [DefaultExecutionOrder(Order.UpdateBrain)]
     [DisallowMultipleComponent]
     [RequireComponent(typeof(CharacterController))]
-    [RequireComponent(typeof(ActorSettings))]
+    [RequireComponent(typeof(CharacterSettings))]
     public sealed class CharacterBrain : BrainBase, IActorSettingUpdateReceiver
     {
         /// <summary>
@@ -151,7 +151,7 @@ namespace Nitou.TCC.Controller.Core
         /// Callback when CharacterSettings is updated.
         /// </summary>
         /// <param name="settings">CharacterSettings.</param>
-        void IActorSettingUpdateReceiver.OnUpdateSettings(ActorSettings settings)
+        void IActorSettingUpdateReceiver.OnUpdateSettings(CharacterSettings settings)
         {
             // If the Controller is not set, retrieve it.
             if (_controller == null) TryGetComponent(out _controller);
@@ -302,7 +302,7 @@ namespace Nitou.TCC.Controller.Core
         private void Reset()
         {
             // Update settings such as CharacterController.
-            var settings = GetComponent<ActorSettings>();
+            var settings = GetComponent<CharacterSettings>();
             ((IActorSettingUpdateReceiver)this).OnUpdateSettings(settings);
         }
 

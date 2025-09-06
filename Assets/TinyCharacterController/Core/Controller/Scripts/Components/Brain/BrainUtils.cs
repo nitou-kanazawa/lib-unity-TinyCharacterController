@@ -30,7 +30,7 @@ namespace Nitou.TCC.Controller.Core
         /// <summary>
         /// 
         /// </summary>
-        public static bool ClosestHit(RaycastHit[] hits, ActorSettings settings, out RaycastHit closestHit, int count, float maxDistance) {
+        public static bool ClosestHit(RaycastHit[] hits, CharacterSettings settings, out RaycastHit closestHit, int count, float maxDistance) {
             var min = maxDistance;
             closestHit = new RaycastHit();
             var isHit = false;

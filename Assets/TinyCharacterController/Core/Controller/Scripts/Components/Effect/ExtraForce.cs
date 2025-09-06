@@ -2,7 +2,7 @@ using System;
 using System.Buffers;
 using UniRx;
 using UnityEngine;
-using Nitou.BachProcessor;
+using Nitou.BatchProcessor;
 using Nitou.TCC.Controller.Core;
 using Nitou.TCC.Controller.Interfaces.Components;
 using Nitou.TCC.Controller.Interfaces.Core;
@@ -46,7 +46,7 @@ namespace Nitou.TCC.Controller.Effect
         private float _bounce = 0f;
 
         // References
-        private ActorSettings _settings;
+        private CharacterSettings _settings;
         private IGroundContact _groundCheck;
         private ITransform _transform;
 
@@ -116,7 +116,7 @@ namespace Nitou.TCC.Controller.Effect
                     {
                         // When colliding with other ExtraForce, propagate the impact.
                         if (closestHit.collider.TryGetComponent(out ExtraForce other) &&
-                            closestHit.collider.TryGetComponent(out ActorSettings otherSettings))
+                            closestHit.collider.TryGetComponent(out CharacterSettings otherSettings))
                         {
                             // Force = Mass * Acceleration
                             var ownForce = _settings.Mass * _velocity;
@@ -184,7 +184,7 @@ namespace Nitou.TCC.Controller.Effect
         /// </summary>
         private void GatherComponents()
         {
-            _settings = GetComponentInParent<ActorSettings>();
+            _settings = GetComponentInParent<CharacterSettings>();
 
             _settings.TryGetComponent(out _transform);
             _settings.TryGetActorComponent(ActorComponent.Check, out _groundCheck);

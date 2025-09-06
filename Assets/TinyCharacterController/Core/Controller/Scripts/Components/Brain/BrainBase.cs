@@ -1,5 +1,5 @@
 using UnityEngine;
-using Nitou.BachProcessor;
+using Nitou.BatchProcessor;
 using Nitou.TCC.Controller.Interfaces.Components;
 using Nitou.TCC.Controller.Interfaces.Core;
 using Nitou.TCC.Controller.Shared;
@@ -28,7 +28,7 @@ namespace Nitou.TCC.Controller.Core
         protected Vector3 Position;
 
 
-        protected ActorSettings Settings;
+        protected CharacterSettings Settings;
         protected Transform CachedTransform;
 
 

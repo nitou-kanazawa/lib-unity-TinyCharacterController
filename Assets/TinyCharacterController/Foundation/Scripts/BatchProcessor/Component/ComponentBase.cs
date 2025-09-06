@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Nitou.BachProcessor
+namespace Nitou.BatchProcessor
 {
     /// <summary>
     /// バッチ処理対象のコンポーネント基底クラス．

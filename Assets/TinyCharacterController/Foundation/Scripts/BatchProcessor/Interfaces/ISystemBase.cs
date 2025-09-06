@@ -1,4 +1,4 @@
-namespace Nitou.BachProcessor
+namespace Nitou.BatchProcessor
 {
     public interface ISystemBase
     {

@@ -8,8 +8,8 @@ using Sirenix.OdinInspector;
 using Nitou.Gizmo;
 #endif
 
-namespace Nitou.TCC.Controller.Control {
-
+namespace Nitou.TCC.Controller.Control
+{
     using Controller.Interfaces.Core;
     using Controller.Interfaces.Components;
     using Controller.Core;
@@ -27,23 +27,23 @@ namespace Nitou.TCC.Controller.Control {
     // [RequireInterface(typeof(IGroundContact))]
     // [RequireInterface(typeof(IOverheadDetection))]
     public class JumpControl : MonoBehaviour,
-        IMove,
-        ITurn,
-        IUpdateComponent {
-
+                               IMove,
+                               ITurn,
+                               IUpdateComponent
+    {
         [Title("Settings")]
-
         /// <summary>
         /// Jump height.
         /// </summary>
         [Tooltip("JumpHeight")]
-        [SerializeField, Indent] public float JumpHeight = 3;
+        [SerializeField, Indent]
+        public float JumpHeight = 3;
 
         /// <summary>
         /// Number of jumps in the air
         /// </summary>
-        [Tooltip("Areal Jump Count.")]
-        [SerializeField, Indent] public int MaxAerialJumpCount = 0;
+        [Tooltip("Areal Jump Count.")] [SerializeField, Indent]
+        public int MaxAerialJumpCount = 0;
 
         /// <summary>
         /// Aerodynamic drag
@@ -54,35 +54,31 @@ namespace Nitou.TCC.Controller.Control {
         /// The speed at which the character will change direction.
         /// If this value is -1, the character will change direction immediately.
         /// </summary>
-        [PropertyRange(-1, 50)]
-        [SerializeField, Indent] int _turnSpeed;
-
+        [PropertyRange(-1, 50)] [SerializeField, Indent]
+        int _turnSpeed;
 
         [Title("Input Settings")]
-
         /// <summary>
         /// The time that <see cref="Jump"/> can be entered ahead of time.
         /// If a jump is possible within the time, it will be automatically jumped.
         /// </summary>
         [PropertyRange(0, 1)]
-        [SerializeField, Indent] float _standbyTime = 0.05f;
-
+        [SerializeField, Indent]
+        float _standbyTime = 0.05f;
 
         [Title("Priority Settings")]
-
         /// <summary>
         /// Move Priority
         /// </summary>
-        [SerializeField, Indent] int _movePriority;
+        [SerializeField, Indent]
+        int _movePriority;
 
         /// <summary>
         /// Turn Priority
         /// </summary>
         [SerializeField, Indent] int _turnPriority;
 
-
         [Title("Callbacks")]
-
         /// <summary>
         /// Callback called when a jump is requested.
         /// Called if the jump is feasible, regardless of <see cref="IsAllowJump"/>.
@@ -96,7 +92,7 @@ namespace Nitou.TCC.Controller.Control {
 
 
         // references
-        private ActorSettings _actorSettings;
+        private CharacterSettings _characterSettings;
         private IGroundContact _groundCheck;
         private IGravity _gravity;
         private IOverheadDetection _head;
@@ -110,7 +106,7 @@ namespace Nitou.TCC.Controller.Control {
         private float _yawAngle;
 
 
-        /// ----------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------
         // Property
 
         /// <summary>
@@ -166,7 +162,6 @@ namespace Nitou.TCC.Controller.Control {
 
         public Vector3 Velocity => _velocity;
 
-        // ----- 
 
         private bool IsCanJump => _groundCheck.IsFirmlyOnGround || AerialJumpCount < MaxAerialJumpCount;
 
@@ -181,19 +176,20 @@ namespace Nitou.TCC.Controller.Control {
         float ITurn.YawAngle => _yawAngle;
 
 
-        /// ----------------------------------------------------------------------------
-        // Lifecycle Events
+        // ----------------------------------------------------------------------------
 
-        private void Awake() {
+        #region Lifecycle Events
+
+        private void Awake()
+        {
             GatherComponents();
         }
 
         private void OnDestroy() {
-
         }
 
-        void IUpdateComponent.OnUpdate(float deltaTime) {
-
+        void IUpdateComponent.OnUpdate(float deltaTime)
+        {
             // Initialize
             IsJumpStart = false;
             IsReadyToJumpStart = false;
@@ -209,19 +205,23 @@ namespace Nitou.TCC.Controller.Control {
             CalculateContactEnvironment();
 
             // Prepare to jump if possible
-            if (Time.time < _requestJump && IsCanJump && IsReadyToJump == false) {
+            if (Time.time < _requestJump && IsCanJump && IsReadyToJump == false)
+            {
                 ReadyJump();
                 _readyTime = 0;
             }
 
             // Jump if jumping is allowed
-            if (IsReadyToJump && IsAllowJump) {
+            if (IsReadyToJump && IsAllowJump)
+            {
                 ForceJump(_requestJumpIncrement);
             }
         }
 
+        #endregion
 
-        /// ----------------------------------------------------------------------------
+
+        // ----------------------------------------------------------------------------
         // Public Method
 
         /// <summary>
@@ -230,7 +230,8 @@ namespace Nitou.TCC.Controller.Control {
         /// Note that it does not jump immediately.
         /// </summary>
         /// <param name="incrementJumpCount">Count the number of jumps</param>.
-        public void Jump(bool incrementJumpCount = true) {
+        public void Jump(bool incrementJumpCount = true)
+        {
             _requestJumpIncrement = incrementJumpCount;
             _requestJump = Time.time + _standbyTime;
         }
@@ -240,7 +241,8 @@ namespace Nitou.TCC.Controller.Control {
         /// This process is executed immediately.
         /// </summary>
         /// <param name="incrementJumpCount">The number of jumps is +1. </param>
-        public void ForceJump(bool incrementJumpCount = true) {
+        public void ForceJump(bool incrementJumpCount = true)
+        {
             // +1 to the number of jumps if already in the air; if not off the ground,
             // the number of jumps in the air is not counted.
             if (incrementJumpCount && _leaveTime > 0)
@@ -271,7 +273,8 @@ namespace Nitou.TCC.Controller.Control {
         /// <summary>
         /// Reset the number of jumps, the vector, and the decision during a jump
         /// </summary>
-        public void ResetJump() {
+        public void ResetJump()
+        {
             AerialJumpCount = 0;
             IsJumping = false;
             _velocity = Vector3.zero;
@@ -282,30 +285,34 @@ namespace Nitou.TCC.Controller.Control {
 
         /// ----------------------------------------------------------------------------
         // Private Method
-
-        private void GatherComponents() {
-            _actorSettings = GetComponentInParent<ActorSettings>() ?? throw new System.NullReferenceException(nameof(_actorSettings));
+        private void GatherComponents()
+        {
+            _characterSettings = GetComponentInParent<CharacterSettings>() ?? throw new System.NullReferenceException(nameof(_characterSettings));
 
             // Components
-            _actorSettings.TryGetActorComponent(ActorComponent.Effect, out _gravity);
-            _actorSettings.TryGetActorComponent(ActorComponent.Check, out _groundCheck);
-            _actorSettings.TryGetActorComponent(ActorComponent.Check, out _head);
+            _characterSettings.TryGetActorComponent(ActorComponent.Effect, out _gravity);
+            _characterSettings.TryGetActorComponent(ActorComponent.Check, out _groundCheck);
+            _characterSettings.TryGetActorComponent(ActorComponent.Check, out _head);
         }
 
-        private void ReadyJump() {
+        private void ReadyJump()
+        {
             IsReadyToJump = true;
             IsReadyToJumpStart = true;
             OnReadyToJump?.Invoke();
         }
 
-        private void CalculateContactEnvironment() {
+        private void CalculateContactEnvironment()
+        {
             // If anything comes in contact with the head, the speed is reduced to zero.
-            if (_head.IsHeadContact && _gravity.FallSpeed > 0) {
+            if (_head.IsHeadContact && _gravity.FallSpeed > 0)
+            {
                 _gravity.SetVelocity(Vector3.zero);
             }
 
             // Set the number of jumps to 0 when you land.
-            if (_groundCheck.IsFirmlyOnGround && _gravity.FallSpeed <= 0) {
+            if (_groundCheck.IsFirmlyOnGround && _gravity.FallSpeed <= 0)
+            {
                 ResetJump();
             }
         }
@@ -313,29 +320,33 @@ namespace Nitou.TCC.Controller.Control {
 
         // ----------------------------------------------------------------------------
 #if UNITY_EDITOR && TCC_USE_NGIZMOS
-        private void OnDrawGizmosSelected() {
+        private void OnDrawGizmosSelected()
+        {
             const float cursorRadius = 0.1f;
-            if (_actorSettings == null) {
-                _actorSettings = GetComponentInParent<ActorSettings>();
+            if (_characterSettings == null)
+            {
+                _characterSettings = GetComponentInParent<CharacterSettings>();
             }
 
             var position = transform.position;
-            var width = _actorSettings.Radius;
+            var width = _characterSettings.Radius;
 
-            if (_leaveTime > 0) {
-                var characterCenter = position + new Vector3(0, _actorSettings.Height * 0.5f, 0);
+            if (_leaveTime > 0)
+            {
+                var characterCenter = position + new Vector3(0, _characterSettings.Height * 0.5f, 0);
                 var velocityOffset = _velocity + new Vector3(0, _gravity.FallSpeed, 0);
                 var velocityPosition = characterCenter + velocityOffset * 0.3f;
                 Gizmos.DrawLine(characterCenter, velocityPosition);
                 NGizmo.DrawSphere(velocityPosition, cursorRadius, Colors.Blue);
-            } else {
+            }
+            else
+            {
                 var top = position + new Vector3(0, JumpHeight, 0);
-                var size = new Vector3(_actorSettings.Radius, 0, _actorSettings.Radius);
+                var size = new Vector3(_characterSettings.Radius, 0, _characterSettings.Radius);
                 NGizmo.DrawCube(top, size, Colors.Blue);
                 Gizmos.DrawLine(position, top);
             }
         }
-
 #endif
     }
 }

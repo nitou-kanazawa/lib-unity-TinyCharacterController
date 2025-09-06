@@ -58,7 +58,7 @@ namespace Nitou.TCC.Controller.Check
         /// </summary>
         public UnityEvent<bool> OnChangeInsightAnyTargetState;
         
-        private ActorSettings _settings;
+        private CharacterSettings _settings;
         
 
         // ----------------------------------------------------------------------------
@@ -192,7 +192,7 @@ namespace Nitou.TCC.Controller.Check
         /// </summary>
         private void GatherComponents()
         {
-            _settings = gameObject.GetComponentInParent<ActorSettings>();
+            _settings = gameObject.GetComponentInParent<CharacterSettings>();
         }
 
 

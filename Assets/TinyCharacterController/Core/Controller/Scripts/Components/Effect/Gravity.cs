@@ -50,7 +50,7 @@ namespace Nitou.TCC.Controller.Effect
 
         // 
         private IGroundContact _groundCheck;
-        private ActorSettings _settings;
+        private CharacterSettings _settings;
         private State _state;
         private Vector3 _impactPower;
         private Vector3 _velocity;
@@ -113,7 +113,7 @@ namespace Nitou.TCC.Controller.Effect
         // LifeCycle Event
         private void Awake()
         {
-            _settings = GetComponentInParent<ActorSettings>();
+            _settings = GetComponentInParent<CharacterSettings>();
             _settings.TryGetActorComponent(ActorComponent.Check, out _groundCheck);
         }
 

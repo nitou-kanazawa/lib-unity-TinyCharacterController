@@ -117,11 +117,7 @@ namespace Nitou.TCC.Inputs {
 
             @pitch.value = characterActions.pitch.value;
             @roll.value = characterActions.roll.value;
-
-            @pitch.value = characterActions.pitch.value;
-            @roll.value = characterActions.roll.value;
             @movement.value = characterActions.movement.value;
-
         }
 
         /// <summary>

@@ -1,6 +1,9 @@
 using System;
 using UnityEngine;
 using Sirenix.OdinInspector;
+#if TCC_USE_NGIZMOS
+using Nitou.Gizmo;
+#endif
 
 namespace Nitou.TCC.Utils
 {
@@ -154,7 +157,7 @@ namespace Nitou.TCC.Utils
         }
 
 
-#if UNITY_EDITOR && USE_NITOU_GIZMOS
+#if UNITY_EDITOR && TCC_USE_NGIZMOS
         [Title("Debug")] [SerializeField, Indent]
         private Vector3 _offset = Vector3.up * 0.01f;
 
@@ -165,13 +168,13 @@ namespace Nitou.TCC.Utils
             var pos = transform.position + _offset;
 
             // Circle
-            Gizmos_.DrawWireCircle(pos, _radius * 0.4f, Colors.Gray);
-            Gizmos_.DrawWireCircle(pos, _radius * 0.8f, Colors.Gray);
+            NGizmo.DrawWireCircle(pos, _radius * 0.4f, Colors.Gray);
+            NGizmo.DrawWireCircle(pos, _radius * 0.8f, Colors.Gray);
 
             // Vectors
-            Gizmos_.DrawRayArrow(pos, MovementReferenceForward * _radius, Colors.DeepSkyBlue);
-            Gizmos_.DrawRayArrow(pos, MovementReferenceRight * _radius, Colors.Orangered);
-            Gizmos_.DrawRay(pos, ModifieredInputVector * _radius, Colors.WhiteSmoke);
+            NGizmo.DrawRayArrow(pos, MovementReferenceForward * _radius, Colors.DeepSkyBlue);
+            NGizmo.DrawRayArrow(pos, MovementReferenceRight * _radius, Colors.Orangered);
+            NGizmo.DrawRay(pos, ModifieredInputVector * _radius, Colors.WhiteSmoke);
         }
 #endif
     }

@@ -1,8 +1,13 @@
 {
-    "name": "Nitou.TCC.Utils",
-    "rootNamespace": "Nitou.TCC.Utils",
+    "name": "Nitou.TCC.Implements",
+    "rootNamespace": "nitou.TCC.Implements",
     "references": [
-        "Nitou.NGizmos"
+        "GUID:c66c9460c1c6e894593991ab01ea1024",
+        "GUID:957d667169b382a479e051a59f944304",
+        "GUID:bbf791a4b3949d24e8c1ffc518c3bba7",
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285",
+        "GUID:5f66ce9f07a9ddf42b3f72bb5d01e8e9"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

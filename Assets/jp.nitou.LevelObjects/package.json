@@ -1,0 +1,18 @@
+{
+  "name": "jp.nitou.levelobjects",
+  "displayName": "Level Objects",
+  "version": "0.9.0",
+  "unity": "6000.0",
+  "description": "Level utilities.",
+  "keywords": [
+    "Level Objects"
+  ],
+  "author": {
+    "name": "Nitou",
+    "url": "https://github.com/nitou-kanazawa"
+  },
+  "category": "",
+  "dependencies": {
+    "com.unity.inputsystem": "1.14.2"
+  }
+}

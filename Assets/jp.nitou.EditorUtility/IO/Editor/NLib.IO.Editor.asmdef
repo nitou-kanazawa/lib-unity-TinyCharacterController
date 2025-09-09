@@ -1,0 +1,18 @@
+{
+    "name": "Nitou.IO.Editor",
+    "rootNamespace": "Nitou.IO.Editor",
+    "references": [
+        "GUID:10bc8f4ecf419a4439a72608cbaf47ad"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

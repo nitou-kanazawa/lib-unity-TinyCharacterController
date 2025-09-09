@@ -1,0 +1,20 @@
+{
+    "name": "Nitou.CustomHierarchy.Editor",
+    "rootNamespace": "Nitou.CustomHierarchy",
+    "references": [
+        "GUID:10bc8f4ecf419a4439a72608cbaf47ad",
+        "GUID:2c3735107aa04494bb341adac04a4fd6",
+        "GUID:8430026c946c9284fae045770e4a98a1"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

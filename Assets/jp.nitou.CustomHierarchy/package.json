@@ -1,0 +1,15 @@
+{
+  "name": "jp.nitou.customhierarchy",
+  "version": "0.8.0",
+  "displayName": "Custom Hierarchy",
+  "description": "Customize hierarchy window.",
+  "author": {
+    "name": "Nitou",
+    "url": "https://github.com/nitou-kanazawa"
+  },
+  "unity": "6000.2",
+  "license": "MIT License",
+  "dependencies": {},
+  "category": "Editor",
+  "keywords": []
+}

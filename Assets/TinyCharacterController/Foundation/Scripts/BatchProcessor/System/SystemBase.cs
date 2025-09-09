@@ -18,7 +18,7 @@ namespace Nitou.BatchProcessor
         protected List<TComponent> Components { get; private set; } = new();
 
 
-        /// ----------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------
         // Static Method
 
         /// <summary>
@@ -49,8 +49,8 @@ namespace Nitou.BatchProcessor
         }
 
 
-        /// ----------------------------------------------------------------------------
-        // Protected MEthod
+        // ----------------------------------------------------------------------------
+        // Protected Method
 
         /// <summary>
         /// 全てのコンポーネントを登録解除する
@@ -89,7 +89,7 @@ namespace Nitou.BatchProcessor
         protected virtual void OnUnregisterComponent(TComponent component, int index) { }
 
 
-        /// ----------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------
         // Private Method
 
         /// <summary>

@@ -20,6 +20,7 @@ namespace Nitou.BatchProcessor
     public abstract class UpdateTimingSingletonSO<TSystem> : ScriptableObject
         where TSystem : UpdateTimingSingletonSO<TSystem>
     {
+        #region Static
 
         /// <summary>
         /// <see cref="UpdateTiming"/>の各タイミングをサポートするためのインスタンス
@@ -51,7 +52,8 @@ namespace Nitou.BatchProcessor
             return instance;
         }
 
-        // -----
+        #endregion
+
 
         /// <summary>
         /// Execution timing.

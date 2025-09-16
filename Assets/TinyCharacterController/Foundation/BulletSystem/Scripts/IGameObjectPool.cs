@@ -4,39 +4,39 @@ using UnityEngine.SceneManagement;
 namespace Nitou.Utility
 {
     /// <summary>
-    /// An interface Used for constructing GameObject pools.
-    /// Utilized for object acquisition, return, destruction, and also for searching objects from the manager.
+    /// <see cref="GameObject"/>プールを構築するためのインターフェース。
+    /// オブジェクトの取得、返却、破棄、およびマネージャーからのオブジェクト検索に使用される。
     /// </summary>
     public interface IGameObjectPool
     {
         /// <summary>
-        /// Prefab ID (used for searching).
+        /// プレハブID（検索に使用）。
         /// </summary>
         int PrefabID { get; }
 
         /// <summary>
-        /// The scene to which the component belongs.
+        /// コンポーネントが属するシーン。
         /// </summary>
         Scene Scene { get; }
 
         /// <summary>
-        /// Retrieve an object from the object pool.
+        /// プールからオブジェクトを取得する。
         /// </summary>
-        /// <returns>An object reused from the cache.</returns>
+        /// <returns>キャッシュから再利用されるオブジェクト。</returns>
         IPooledObject Get();
 
         /// <summary>
-        /// Retrieve an object from the object pool.
+        /// プールからオブジェクトを取得する。
         /// </summary>
-        /// <param name="position">Position</param>
-        /// <param name="rotation">Rotation</param>
-        /// <returns>An object reused from the cache.</returns>
+        /// <param name="position">位置</param>
+        /// <param name="rotation">回転</param>
+        /// <returns>キャッシュから再利用されるオブジェクト。</returns>
         IPooledObject Get(in Vector3 position, in Quaternion rotation);
 
         /// <summary>
-        /// Release a cached object.
+        /// キャッシュされたオブジェクトを解放する。
         /// </summary>
-        /// <param name="obj">Object to release</param>
+        /// <param name="obj">解放するオブジェクト</param>
         void Release(IPooledObject obj);
     }
 }

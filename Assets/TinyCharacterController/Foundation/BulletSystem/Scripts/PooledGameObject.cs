@@ -18,22 +18,19 @@ namespace Nitou.Utility
         /// Determines whether to use the lifetime feature.
         /// </summary>
         [DisableInPlayMode]
-        [SerializeField]
-        private bool _isUseLifetime;
+        [SerializeField] private bool _isUseLifetime;
 
         /// <summary>
         /// The duration for which the object remains valid.
         /// <see cref="_isUseLifetime"/> が有効な時に使用されます．
         /// </summary>
         [DisableInPlayMode]
-        [SerializeField]
-        private float _lifeTime;
+        [SerializeField] private float _lifeTime;
 
         /// <summary>
         /// Only available when `_isUseLifetime` is enabled.
         /// Callback invoked when the object is released.
         /// </summary>
-        [FormerlySerializedAs("OnRelease")]
         public UnityEvent OnReleaseByLifeTime = new();
 
         private IGameObjectPool _owner;
@@ -58,22 +55,6 @@ namespace Nitou.Utility
         /// </summary>
         public bool IsPlaying => IsUsed && ((_isUseLifetime && Time.timeSinceLevelLoad > ReleaseTime) || !_isUseLifetime);
 
-        
-        /// <summary>
-        /// Initializes the element when retrieved from the pool by GameObjectPool.
-        /// </summary>
-        /// <param name="owner">The owner</param>
-        /// <param name="hasRigidbody">Determines if the object has a Rigidbody</param>
-        void IPooledObject.Initialize(IGameObjectPool owner, bool hasRigidbody)
-        {
-            _owner = owner;
-            _hasRigidbody = hasRigidbody;
-            if (hasRigidbody)
-                TryGetComponent(out _rigidbody);
-        }
-
-        GameObject IPooledObject.GameObject => gameObject;
-
         /// <summary>
         /// Instance ID.
         /// </summary>
@@ -90,6 +71,32 @@ namespace Nitou.Utility
             }
         }
 
+        GameObject IPooledObject.GameObject => gameObject;
+
+        
+        #region Public Method
+
+        /// <summary>
+        /// Initializes the element when retrieved from the pool by GameObjectPool.
+        /// </summary>
+        /// <param name="owner">The owner</param>
+        /// <param name="hasRigidbody">Determines if the object has a Rigidbody</param>
+        void IPooledObject.Initialize(IGameObjectPool owner, bool hasRigidbody)
+        {
+            _owner = owner;
+            _hasRigidbody = hasRigidbody;
+            if (hasRigidbody)
+                TryGetComponent(out _rigidbody);
+        }
+
+        /// <summary>
+        /// Releases the object back to the pool.
+        /// </summary>
+        public void Release()
+        {
+            if (IsUsed && _owner != null && gameObject != null)
+                _owner.Release(this);
+        }
 
         /// <summary>
         /// Callbacks when GameObjects are retrieved or created from the pool
@@ -127,13 +134,6 @@ namespace Nitou.Utility
             IsUsed = false;
         }
 
-        /// <summary>
-        /// Releases the object back to the pool.
-        /// </summary>
-        public void Release()
-        {
-            if (IsUsed && _owner != null && gameObject != null)
-                _owner.Release(this);
-        }
+        #endregion
     }
 }

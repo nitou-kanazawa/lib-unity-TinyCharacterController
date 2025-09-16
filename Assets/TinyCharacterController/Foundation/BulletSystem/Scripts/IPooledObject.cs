@@ -5,41 +5,42 @@ namespace Nitou.Utility
     public interface IPooledObject
     {
         /// <summary>
-        /// Initialize the object.
-        /// Called by GameObjectPool.
-        /// </summary>
-        /// <param name="owner">The owner that generates the prefab.</param>
-        /// <param name="hasRigidbody">True if the prefab has a <see cref="Rigidbody"/>.</param>
-        void Initialize(IGameObjectPool owner, bool hasRigidbody);
-
-        /// <summary>
-        /// The corresponding GameObject.
+        /// 対応するGameObjectを取得する。
         /// </summary>
         GameObject GameObject { get; }
 
         /// <summary>
-        /// An instance ID to identify the object.
+        /// オブジェクトを識別するためのインスタンスIDを取得する。
         /// </summary>
         int InstanceId { get; }
 
+        
         /// <summary>
-        /// Called when the object is retrieved.
-        /// </summary>
-        void OnGet();
-
-        /// <summary>
-        /// True if the object is used.
+        /// オブジェクトが使用中かどうかを示す。
         /// </summary>
         bool IsUsed { get; }
 
         /// <summary>
-        /// Called when the object is released.
+        /// オブジェクトを初期化する。
+        /// GameObjectPoolによって呼び出される。
         /// </summary>
-        void OnRelease();
+        /// <param name="owner">プレハブを生成する所有者</param>
+        /// <param name="hasRigidbody">プレハブが<see cref="Rigidbody"/>を持つ場合はtrue</param>
+        void Initialize(IGameObjectPool owner, bool hasRigidbody);
 
         /// <summary>
-        /// Release the component.
+        /// コンポーネントを解放する。
         /// </summary>
         void Release();
+        
+        /// <summary>
+        /// オブジェクトが取得されたときに呼び出される。
+        /// </summary>
+        void OnGet();
+
+        /// <summary>
+        /// オブジェクトが解放されたときに呼び出される。
+        /// </summary>
+        void OnRelease();
     }
 }

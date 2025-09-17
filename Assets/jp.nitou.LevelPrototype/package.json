@@ -1,11 +1,11 @@
 {
-  "name": "jp.nitou.levelobjects",
-  "displayName": "Level Objects",
+  "name": "jp.nitou.levelprototype",
+  "displayName": "Level Prototype",
   "version": "0.9.0",
   "unity": "6000.0",
   "description": "Level utilities.",
   "keywords": [
-    "Level Objects"
+    "Prototype"
   ],
   "author": {
     "name": "Nitou",

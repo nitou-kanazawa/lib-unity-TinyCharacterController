@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adea491dda4a0d6438742284e158f336, type: 3}
+  m_Name: Protector_Idel_AnimSet
+  m_EditorClassIdentifier: Nitou.AnimationModule::Nitou.AnimationModule.IdleAnimSet
+  _mainIdleClip:
+    _FadeDuration: 0.25
+    _Speed: 1
+    _Events:
+      _NormalizedTimes: []
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: 656d403d76fc3ae40aa9cb7efc8489ab, type: 3}
+    _NormalizedStartTime: NaN
+  _randomMotionClips: []
+  references:
+    version: 2
+    RefIds: []

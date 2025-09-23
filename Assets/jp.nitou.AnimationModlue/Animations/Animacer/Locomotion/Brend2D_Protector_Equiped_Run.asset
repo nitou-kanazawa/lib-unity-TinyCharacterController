@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
+  m_Name: Brend2D_Protector_Equiped_Run
+  m_EditorClassIdentifier: Kybernetik.Animancer::Animancer.TransitionAsset
+  _Transition:
+    rid: 5340719925660746292
+  references:
+    version: 2
+    RefIds:
+    - rid: 5340719925660746292
+      type: {class: MixerTransition2D, ns: Animancer, asm: Kybernetik.Animancer}
+      data:
+        _FadeDuration: 0.25
+        _Speed: 1
+        _Events:
+          _NormalizedTimes: []
+          _Callbacks: []
+          _Names: []
+        _Animations:
+        - {fileID: 7400000, guid: 656d403d76fc3ae40aa9cb7efc8489ab, type: 3}
+        - {fileID: 7400000, guid: 18c25a28afef50f4c89f2e05068eacb4, type: 3}
+        - {fileID: 7400000, guid: 2ca14367b0c311941857e8fe9670d6f5, type: 3}
+        - {fileID: 7400000, guid: 9a78153f3f1da0946a6e1b71e468f31c, type: 3}
+        - {fileID: 7400000, guid: d9aae1a60d647494c9dfca7c21cbd790, type: 3}
+        - {fileID: 7400000, guid: f25304362a6cf564abcdd4afaf8ffcaa, type: 3}
+        - {fileID: 7400000, guid: 90543b5044f4736429b57b905ebcded4, type: 3}
+        - {fileID: 7400000, guid: a5c6180bb4a0a8b45b1f2464e47ca7c4, type: 3}
+        - {fileID: 7400000, guid: c9483f8765c84794fb1c25531b15a18d, type: 3}
+        _Speeds: []
+        _SynchronizeChildren: 00
+        _Thresholds:
+        - {x: 0, y: 0}
+        - {x: -0.021533474, y: -3.4708552}
+        - {x: -2.4805954, y: -2.4826705}
+        - {x: 2.4798443, y: -2.4825053}
+        - {x: 0.47307926, y: 2.9924874}
+        - {x: -2.1168892, y: 1.8760653}
+        - {x: 2.5413063, y: 2.1114485}
+        - {x: -3.4828897, y: -0.06455332}
+        - {x: 3.4920127, y: -0.09891017}
+        _DefaultParameter: {x: 0, y: 0}
+        _Type: 0
+        _ParameterNameX: {fileID: 11400000, guid: efef6d6f1a6a3bd4b84f51dd35f006d1, type: 2}
+        _ParameterNameY: {fileID: 11400000, guid: e6b4df6388f5fe842941a040f9ae0d35, type: 2}

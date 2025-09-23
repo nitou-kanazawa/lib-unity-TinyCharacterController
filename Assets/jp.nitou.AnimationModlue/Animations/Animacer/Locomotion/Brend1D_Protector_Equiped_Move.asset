@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5a8877f26e7a6a43aaf06fade1a064a, type: 3}
+  m_Name: Brend1D_Protector_Equiped_Move
+  m_EditorClassIdentifier: Kybernetik.Animancer::Animancer.TransitionAsset
+  _Transition:
+    rid: 5340719899976663156
+  references:
+    version: 2
+    RefIds:
+    - rid: 5340719899976663156
+      type: {class: LinearMixerTransition, ns: Animancer, asm: Kybernetik.Animancer}
+      data:
+        _FadeDuration: 0.25
+        _Speed: 1
+        _Events:
+          _NormalizedTimes: []
+          _Callbacks: []
+          _Names: []
+        _Animations:
+        - {fileID: 7400000, guid: 90d00585a0dc4034ebb61645c9d1e222, type: 3}
+        - {fileID: 7400000, guid: 0a63e7e000d3b9942880a8818bfc05b8, type: 3}
+        - {fileID: 7400000, guid: ac305d6ba73120947a3c2148bb341447, type: 3}
+        - {fileID: 7400000, guid: 63c012ca48c1d1041a569d79e16aa3cc, type: 3}
+        _Speeds:
+        - 1
+        - 1
+        - 1
+        - 1.2
+        _SynchronizeChildren: 00
+        _Thresholds:
+        - 0
+        - 2.8
+        - 5
+        - 9.5
+        _DefaultParameter: 0
+        _ExtrapolateSpeed: 1
+        _ParameterName: {fileID: 11400000, guid: e6b4df6388f5fe842941a040f9ae0d35, type: 2}

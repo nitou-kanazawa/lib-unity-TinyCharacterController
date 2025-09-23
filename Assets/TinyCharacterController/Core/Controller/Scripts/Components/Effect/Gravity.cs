@@ -114,7 +114,7 @@ namespace Nitou.TCC.Controller.Effect
         private void Awake()
         {
             _settings = GetComponentInParent<CharacterSettings>();
-            _settings.TryGetActorComponent(ActorComponent.Check, out _groundCheck);
+            _settings.TryGetActorComponent(CharacterComponent.Check, out _groundCheck);
         }
 
         private void Start()

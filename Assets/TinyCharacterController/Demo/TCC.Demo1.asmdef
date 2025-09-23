@@ -1,21 +1,19 @@
 {
-    "name": "Demo",
-    "rootNamespace": "",
+    "name": "TCC.Demo1",
+    "rootNamespace": "TCC.Demo1",
     "references": [
         "GUID:bbf791a4b3949d24e8c1ffc518c3bba7",
         "GUID:957d667169b382a479e051a59f944304",
         "GUID:c66c9460c1c6e894593991ab01ea1024",
         "GUID:382f47675468803489622ec623e25baa",
-        "GUID:d3427e995d75f7149bb2cc43aad774c4",
-        "GUID:560b04d1a97f54a4e82edc0cbbb69285",
-        "GUID:4c25c05f410a3a447a75c3b0909152ef"
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
-    "autoReferenced": true,
+    "autoReferenced": false,
     "defineConstraints": [],
     "versionDefines": [],
     "noEngineReferences": false

@@ -61,7 +61,7 @@ namespace Nitou.TCC.Controller.Effect
 
 
         // ----------------------------------------------------------------------------
-        // Properity
+        // Property
 
         /// <summary>
         /// 更新タイミング
@@ -85,7 +85,7 @@ namespace Nitou.TCC.Controller.Effect
         /// <summary>
         /// 他コライダーと接触したときに通知するObservable．
         /// </summary>
-        public IObservable<Collider> OnHitOtherCollider;
+        public IObservable<Collider> OnHitOtherCollider => _onHitOtherCollider;
 
 
         // ----------------------------------------------------------------------------
@@ -187,7 +187,7 @@ namespace Nitou.TCC.Controller.Effect
             _settings = GetComponentInParent<CharacterSettings>();
 
             _settings.TryGetComponent(out _transform);
-            _settings.TryGetActorComponent(ActorComponent.Check, out _groundCheck);
+            _settings.TryGetActorComponent(CharacterComponent.Check, out _groundCheck);
         }
 
         /// <summary>

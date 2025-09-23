@@ -23,7 +23,7 @@ namespace Nitou.DesignPattern
         where TParam : StateSetupParam
     {
         /// <summary>
-        /// ステートマシンが保持しているコンテキスト
+        /// ステートマシンが保持しているコンテキスト．
         /// </summary>
         public TContext Context { get; private set; }
 
@@ -32,21 +32,21 @@ namespace Nitou.DesignPattern
         // ステート
 
         /// <summary>
-        ///  初期ステート
+        ///  初期ステート．
         /// </summary>
         [TitleGroup("State Information")]
         [SerializeField, Indent]
         protected State<TContext, TParam> _initialState = null;
 
         /// <summary>
-        ///  現在のステート
+        ///  現在のステート．
         /// </summary>
         [TitleGroup("State Information")]
         [ShowInInspector, ReadOnly, Indent]
         public State<TContext, TParam> CurrentState { get; private set; }
 
         /// <summary>
-        ///  前回のステート
+        ///  前回のステート．
         /// </summary>
         [TitleGroup("State Information")]
         [ShowInInspector, ReadOnly, Indent]
@@ -54,12 +54,12 @@ namespace Nitou.DesignPattern
 
 
         /// <summary>
-        /// 現在のステートを開始してからの時間
+        /// 現在のステートを開始してからの時間．
         /// </summary>
         public float StateElapsedTime => (Time.time - _stateEnteredTime);
 
         /// <summary>
-        /// ステート遷移時の通知
+        /// ステート遷移時の通知．
         /// </summary>
         public System.IObservable<(State<TContext, TParam> current, State<TContext, TParam> next)> OnStateChange => _stateChangeSubject;
 
@@ -101,14 +101,19 @@ namespace Nitou.DesignPattern
         /// <summary>
         /// 初期化
         /// </summary>
-        public void Initialize(TContext context, TParam param)
+        public void Initialize(TContext context, TParam param, bool forceReinitialize = false)
         {
-            if (IsInitialized)
+            if (IsInitialized && !forceReinitialize)
             {
-                Debug.LogWarning("the state machine has already been set upp.");
+                Debug.LogWarning("The state machine has already been set up. Use forceReinitialize=true to reinitialize.");
                 return;
             }
 
+            if (IsInitialized)
+            {
+                Cleanup(); // 既存のステートをクリーンアップ
+            }
+            
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
 
@@ -144,11 +149,10 @@ namespace Nitou.DesignPattern
         {
             if (!IsInitialized)
             {
-                Debug.LogWarning("Statemachin is not initialized yet.");
+                Debug.LogWarning("StateMachine is not initialized yet.");
                 return;
             }
 
-            ;
             if (CurrentState == null || !CurrentState.isActiveAndEnabled)
             {
                 Debug.LogWarning("Current state is invalid.");
@@ -156,8 +160,8 @@ namespace Nitou.DesignPattern
             }
 
             // ステート遷移
-            CheckAndExecuteStateTransition(); // 遷移の実行
-            _transitionsQueue.Clear(); // 遷移リクエストのクリア
+            CheckAndExecuteStateTransition();// 遷移の実行
+            _transitionsQueue.Clear();
 
             // ステート更新処理
             var dt = Time.deltaTime;
@@ -301,6 +305,12 @@ namespace Nitou.DesignPattern
         // Protected Method 
         protected virtual void OnInitialize(TParam param) { }
 
+        protected void Cleanup()
+        {
+            CurrentState?.ExitBehaviour(0f, null);
+            _states.Clear();
+            _transitionsQueue.Clear();
+        }
 
         /// ----------------------------------------------------------------------------
 #if UNITY_EDITOR
@@ -315,7 +325,7 @@ namespace Nitou.DesignPattern
         {
             if (CurrentState == null || !_drawGizmo) return;
     
-            // Unity6では SceneView.currentDrawingSceneView が null になる場合があるため、より安全なチェック
+            // SceneView.currentDrawingSceneView が null になる場合があるため、より安全なチェック
             var currentSceneView = SceneView.currentDrawingSceneView;
             if (currentSceneView == null || currentSceneView.camera == null) return;
 

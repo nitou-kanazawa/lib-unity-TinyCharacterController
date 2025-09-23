@@ -1,5 +1,5 @@
 {
-  "name": "com.nitou.tiny-character-controller",
+  "name": "jp.nitou.tiny-character-controller",
   "version": "0.8.0",
   "displayName": "Tiny Character Controller",
   "description": "Character controller.",
@@ -11,7 +11,6 @@
   "license": "MIT",
   "dependencies": {
   },
-  "category": "FileBrowser",
-  "type": "tool",
+  "category": "Character Controller",
   "keywords": []
 }

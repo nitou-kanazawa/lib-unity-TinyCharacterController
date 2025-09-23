@@ -1,9 +1,7 @@
 {
     "name": "Nitou.CustomHierarchy",
     "rootNamespace": "Nitou.CustomHierarchy",
-    "references": [
-        "GUID:10bc8f4ecf419a4439a72608cbaf47ad"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

@@ -293,9 +293,9 @@ namespace Nitou.TCC.Controller.Control
             _characterSettings = GetComponentInParent<CharacterSettings>() ?? throw new System.NullReferenceException(nameof(_characterSettings));
 
             // Components
-            _characterSettings.TryGetActorComponent(ActorComponent.Effect, out _gravity);
-            _characterSettings.TryGetActorComponent(ActorComponent.Check, out _groundCheck);
-            _characterSettings.TryGetActorComponent(ActorComponent.Check, out _head);
+            _characterSettings.TryGetActorComponent(CharacterComponent.Effect, out _gravity);
+            _characterSettings.TryGetActorComponent(CharacterComponent.Check, out _groundCheck);
+            _characterSettings.TryGetActorComponent(CharacterComponent.Check, out _head);
         }
 
         private void ReadyJump()

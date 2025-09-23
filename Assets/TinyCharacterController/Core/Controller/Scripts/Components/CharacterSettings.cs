@@ -263,7 +263,7 @@ namespace Nitou.TCC.Controller.Core
     }
 
 
-    public enum ActorComponent
+    public enum CharacterComponent
     {
         Brain,
         Check,
@@ -277,14 +277,14 @@ namespace Nitou.TCC.Controller.Core
         /// <summary>
         /// Actorコンポーネントを設定したGameObjectから取得する
         /// </summary>
-        public static T GetActorComponent<T>(this CharacterSettings settings, ActorComponent type)
+        public static T GetActorComponent<T>(this CharacterSettings settings, CharacterComponent type)
         {
             // コンポーネント
             Transform holder = type switch
             {
-                ActorComponent.Check => settings.CheckParent,
-                ActorComponent.Effect => settings.EffectParent,
-                ActorComponent.Control => settings.ControlParent,
+                CharacterComponent.Check => settings.CheckParent,
+                CharacterComponent.Effect => settings.EffectParent,
+                CharacterComponent.Control => settings.ControlParent,
                 _ => settings.transform
             };
             if (holder == null) holder = settings.transform;
@@ -295,14 +295,14 @@ namespace Nitou.TCC.Controller.Core
         /// <summary>
         /// Actorコンポーネントを設定したGameObjectから取得する
         /// </summary>
-        public static bool TryGetActorComponent<T>(this CharacterSettings settings, ActorComponent type, out T component)
+        public static bool TryGetActorComponent<T>(this CharacterSettings settings, CharacterComponent type, out T component)
         {
             // コンポーネント
             Transform holder = type switch
             {
-                ActorComponent.Check => settings.CheckParent,
-                ActorComponent.Effect => settings.EffectParent,
-                ActorComponent.Control => settings.ControlParent,
+                CharacterComponent.Check => settings.CheckParent,
+                CharacterComponent.Effect => settings.EffectParent,
+                CharacterComponent.Control => settings.ControlParent,
                 _ => settings.transform
             };
             if (holder == null) holder = settings.transform;

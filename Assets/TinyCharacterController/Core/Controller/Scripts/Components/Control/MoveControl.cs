@@ -27,34 +27,34 @@ namespace Nitou.TCC.Controller.Control
         /// Determines if MoveControl is used to move the character.
         /// If a higher value than other Priority is set, this component is used.
         /// </summary>
-        [SerializeField, Indent]
         [GUIColor("green")]
+        [SerializeField, Indent]
         private int _movePriority = 1;
 
         /// <summary>
-        /// �A�N�^�[�̍ő�ړ����x�D
+        /// アクターの最大移動速度．
         /// </summary>
         [SerializeField, Indent] private float _moveSpeed = 4;
 
         /// <summary>
-        /// �u���[�L�́D
+        /// ブレーキ力．
         /// </summary>
         [SerializeField, Indent] private float _brakePower = 12;
 
         /// <summary>
-        /// �����x�D
+        /// 加速度．
         /// </summary>
         [SerializeField, Indent] private float _accelerator = 6;
 
         /// <summary>
-        /// �ړ��\�ȌX�Ίp�x�B
-        /// �n�`�̊p�x�����̒l�ȉ��̏ꍇ�A���̒n�`�ɉ����Ĉړ�����D
+        /// 移動可能な傾斜角度。
+        /// 地形の角度がこの値以下の場合、その地形に沿って移動する．
         /// </summary>
         [SerializeField, Indent] private float _angle = 45;
 
         /// <summary>
-        /// �ړ��\�����𐧌����邽�߂̔C�ӎ��D�l�̓O���[�o�����W�n�D
-        /// Vector3.zero�ȊO���w�肳���ƁA�A�N�^�[�͂��̎������݂̂Ɉړ�����D
+        /// 移動可能方向を制限するための任意軸．値はグローバル座標系．
+        /// Vector3.zero以外が指定されると、アクターはその軸方向のみに移動する．
         /// </summary>
         [SerializeField, Indent] private Vector3 _lockAxis = Vector3.zero;
 
@@ -63,7 +63,8 @@ namespace Nitou.TCC.Controller.Control
         /// Threshold to determine if the character is in motion.
         /// If the value falls below this threshold, set <see cref="IsMove"/> to False.
         /// </summary>
-        [Range(0, 1)] [SerializeField, Indent] private float _moveStopThreshold = 0.2f;
+        [Range(0, 1)] 
+        [SerializeField, Indent] private float _moveStopThreshold = 0.2f;
 
 
         [Title("Turning Settings")]
@@ -71,14 +72,16 @@ namespace Nitou.TCC.Controller.Control
         /// Determines if MoveControl is used for character orientation.
         /// If a higher value is set compared to other priorities, this component is used.
         /// </summary>
-        [SerializeField, Indent]
         [GUIColor("green")]
+        [SerializeField, Indent]
         private int _turnPriority = 1;
 
         /// <summary>
-        /// �A�N�^�[��]���x�D�iPriority�������Ƃ��̂ݓK�p�j
+        /// アクター回転速度．
+        /// （Priorityが高いときのみ適用）
         /// </summary>
-        [PropertyRange(-1, 50)] [SerializeField, Indent]
+        [PropertyRange(-1, 50)]
+        [SerializeField, Indent]
         private int _turnSpeed = 15;
 
         /// <summary>
@@ -108,9 +111,6 @@ namespace Nitou.TCC.Controller.Control
 
         #region Property
 
-        /// <summary>
-        /// ���������D
-        /// </summary>
         int IUpdateComponent.Order => Order.Control;
 
         /// <summary>
@@ -119,8 +119,8 @@ namespace Nitou.TCC.Controller.Control
         public MovementReference MovementReference => _characterSettings.MovementReference;
 
         /// <summary>
-        /// ���݂̈ړ����x�D
-        /// <see cref="IPriority{IMove}.Priority">�D��x</see>/>��0�̏ꍇ�A�ړ����x��0�ɂȂ�
+        /// 現在の移動速度．
+        /// <see cref="IPriority{IMove}.Priority">優先度</see>/>が0の場合、移動速度も0になる．
         /// </summary>
         public float CurrentSpeed
         {
@@ -188,8 +188,8 @@ namespace Nitou.TCC.Controller.Control
         }
 
         /// <summary>.
-        /// <see cref="IMove"/>�Ƃ��Ă̗D��x�D
-        /// 0�ȉ��̏ꍇ�͎g�p����Ȃ��D
+        /// Determines if MoveControl is used to move the character.
+        /// If a higher value than other Priority is set, this component is used.
         /// </summary>
         public int MovePriority
         {
@@ -212,7 +212,7 @@ namespace Nitou.TCC.Controller.Control
         }
 
         /// <summary>
-        /// �ړ������̕ω��� (degree)
+        /// 移動方向の変化量 (degree)
         /// </summary>
         public float DeltaDirectionAngle => Vector3.SignedAngle(_transform.forward, _moveDirection, Vector3.up);
 
@@ -267,7 +267,7 @@ namespace Nitou.TCC.Controller.Control
             // Components
             _characterSettings.TryGetComponent<Transform>(out _transform);
             _characterSettings.TryGetComponent<IBrain>(out _brain);
-            _hasGroundCheck = _characterSettings.TryGetActorComponent(ActorComponent.Check, out _groundCheck);
+            _hasGroundCheck = _characterSettings.TryGetActorComponent(CharacterComponent.Check, out _groundCheck);
         }
 
         private void OnDestroy() {
@@ -292,7 +292,7 @@ namespace Nitou.TCC.Controller.Control
         /// <param name="leftStick">Direction of movement.</param>
         public void Move(Vector2 leftStick)
         {
-            // ���͏��̃L���b�V��
+            // 入力情報をキャッシュする
             _inputValue = leftStick;
             _hasInput = leftStick.sqrMagnitude > 0;
         }
@@ -303,18 +303,13 @@ namespace Nitou.TCC.Controller.Control
 
         private void ProcessMove(float dt)
         {
-            // �ړ����͂��������ꍇ
+            // 移動入力があった場合
             if (_hasInput)
             {
+                // 移動方向
                 var preDirection = _moveDirection;
                 MovementReference.UpdateInputData(_inputValue);
                 _moveDirection = MovementReference.ModifieredInputVector;
-
-                //var cameraYawRotation = Quaternion.AngleAxis(_actorSettings.CameraTransform.rotation.eulerAngles.y, Vector3.up);
-                //var direction = new Vector3(_inputValue.x, 0, _inputValue.y);
-
-                //// Determines direction of movement according to camera orientation
-                //_moveDirection = cameraYawRotation * direction.normalized;
 
                 if (IsLockAxis)
                 {
@@ -325,7 +320,7 @@ namespace Nitou.TCC.Controller.Control
                 _currentSpeed = Mathf.Lerp(_currentSpeed, _moveSpeed, _accelerator * dt);
                 DeltaTurnAngle = Vector3.SignedAngle(preDirection, _moveDirection, Vector3.up);
             }
-            // �ړ����͂��Ȃ��ꍇ�C
+            // 移動入力がない場合，
             else
             {
                 DeltaTurnAngle = 0;

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &1
+MonoBehaviour:
+  m_ObjectHideFlags: 53
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a52e960f8b4aaa4f9d7a989e8587be6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Nitou.Tools.CustomHierarchy.Editor::Nitou.CustomHierarchy.EditorSctipts.HierarchySettingsSO
+  hierarchyObjectMode: 2
+  showHierarchyToggles: 1
+  showComponentIcons: 1
+  showTreeMap: 1
+  treeMapColor: {r: 0.53, g: 0.53, b: 0.53, a: 0.45}
+  showSeparator: 1
+  showRowShading: 1
+  separatorColor: {r: 0.19, g: 0.19, b: 0.19, a: 0}
+  evenRowColor: {r: 0, g: 0, b: 0, a: 0.07}
+  oddRowColor: {r: 0, g: 0, b: 0, a: 0}

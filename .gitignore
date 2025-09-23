@@ -104,3 +104,7 @@ InitTestScene*.unity*
 
 # Animancer
 /[Pp]ackages/com.kybernetik.animancer/
+
+
+Assets/jp.nitou.AnimationModlue/Animations/Clips/
+Assets/jp.nitou.AnimationModlue/Animations/Clips.meta

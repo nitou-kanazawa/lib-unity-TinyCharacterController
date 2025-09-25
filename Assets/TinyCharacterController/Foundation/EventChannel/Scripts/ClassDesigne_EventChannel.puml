@@ -1,0 +1,40 @@
+@startuml SceneSystem
+!theme toy
+'!theme vibrant
+'!theme amiga
+skinparam backgroundColor gray
+
+namespace nitou{
+
+    namespace EventChannel{
+
+        ' イベントの発行元
+        abstract class EventChannel{
+            + RaiseEvent() : void
+        }
+
+        abstract class EventListener{
+            + Respond() : void
+        }
+
+        ' 継承関係
+        EventChannel -up-|> ScriptableObject
+        EventListener -up-|> MonoBehaviour
+        ' 依存関係
+        EventChannel <-right- EventListener
+    }
+
+}
+
+
+package CustomModule{
+
+    class CustomEventChannel{}
+    class CustomEventListener{}
+
+    ' 継承関係
+    CustomEventChannel -up-|> nitou.EventChannel.EventChannel
+    CustomEventListener -up-|> nitou.EventChannel.EventListener
+}
+
+@enduml

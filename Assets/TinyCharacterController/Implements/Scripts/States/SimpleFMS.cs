@@ -7,7 +7,7 @@ using Sirenix.OdinInspector;
 using UnityEditor;
 #endif
 
-namespace Nitou.DesignPattern
+namespace Nitou.TCC.Implements
 {
     /// <summary>
     /// ステートの初期化パラメータ．

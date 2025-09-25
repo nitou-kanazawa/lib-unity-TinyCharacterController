@@ -7,7 +7,7 @@ using Nitou.AnimationModule;
 
 namespace Project.Actor
 {
-    using StateBase = Nitou.DesignPattern.State<ActorCore, ActorFMS.SetupParam>;
+    using StateBase = Nitou.TCC.Implements.State<ActorCore, ActorFMS.SetupParam>;
 
     /// <summary>
     /// 待機ステート．

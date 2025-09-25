@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Nitou.DesignPattern
+namespace Nitou.TCC.Implements
 {
     /// <summary>
     /// <see cref="MonoBehaviour"/> を継承したステート基底クラス．

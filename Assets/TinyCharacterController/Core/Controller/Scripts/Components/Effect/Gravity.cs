@@ -57,7 +57,7 @@ namespace Nitou.TCC.Controller.Effect
 
 
         // ----------------------------------------------------------------------------
-        // Properity
+        // Property
 
         /// <summary>
         /// 処理順序．

@@ -13,7 +13,6 @@ using Nitou.TCC.Utils;
 using Nitou.Gizmo;
 #endif
 
-
 namespace Nitou.TCC.Controller.Check
 {
     /// <summary>

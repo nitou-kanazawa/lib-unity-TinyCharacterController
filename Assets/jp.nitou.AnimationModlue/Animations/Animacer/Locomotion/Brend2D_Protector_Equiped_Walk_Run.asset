@@ -36,18 +36,34 @@ MonoBehaviour:
         - {fileID: 7400000, guid: 58f3e5abd81cd3248a7897ce8afced4e, type: 3}
         - {fileID: 7400000, guid: c76250e41eafa4944ab5b217fcd03b16, type: 3}
         - {fileID: 7400000, guid: 656d403d76fc3ae40aa9cb7efc8489ab, type: 3}
+        - {fileID: 7400000, guid: 18c25a28afef50f4c89f2e05068eacb4, type: 3}
+        - {fileID: 7400000, guid: 2ca14367b0c311941857e8fe9670d6f5, type: 3}
+        - {fileID: 7400000, guid: 9a78153f3f1da0946a6e1b71e468f31c, type: 3}
+        - {fileID: 7400000, guid: d9aae1a60d647494c9dfca7c21cbd790, type: 3}
+        - {fileID: 7400000, guid: f25304362a6cf564abcdd4afaf8ffcaa, type: 3}
+        - {fileID: 7400000, guid: 90543b5044f4736429b57b905ebcded4, type: 3}
+        - {fileID: 7400000, guid: a5c6180bb4a0a8b45b1f2464e47ca7c4, type: 3}
+        - {fileID: 7400000, guid: c9483f8765c84794fb1c25531b15a18d, type: 3}
         _Speeds: []
         _SynchronizeChildren: 010101010101010100
         _Thresholds:
-        - {x: 0, y: 1}
-        - {x: -0.7, y: 0.7}
-        - {x: 0.7, y: 0.7}
-        - {x: -0.7, y: -0.7}
-        - {x: 0, y: -1}
-        - {x: 0.7, y: -0.7}
-        - {x: -1, y: 0}
-        - {x: 1, y: 0}
-        - {x: 0, y: 0}
+        - {x: 0.022628795, y: 1.5539958}
+        - {x: -1.1561517, y: 1.1030337}
+        - {x: 1.1697534, y: 1.1150281}
+        - {x: -1.1739283, y: -1.1443051}
+        - {x: -0.010169522, y: -1.5890852}
+        - {x: 1.1711797, y: -1.1201035}
+        - {x: -1.6436771, y: -0.027235681}
+        - {x: 1.6479479, y: 0.016639696}
+        - {x: 0.00000161645, y: -0.0000021988294}
+        - {x: -0.021533474, y: -3.4708552}
+        - {x: -2.4805954, y: -2.4826705}
+        - {x: 2.4798443, y: -2.4825053}
+        - {x: 0.47307926, y: 2.9924874}
+        - {x: -2.1168892, y: 1.8760653}
+        - {x: 2.5413063, y: 2.1114485}
+        - {x: -3.4828897, y: -0.06455332}
+        - {x: 3.4920127, y: -0.09891017}
         _DefaultParameter: {x: 0, y: 0}
         _Type: 0
         _ParameterNameX: {fileID: 11400000, guid: efef6d6f1a6a3bd4b84f51dd35f006d1, type: 2}

@@ -1,6 +1,6 @@
 using UnityEngine;
 using Nitou.TCC;
-using Nitou.Utility;
+using Nitou.Pool;
 
 public sealed class DemoRifleController : MonoBehaviour
 {

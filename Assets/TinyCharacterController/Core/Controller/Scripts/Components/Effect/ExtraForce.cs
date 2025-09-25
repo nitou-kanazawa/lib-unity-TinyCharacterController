@@ -64,7 +64,7 @@ namespace Nitou.TCC.Controller.Effect
         // Property
 
         /// <summary>
-        /// 更新タイミング
+        /// 更新タイミング．
         /// </summary>
         int IEarlyUpdateComponent.Order => Order.Effect;
 

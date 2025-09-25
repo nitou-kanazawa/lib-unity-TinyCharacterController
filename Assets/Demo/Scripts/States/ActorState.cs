@@ -11,7 +11,7 @@ namespace Project.Actor
     /// <summary>
     /// アクターのステート基底クラス
     /// </summary>
-    public abstract class ActorState : Nitou.DesignPattern.State<ActorCore, ActorFMS.SetupParam>
+    public abstract class ActorState : Nitou.TCC.Implements.State<ActorCore, ActorFMS.SetupParam>
     {
         // Reference
         public CharacterSettings Settings { get; private set; }

@@ -7,7 +7,7 @@ using Nitou.TCC.Controller.Core;
 
 namespace Project.Actor
 {
-    using StateBase = Nitou.DesignPattern.State<ActorCore, ActorFMS.SetupParam>;
+    using StateBase = Nitou.TCC.Implements.State<ActorCore, ActorFMS.SetupParam>;
 
     /// <summary>
     /// 戦闘時の基本移動ステート．

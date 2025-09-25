@@ -1,7 +1,7 @@
 using UnityEngine;
 
-namespace Nitou.EventChannel {
-
+namespace Nitou.EventChannel
+{
     /// <summary>
     /// <see cref="Color"/>型のイベントチャンネル．
     /// </summary>
@@ -10,5 +10,4 @@ namespace Nitou.EventChannel {
         menuName = AssetMenu.Prefix.EventChannel + "Color Event"
     )]
     public class ColorEventChannel : EventChannel<Color> { }
-
 }

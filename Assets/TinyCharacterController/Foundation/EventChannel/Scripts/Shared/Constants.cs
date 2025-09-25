@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace Nitou.EventChannel
 {
     internal static class AssetMenu

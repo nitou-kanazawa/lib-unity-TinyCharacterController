@@ -4,7 +4,7 @@
 '!theme amiga
 skinparam backgroundColor gray
 
-namespace nitou{
+namespace Nitou {
 
     namespace EventChannel{
 
@@ -33,8 +33,8 @@ package CustomModule{
     class CustomEventListener{}
 
     ' 継承関係
-    CustomEventChannel -up-|> nitou.EventChannel.EventChannel
-    CustomEventListener -up-|> nitou.EventChannel.EventListener
+    CustomEventChannel -up-|> Nitou.EventChannel.EventChannel
+    CustomEventListener -up-|> Nitou.EventChannel.EventListener
 }
 
 @enduml

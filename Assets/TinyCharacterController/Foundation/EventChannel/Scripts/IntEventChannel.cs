@@ -3,10 +3,10 @@ using UnityEngine;
 namespace Nitou.EventChannel
 {
     /// <summary>
-    /// <see cref="int"/>�^�̃C�x���g�`�����l��
+    /// <see cref="int"/>型のイベントチャンネル．
     /// </summary>
     [CreateAssetMenu(
-        fileName = "Event_Int",
+        fileName = "New IntEvent",
         menuName = AssetMenu.Prefix.EventChannel + "Int Event"
     )]
     public class IntEventChannel : EventChannel<int> { }

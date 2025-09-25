@@ -3,10 +3,10 @@ using UnityEngine;
 namespace Nitou.EventChannel
 {
     /// <summary>
-    /// <see cref="void"/>�^�̃C�x���g�`�����l��
+    /// <see cref="void"/>型のイベントチャンネル．
     /// </summary>
     [CreateAssetMenu(
-        fileName = "Event_Void",
+        fileName = "New VoidEvent",
         menuName = AssetMenu.Prefix.EventChannel + "Void Event"
     )]
     public class VoidEventChannel : EventChannel { }

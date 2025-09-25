@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Nitou.Utility
+namespace Nitou.Pool
 {
     /// <summary>
     /// <see cref="GameObject"/>プールを構築するためのインターフェース。

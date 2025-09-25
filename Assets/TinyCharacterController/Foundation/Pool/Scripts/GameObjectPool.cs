@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 using Nitou.BatchProcessor;
 using Sirenix.OdinInspector;
 
-namespace Nitou.Utility
+namespace Nitou.Pool
 {
     public static class Order
     {

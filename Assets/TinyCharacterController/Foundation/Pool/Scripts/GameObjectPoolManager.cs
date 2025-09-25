@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Nitou.BatchProcessor;
 
-namespace Nitou.Utility
+namespace Nitou.Pool
 {
     /// <summary>
     /// A class that registers and manages <see cref="IGameObjectPool"/>.

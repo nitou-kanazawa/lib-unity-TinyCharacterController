@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.Pool;
 using Nitou.BatchProcessor;
 
-namespace Nitou.Utility
+namespace Nitou.Pool
 {
     /// <summary>
     /// System for calculating the lifetime of Pooled Game Objects.

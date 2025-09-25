@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Nitou.Utility
+namespace Nitou.Pool
 {
     public interface IPooledObject
     {

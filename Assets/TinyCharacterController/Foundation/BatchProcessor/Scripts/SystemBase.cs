@@ -13,7 +13,7 @@ namespace Nitou.BatchProcessor
         where TSystem : SystemBase<TComponent, TSystem>
     {
         /// <summary>
-        /// 対象コンポーネントのリスト
+        /// 対象コンポーネントのリスト．
         /// </summary>
         protected List<TComponent> Components { get; private set; } = new();
 
@@ -24,8 +24,8 @@ namespace Nitou.BatchProcessor
         /// <summary>
         /// Register a component with the system.
         /// </summary>
-        /// <param name="component">The component to register</param>
-        /// <param name="timing">The update timing</param>
+        /// <param name="component">登録されるコンポーネント</param>
+        /// <param name="timing">更新タイミング</param>
         public static void Register(TComponent component, UpdateTiming timing)
         {
             if (((IComponentIndex)component).IsRegistered) return;
@@ -53,7 +53,7 @@ namespace Nitou.BatchProcessor
         // Protected Method
 
         /// <summary>
-        /// 全てのコンポーネントを登録解除する
+        /// 全てのコンポーネントを登録解除する．
         /// </summary>
         protected void UnregisterAllComponents()
         {
@@ -66,7 +66,7 @@ namespace Nitou.BatchProcessor
         }
 
         /// <summary>
-        /// システムのインスタンス生成時のコールバック
+        /// システムのインスタンス生成時のコールバック．
         /// </summary>
         protected override void OnCreate(UpdateTiming timing)
         {
@@ -77,7 +77,7 @@ namespace Nitou.BatchProcessor
         /// <summary>
         /// Callback called when an element is registered.
         /// </summary>
-        /// <param name="component">The registered element</param>
+        /// <param name="component">登録されるコンポーネント</param>
         /// <param name="index">The index of the element</param>
         protected virtual void OnRegisterComponent(TComponent component, int index) { }
 

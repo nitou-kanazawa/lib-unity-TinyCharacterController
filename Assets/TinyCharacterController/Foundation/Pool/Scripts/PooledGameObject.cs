@@ -4,7 +4,7 @@ using UnityEngine.Serialization;
 using Nitou.BatchProcessor;
 using Sirenix.OdinInspector;
 
-namespace Nitou.Utility
+namespace Nitou.Pool
 {
     /// <summary>
     /// A component used to manage objects that are pooled by GameObjectPool.

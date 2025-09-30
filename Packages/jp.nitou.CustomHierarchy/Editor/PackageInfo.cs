@@ -7,7 +7,7 @@ namespace Nitou.CustomHierarchy
         /// <summary>
         /// パッケージ名．
         /// </summary>
-        public static readonly string PackageName = "com.nitou.customhierarchy";
+        public static readonly string PackageName = "jp.nitou.customhierarchy";
 
         /// <summary>
         /// パッケージのディレクトリパス．

@@ -32,6 +32,7 @@ namespace Nitou.CustomHierarchy.EditorSctipts
                 if (tex != null) return tex;
 
                 // Texture読み込み
+                Debug.Log(PackageInfo.PackagePath.ToProjectPath());
                 tex = AssetsLoader.Load<Texture2D>(PackageInfo.PackagePath, REATIVE_PATH, CURRENT_TEXTURE);
                 TextureCached[nameof(TreeMapCurrent)] = tex;
                 return tex;

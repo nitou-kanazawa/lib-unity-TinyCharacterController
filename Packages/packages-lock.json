@@ -30,7 +30,7 @@
       "hash": "6baeccf6c544c155497164327cca72f28163a578"
     },
     "com.nitou.ngizmo": {
-      "version": "file:NGizmos",
+      "version": "file:jp.nitou.NGizmos",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}
@@ -315,6 +315,12 @@
       "source": "git",
       "dependencies": {},
       "hash": "80c0c42131d4824f9ff6439eda11c2378251fe6d"
+    },
+    "jp.nitou.customhierarchy": {
+      "version": "file:jp.nitou.CustomHierarchy",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",

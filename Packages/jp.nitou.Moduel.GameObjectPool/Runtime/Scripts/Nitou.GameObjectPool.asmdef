@@ -1,0 +1,19 @@
+{
+    "name": "Nitou.GameObjectPool",
+    "rootNamespace": "Nitou.Pool",
+    "references": [
+        "GUID:c61784856788dae43acaf8b4588b90f7"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Sirenix.OdinInspector.Attributes.dll",
+        "Sirenix.Utilities.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

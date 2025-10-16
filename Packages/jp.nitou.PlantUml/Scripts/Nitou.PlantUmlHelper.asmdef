@@ -1,0 +1,16 @@
+{
+    "name": "Nitou.PlantUmlHelper",
+    "rootNamespace": "Nitou.PlantUml",
+    "references": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

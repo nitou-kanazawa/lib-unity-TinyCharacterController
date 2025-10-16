@@ -1,0 +1,18 @@
+{
+  "name": "jp.nitou.gameobjectpool",
+  "displayName": "Game Object Pool",
+  "version": "0.9.0",
+  "unity": "6000.0",
+  "description": "Object pool for gameobject.",
+  "keywords": [
+    "Prototype"
+  ],
+  "author": {
+    "name": "Nitou",
+    "url": "https://github.com/nitou-kanazawa"
+  },
+  "category": "",
+  "dependencies": {
+    "com.unity.inputsystem": "1.14.2"
+  }
+}

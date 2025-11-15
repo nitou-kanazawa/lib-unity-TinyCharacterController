@@ -102,9 +102,11 @@ namespace Nitou.TCC.Inputs
         /// </summary>
         public void Update(float dt)
         {
-            // 状態フラグ
-            Started |= !_previousValue && value;
-            Canceled |= _previousValue && !value;
+            // 状態変化の検出（フレーム間の遷移を検出）
+            // |= を使用することで、Reset()が呼ばれるまでフラグを保持
+            // これにより、Update() が複数回呼ばれてもStarted/Canceledイベントを見逃さない
+            Started |= !_previousValue && value;      // 前回false → 今回true
+            Canceled |= _previousValue && !value;     // 前回true → 今回false
 
             // 経過時間の更新
             StartedElapsedTime += dt;
@@ -156,7 +158,6 @@ namespace Nitou.TCC.Inputs
     }
 
 
-    // ----------------------------------------------------------------------------
 #if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(BoolAction))]
     internal class BoolActionEditor : PropertyDrawer

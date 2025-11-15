@@ -38,39 +38,64 @@ namespace Nitou.TCC.Inputs
         {
             if (inputActionsAsset == null)
             {
-                Debug.Log("No input actions asset found!");
+                Debug.LogError($"[{nameof(InputSystemHandler)}] No input actions asset assigned!", this);
                 return;
             }
 
             inputActionsAsset.Enable();
 
-            // Control Scheme �ɂ��t�B���^�����O
+            // Control Scheme によるフィルタリング（安全版）
             if (_filterByControlScheme)
             {
-                string bindingGroup = inputActionsAsset.controlSchemes.First(x => x.name == _controlSchemeName).bindingGroup;
-                inputActionsAsset.bindingMask = InputBinding.MaskByGroup(bindingGroup);
+                var scheme = inputActionsAsset.controlSchemes
+                    .FirstOrDefault(x => x.name == _controlSchemeName);
+
+                if (!string.IsNullOrEmpty(scheme.bindingGroup))
+                {
+                    inputActionsAsset.bindingMask = InputBinding.MaskByGroup(scheme.bindingGroup);
+                }
+                else
+                {
+                    Debug.LogError($"[{nameof(InputSystemHandler)}] Control scheme '{_controlSchemeName}' not found!", this);
+                }
             }
 
-            // Action Map �ɂ��t�B���^�����O
+            // Action Map によるフィルタリング（重複検出付き）
             if (_filterByActionMap)
             {
-                var rawInputActions = inputActionsAsset.FindActionMap(_gameplayActionMap).actions;
-
-                foreach (var action in rawInputActions)
+                var actionMap = inputActionsAsset.FindActionMap(_gameplayActionMap);
+                if (actionMap != null)
                 {
-                    _inputActionsDictionary.Add(action.name, action);
+                    RegisterActions(actionMap.actions, _gameplayActionMap);
+                }
+                else
+                {
+                    Debug.LogError($"[{nameof(InputSystemHandler)}] Action map '{_gameplayActionMap}' not found!", this);
                 }
             }
             else
             {
-                for (int i = 0; i < inputActionsAsset.actionMaps.Count; i++)
+                foreach (var actionMap in inputActionsAsset.actionMaps)
                 {
-                    var actionMap = inputActionsAsset.actionMaps[i];
+                    RegisterActions(actionMap.actions, actionMap.name);
+                }
+            }
+        }
 
-                    foreach (var action in actionMap.actions)
-                    {
-                        _inputActionsDictionary.Add(action.name, action);
-                    }
+        /// <summary>
+        /// アクションを辞書に登録（重複チェック付き）
+        /// </summary>
+        private void RegisterActions(IEnumerable<InputAction> actions, string actionMapName)
+        {
+            foreach (var action in actions)
+            {
+                if (!_inputActionsDictionary.ContainsKey(action.name))
+                {
+                    _inputActionsDictionary.Add(action.name, action);
+                }
+                else
+                {
+                    Debug.LogWarning($"[{nameof(InputSystemHandler)}] Duplicate action name '{action.name}' found in action map '{actionMapName}'. Skipping.", this);
                 }
             }
         }

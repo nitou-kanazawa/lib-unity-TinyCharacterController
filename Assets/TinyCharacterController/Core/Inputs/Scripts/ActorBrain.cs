@@ -7,19 +7,19 @@ namespace Nitou.TCC.Inputs
     public enum UpdateMode
     {
         /// <summary>
-        /// FixedUpdate�œ��͂��g���ꍇ�̃��[�h�i�f�t�H���g�j
+        /// FixedUpdateで入力を扱う場合のモード（デフォルト）
         /// </summary>
         FixedUpdate,
 
         /// <summary>
-        /// 
+        /// Updateで入力を扱う場合のモード
         /// </summary>
         Update
     }
 
 
     /// <summary>
-    /// ���͏��<see cref="CharacterActions"/>�̍X�V�����ƊO�����J��S���R���|�[�l���g�D
+    /// 入力処理とActorActionsの更新を管理する基底コンポーネント
     /// </summary>
     [DisallowMultipleComponent]
     public abstract class ActorBrain : MonoBehaviour
@@ -29,17 +29,18 @@ namespace Nitou.TCC.Inputs
                  "FixedUpdate (recommended): use this when the gameplay logic needs to run during FixedUpdate.\n\n" +
                  "Update: use this when the gameplay logic needs to run every frame during Update.")]
         [SerializeField, Indent]
+        [DisableInPlayMode]  // 実行時変更による状態不整合を防止
         UpdateMode _updateMode = UpdateMode.FixedUpdate;
 
         [TitleGroup("Actor Actions")] [HideLabel, ReadOnly] [SerializeField, Indent]
         protected ActorActions _characterActions = new();
 
-        // ���������p
+        // FixedUpdateモード用の初回フラグ
         private bool _firstUpdateFlag = false;
 
 
         /// <summary>
-        /// ���݁C�ݒ肳��Ă���A�N�V�����D
+        /// 現在設定されているアクション
         /// </summary>
         public ActorActions CharacterActions => _characterActions;
 
@@ -63,6 +64,7 @@ namespace Nitou.TCC.Inputs
 
             if (_updateMode == UpdateMode.FixedUpdate)
             {
+                // FixedUpdateモードの場合、FixedUpdateの最初のUpdate呼び出しでリセット
                 if (_firstUpdateFlag)
                 {
                     _firstUpdateFlag = false;
@@ -71,10 +73,11 @@ namespace Nitou.TCC.Inputs
             }
             else
             {
+                // Updateモードの場合、毎フレームリセット
                 _characterActions.Reset();
             }
 
-            // �X�V����
+            // 更新処理
             UpdateBrainValues(dt);
         }
 
@@ -83,16 +86,17 @@ namespace Nitou.TCC.Inputs
             _firstUpdateFlag = true;
             if (_updateMode == UpdateMode.FixedUpdate)
             {
-                UpdateBrainValues(0f);
+                // FixedUpdateモードの場合、正しいdeltaTimeを渡す
+                UpdateBrainValues(Time.fixedDeltaTime);
             }
         }
 
 
         // ----------------------------------------------------------------------------
-        // Protected Method 
+        // Protected Method
 
         /// <summary>
-        /// �X�V�����̎��s�D
+        /// 更新処理の実行
         /// </summary>
         protected abstract void UpdateBrainValues(float dt);
     }

@@ -4,45 +4,42 @@ namespace Nitou.TCC.Inputs
 {
     public abstract class EnemyBehaviourBase : MonoBehaviour
     {
-        protected ActorActions _actions;
+        protected ActorActions _actions = new();
 
         /// <summary>
-        /// �A�N�V�����}�b�v
+        /// アクションマップ
         /// </summary>
         public ActorActions CharacterActions => _actions;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        //public LevelActor CharacterActor { get; private set; }
-
         // ----------------------------------------------------------------------------
-        // MonoBehaviour Method 
+        // MonoBehaviour Method
+
         protected virtual void Awake()
         {
-            //CharacterActor = gameObject.GetComponentInBranch<CharacterActor>();
+            // ActorActionsの初期化を保証
+            _actions.InitializeActions();
         }
 
-        protected virtual void Reset()
+        protected virtual void OnEnable()
         {
             _actions.Reset();
         }
 
 
         // ----------------------------------------------------------------------------
-        // Public Method 
+        // Public Method
 
         /// <summary>
-        /// �ړ����͂�ݒ肷��
+        /// 移動入力を設定する
         /// </summary>
         public void SetMovement(Vector3 direction)
         {
-            //(var x, _, var z) = Vector3.ProjectOnPlane(direction, CharacterActor.Up).ClampMagnitude01();
-            //_actions.movement.value = new Vector2(x, z);
+            // TODO: 実装が必要な場合はここに追加
+            // 現在は未実装
         }
 
         /// <summary>
-        /// �U�����͂�ݒ肷��
+        /// 攻撃入力を設定する
         /// </summary>
         public void RaiseAttack()
         {

@@ -1,9 +1,8 @@
 {
-    "name": "Nitou.LevelActors.Inputs.Editor",
-    "rootNamespace": "",
+    "name": "Nitou.TCC.Inputs.Editor",
+    "rootNamespace": "Nitou.TCC.Inputs.EditorScripts",
     "references": [
-        "GUID:957d667169b382a479e051a59f944304",
-        "GUID:14d14a38d1c9a1f43b1b739aba632d1e"
+        "GUID:957d667169b382a479e051a59f944304"
     ],
     "includePlatforms": [
         "Editor"

@@ -2,35 +2,35 @@
 using System;
 using System.Linq;
 using System.IO;
-using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEditor;
 
-/*
-namespace Nitou.TCC.Inputs.EditorScripts {
-
+namespace Nitou.TCC.Inputs.EditorScripts
+{
     [CustomEditor(typeof(ActorActionsAsset))]
-    internal class LevelActorActionsAssetEditor : Editor {
+    internal class LevelActorActionsAssetEditor : Editor
+    {
+        // ファイル名定数
+        private const string ActorActionsFileName = "ActorActions";
 
-        // 
-        const string ActorActionsFileName = "ActorActions";
-        const string TemplateFileName = "Template-actor-actions";
-
+        // SerializedProperty
         private SerializedProperty boolActions = null;
         private SerializedProperty floatActions = null;
         private SerializedProperty vector2Actions = null;
 
 
-        /// ----------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------
         // Lifecycle Events
 
-        private void OnEnable() {
+        private void OnEnable()
+        {
             boolActions = serializedObject.FindProperty("boolActions");
             floatActions = serializedObject.FindProperty("floatActions");
             vector2Actions = serializedObject.FindProperty("vector2Actions");
         }
 
-        public override void OnInspectorGUI() {
+        public override void OnInspectorGUI()
+        {
             EditorUtil.GUI.ScriptableObjectField((ActorActionsAsset)target);
 
             serializedObject.Update();
@@ -45,217 +45,113 @@ namespace Nitou.TCC.Inputs.EditorScripts {
 
             EditorGUILayout.Space();
 
+            // ヘルプボックス
             EditorGUILayout.HelpBox(
-                "Click the button to replace the original \"CharacterActions.cs\" file. This can be useful if you need to create custom actions, without modifing the code. ",
+                "Click the button to generate the \"ActorActions.cs\" file based on the configured actions. " +
+                "This allows you to create custom input actions without modifying the original code.",
                 MessageType.Info
             );
 
-            // �R�[�h�o�̓{�^��
-            if (GUILayout.Button("Create scripte")) {
-
-                // �m�F���[�_��
+            // コード生成ボタン
+            if (GUILayout.Button("Generate ActorActions.cs"))
+            {
+                // 確認ダイアログ
                 bool isYes = EditorUtility.DisplayDialog(
-                    "Create actions",
-                    "Warning: This will replace the original \"CharacterActions\" file. Are you sure you want to continue?",
+                    "Generate ActorActions",
+                    "This will create or replace the \"ActorActions.cs\" file. Are you sure you want to continue?",
                     "Yes", "No");
 
-                if (isYes) {
-
-                    // �e���v���[�g
-                    string templatePath = AssetDatabase.FindAssets(TemplateFileName)
-                        .Select(AssetDatabase.GUIDToAssetPath)
-                        .FirstOrDefault();
-                    if (templatePath.IsNullOrEmpty()) {
-                        Debug_.LogWarning("Template file cannot be found.");
-                        return;
-                    }
-
-                    // �ΏۃX�N���v�g
-                    var targetFilePath = AssetDatabase.FindAssets(ActorActionsFileName + " t:script")
-                        .Select(AssetDatabase.GUIDToAssetPath)
-                        .FirstOrDefault(str => string.Equals(Path.GetFileNameWithoutExtension(str), ActorActionsFileName, StringComparison.CurrentCultureIgnoreCase));
-
-                    // �ΏۃX�N���v�g�̃f�B���N�g��
-                    var DirectoryPath = !targetFilePath.IsNullOrEmpty()
-                        ? Path.GetDirectoryName(targetFilePath)
-                        : "Assets";     // �����݂��Ă��Ȃ��ꍇ�CAssets�����ɐV�K����
-
-                    // �t�@�C���o��
-                    var filePath = EditorUtility.SaveFilePanel("Save", DirectoryPath, ActorActionsFileName, "cs");
-                    if (!string.IsNullOrEmpty(filePath)) {
-                        Debug_.Log(filePath, Colors.Orange);
-                        CreateCSharpClass(filePath, templatePath);
-                    }
+                if (isYes)
+                {
+                    GenerateActorActionsFile();
                 }
-
             }
+
             serializedObject.ApplyModifiedProperties();
         }
 
 
-        /// ----------------------------------------------------------------------------
-        // Private Method
+        // ----------------------------------------------------------------------------
+        // Private Methods
 
-        private void CreateCSharpClass(string characterActionsPath, string templatePath) {
-            if (characterActionsPath == null || templatePath == null) return;
+        /// <summary>
+        /// ActorActions.csファイルを生成
+        /// </summary>
+        private void GenerateActorActionsFile()
+        {
+            // 既存のActorActions.csを探す
+            var targetFilePath = AssetDatabase.FindAssets(ActorActionsFileName + " t:script")
+                .Select(AssetDatabase.GUIDToAssetPath)
+                .FirstOrDefault(path => string.Equals(
+                    Path.GetFileNameWithoutExtension(path),
+                    ActorActionsFileName,
+                    StringComparison.CurrentCultureIgnoreCase));
 
-            string output = GenerateOutput(ActorActionsFileName, templatePath);
+            // ディレクトリパスを決定（既存ファイルのディレクトリ or Assetsフォルダ）
+            var directoryPath = !string.IsNullOrEmpty(targetFilePath)
+                ? Path.GetDirectoryName(targetFilePath)
+                : "Assets";
 
-            FileStream fileStream = File.Open(characterActionsPath, FileMode.Truncate, FileAccess.ReadWrite);
+            // ファイル保存ダイアログ
+            var filePath = EditorUtility.SaveFilePanel(
+                "Save ActorActions.cs",
+                directoryPath,
+                ActorActionsFileName,
+                "cs");
 
-            StreamWriter file = new StreamWriter(fileStream);
+            if (string.IsNullOrEmpty(filePath))
+            {
+                Debug.Log("[ActorActionsAssetEditor] File generation cancelled.");
+                return;
+            }
 
-            file.Write(output);
-            file.Close();
+            // コード生成
+            try
+            {
+                var boolActionsArray = GetStringArray(boolActions);
+                var floatActionsArray = GetStringArray(floatActions);
+                var vector2ActionsArray = GetStringArray(vector2Actions);
 
-            AssetDatabase.Refresh();
+                var generator = new ActorActionsGenerator(
+                    boolActionsArray,
+                    floatActionsArray,
+                    vector2ActionsArray,
+                    className: ActorActionsFileName,
+                    enableInputBuffer: true  // InputBuffer機能を有効化
+                );
+
+                string generatedCode = generator.Generate();
+
+                // ファイルに書き込み
+                File.WriteAllText(filePath, generatedCode);
+
+                Debug.Log($"[ActorActionsAssetEditor] Successfully generated: {filePath}");
+
+                // Unityにアセットを再読込させる
+                AssetDatabase.Refresh();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[ActorActionsAssetEditor] Failed to generate ActorActions.cs: {ex.Message}");
+            }
         }
 
-        private string GenerateOutput(string className, string templatePath) {
-            StreamReader reader = new StreamReader(templatePath);
+        /// <summary>
+        /// SerializedPropertyから文字列配列を取得
+        /// </summary>
+        private static string[] GetStringArray(SerializedProperty arrayProperty)
+        {
+            if (arrayProperty == null || !arrayProperty.isArray)
+                return Array.Empty<string>();
 
-            string output = reader.ReadToEnd();
-            reader.Close();
-
-            output = Regex.Replace(output, @"@\s*struct-name\s*@", ActorActionsFileName);
-
-            // -----------------------------------------------------------------------------------------------------------------------------------
-            // Bool Actions ----------------------------------------------------------------------------------------------------------------------
-            // -----------------------------------------------------------------------------------------------------------------------------------
-
-            string definitionsString = "";
-            string resetString = "";
-            string newString = "";
-            string setValueString = "";
-            string copyValueString = "";
-            string updateString = "";
-
-            for (int i = 0; i < boolActions.arraySize; i++) {
-                string actionName = boolActions.GetArrayElementAtIndex(i).stringValue;
-                if (actionName.IsNullOrEmpty())
-                    continue;
-
-                string[] words = actionName.Split(' ');
-
-                string variableName = "@";
-                for (int j = 0; j < words.Length; j++) {
-                    string word = words[j];
-
-                    if (j == 0)
-                        variableName += System.Char.ToLowerInvariant(word[0]) + word.Substring(1).ToLower();
-                    else
-                        variableName += System.Char.ToUpperInvariant(word[0]) + word.Substring(1).ToLower();
-                }
-
-
-                definitionsString += "\tpublic BoolAction " + variableName + ";\n";
-                resetString += "\t\t" + variableName + ".Reset();\n";
-                newString += "\t\t" + variableName + " = new BoolAction();\n" +
-                    "\t\t" + variableName + ".Initialize();\n\n";
-                setValueString += "\t\t" + variableName + ".value = inputHandler.GetBool( \"" + actionName + "\" );\n";
-                copyValueString += "\t\t" + variableName + ".value = characterActions." + variableName.Substring(1) + ".value;\n";
-                updateString += "\t\t" + variableName + ".Update( dt );\n";
+            var result = new string[arrayProperty.arraySize];
+            for (int i = 0; i < arrayProperty.arraySize; i++)
+            {
+                result[i] = arrayProperty.GetArrayElementAtIndex(i).stringValue ?? string.Empty;
             }
-
-            // Write bool actions
-            output = Regex.Replace(output, @"@\s*bool-actions-definitions\s*@", definitionsString);
-            output = Regex.Replace(output, @"@\s*bool-actions-reset\s*@", resetString);
-            output = Regex.Replace(output, @"@\s*bool-actions-new\s*@", newString);
-            output = Regex.Replace(output, @"@\s*bool-actions-setValue\s*@", setValueString);
-            output = Regex.Replace(output, @"@\s*bool-actions-copyValue\s*@", copyValueString);
-            output = Regex.Replace(output, @"@\s*bool-actions-update\s*@", updateString);
-
-            // -----------------------------------------------------------------------------------------------------------------------------------
-            // Float Actions ---------------------------------------------------------------------------------------------------------------------
-            // -----------------------------------------------------------------------------------------------------------------------------------
-
-            definitionsString = "";
-            resetString = "";
-            newString = "";
-            setValueString = "";
-            copyValueString = "";
-            updateString = "";
-
-            for (int i = 0; i < floatActions.arraySize; i++) {
-                string actionName = floatActions.GetArrayElementAtIndex(i).stringValue;
-                if (actionName.IsNullOrEmpty())
-                    continue;
-
-                string[] words = actionName.Split(' ');
-
-                string variableName = "@";
-                for (int j = 0; j < words.Length; j++) {
-                    string word = words[j];
-
-                    if (j == 0)
-                        variableName += System.Char.ToLowerInvariant(word[0]) + word.Substring(1).ToLower();
-                    else
-                        variableName += System.Char.ToUpperInvariant(word[0]) + word.Substring(1).ToLower();
-                }
-
-
-                definitionsString += "\tpublic FloatAction " + variableName + ";\n";
-                resetString += "\t\t" + variableName + ".Reset();\n";
-                newString += "\t\t" + variableName + " = new FloatAction();\n";
-                setValueString += "\t\t" + variableName + ".value = inputHandler.GetFloat( \"" + actionName + "\" );\n";
-                copyValueString += "\t\t" + variableName + ".value = characterActions." + variableName.Substring(1) + ".value;\n";
-            }
-
-            // Write bool actions
-            output = Regex.Replace(output, @"@\s*float-actions-definitions\s*@", definitionsString);
-            output = Regex.Replace(output, @"@\s*float-actions-reset\s*@", resetString);
-            output = Regex.Replace(output, @"@\s*float-actions-new\s*@", newString);
-            output = Regex.Replace(output, @"@\s*float-actions-setValue\s*@", setValueString);
-            output = Regex.Replace(output, @"@\s*float-actions-copyValue\s*@", copyValueString);
-
-            // -----------------------------------------------------------------------------------------------------------------------------------
-            // Vector2 Actions -------------------------------------------------------------------------------------------------------------------
-            // -----------------------------------------------------------------------------------------------------------------------------------
-
-            definitionsString = "";
-            resetString = "";
-            newString = "";
-            setValueString = "";
-            updateString = "";
-
-            for (int i = 0; i < vector2Actions.arraySize; i++) {
-                string actionName = vector2Actions.GetArrayElementAtIndex(i).stringValue;
-                if (actionName.IsNullOrEmpty())
-                    continue;
-
-                string[] words = actionName.Split(' ');
-
-                string variableName = "@";
-                for (int j = 0; j < words.Length; j++) {
-                    string word = words[j];
-
-                    if (j == 0)
-                        variableName += System.Char.ToLowerInvariant(word[0]) + word.Substring(1).ToLower();
-                    else
-                        variableName += System.Char.ToUpperInvariant(word[0]) + word.Substring(1).ToLower();
-                }
-
-
-                definitionsString += "\tpublic Vector2Action " + variableName + ";\n";
-                resetString += "\t\t" + variableName + ".Reset();\n";
-                newString += "\t\t" + variableName + " = new Vector2Action();\n";
-                setValueString += "\t\t" + variableName + ".value = inputHandler.GetVector2( \"" + actionName + "\" );\n";
-                copyValueString += "\t\t" + variableName + ".value = characterActions." + variableName.Substring(1) + ".value;\n";
-
-            }
-
-            // Write bool actions
-            output = Regex.Replace(output, @"@\s*vector2-actions-definitions\s*@", definitionsString);
-            output = Regex.Replace(output, @"@\s*vector2-actions-reset\s*@", resetString);
-            output = Regex.Replace(output, @"@\s*vector2-actions-new\s*@", newString);
-            output = Regex.Replace(output, @"@\s*vector2-actions-setValue\s*@", setValueString);
-            output = Regex.Replace(output, @"@\s*vector2-actions-copyValue\s*@", copyValueString);
-
-            return output;
-
+            return result;
         }
     }
 }
-*/
 
 #endif

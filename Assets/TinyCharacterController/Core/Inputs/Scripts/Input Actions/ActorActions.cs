@@ -1,11 +1,11 @@
-
-namespace Nitou.TCC.Inputs {
-
+namespace Nitou.TCC.Inputs
+{
     /// <summary>
     /// This struct contains all the inputs actions available for the character to interact with.
     /// </summary>
     [System.Serializable]
-    public struct ActorActions {
+    public struct ActorActions
+    {
 
         // Bool actions
         public BoolAction @jump;
@@ -31,7 +31,8 @@ namespace Nitou.TCC.Inputs {
         /// <summary>
         /// Reset all the actions.
         /// </summary>
-        public void Reset() {
+        public void Reset()
+        {
             @jump.Reset();
             @attack1.Reset();
             @attack2.Reset();
@@ -48,7 +49,8 @@ namespace Nitou.TCC.Inputs {
         /// <summary>
         /// Initializes all the actions by instantiate them. Each action will be instantiated with its specific type (Bool, Float or Vector2).
         /// </summary>
-        public void InitializeActions() {
+        public void InitializeActions()
+        {
             @jump = new BoolAction();
             @jump.Initialize();
 
@@ -83,7 +85,8 @@ namespace Nitou.TCC.Inputs {
         /// <summary>
         /// Updates the values of all the actions based on the current input handler (human).
         /// </summary>
-        public void SetValues(InputHandler inputHandler) {
+        public void SetValues(InputHandler inputHandler)
+        {
             if (inputHandler == null) return;
 
             @jump.value = inputHandler.GetBool("Jump");
@@ -105,7 +108,8 @@ namespace Nitou.TCC.Inputs {
         /// <summary>
         /// Copies the values of all the actions from an existing set of actions.
         /// </summary>
-        public void SetValues(ActorActions characterActions) {
+        public void SetValues(ActorActions characterActions)
+        {
             @jump.value = characterActions.jump.value;
             @attack1.value = characterActions.attack1.value;
             @attack2.value = characterActions.attack2.value;
@@ -121,9 +125,10 @@ namespace Nitou.TCC.Inputs {
         }
 
         /// <summary>
-	    /// Update all the actions internal states.
-	    /// </summary>
-        public void Update(float dt) {
+        /// Update all the actions internal states.
+        /// </summary>
+        public void Update(float dt)
+        {
             @jump.Update(dt);
             @attack1.Update(dt);
             @attack2.Update(dt);

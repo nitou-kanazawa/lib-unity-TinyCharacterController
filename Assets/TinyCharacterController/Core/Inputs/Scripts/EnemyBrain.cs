@@ -4,7 +4,7 @@ using Sirenix.OdinInspector;
 namespace Nitou.TCC.Inputs
 {
     /// <summary>
-    /// 
+    /// 敵用の入力処理Brain
     /// </summary>
     [DefaultExecutionOrder(int.MinValue)]
     [DisallowMultipleComponent]
@@ -14,22 +14,20 @@ namespace Nitou.TCC.Inputs
 
 
         // ----------------------------------------------------------------------------
-        // Private Method 
+        // Protected Method
 
         /// <summary>
-        /// �X�V�����̎��s
+        /// 更新処理の実行
         /// </summary>
         protected override void UpdateBrainValues(float dt)
         {
-            if (Time.timeScale == 0) return;
-
-            // �l�̍X�V
+            // 値の更新
             _characterActions.SetValues(_behaviour.CharacterActions);
             _characterActions.Update(dt);
         }
 
 
-        /// ----------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------
 #if UNITY_EDITOR
         protected void OnValidate()
         {

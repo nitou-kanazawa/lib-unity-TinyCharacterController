@@ -4,21 +4,22 @@ using Sirenix.OdinInspector;
 namespace Nitou.TCC.Inputs
 {
     /// <summary>
-    /// 
+    /// プレイヤー用の入力処理Brain
     /// </summary>
     [DefaultExecutionOrder(int.MinValue)]
     [DisallowMultipleComponent]
     public sealed class PlayerBrain : ActorBrain
     {
-        [TitleGroup("Settings")] [DisableInPlayMode] [SerializeField, Indent]
-        InputHandler _inputHandler = null;
+        [TitleGroup("Settings")]
+        [DisableInPlayMode]
+        [SerializeField, Indent] InputHandler _inputHandler = null;
 
 
         // ----------------------------------------------------------------------------
-        // Public Method 
+        // Public Method
 
         /// <summary>
-        /// ���̓n���h���[��ݒ肷��
+        /// 入力ハンドラを設定する
         /// </summary>
         public void SetInputHandler(InputHandler inputHandler)
         {
@@ -30,16 +31,14 @@ namespace Nitou.TCC.Inputs
 
 
         // ----------------------------------------------------------------------------
-        // Protected Method 
+        // Protected Method
 
         /// <summary>
-        /// �X�V�����̎��s
+        /// 更新処理の実行
         /// </summary>
         protected override void UpdateBrainValues(float dt)
         {
-            if (Time.timeScale == 0) return;
-
-            // �l�̍X�V
+            // 値の更新
             _characterActions.SetValues(_inputHandler);
             _characterActions.Update(dt);
         }

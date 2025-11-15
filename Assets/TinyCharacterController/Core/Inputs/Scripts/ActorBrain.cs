@@ -60,6 +60,9 @@ namespace Nitou.TCC.Inputs
 
         protected virtual void Update()
         {
+            // ゲームが一時停止中の場合は処理をスキップ
+            if (Time.timeScale == 0) return;
+
             float dt = Time.deltaTime;
 
             if (_updateMode == UpdateMode.FixedUpdate)

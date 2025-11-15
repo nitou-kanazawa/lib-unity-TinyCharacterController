@@ -77,9 +77,13 @@ namespace Nitou.TCC.Inputs
 
 
             @pitch = new FloatAction();
+            @pitch.Initialize();
+
             @roll = new FloatAction();
+            @roll.Initialize();
 
             @movement = new Vector2Action();
+            @movement.Initialize();
         }
 
         /// <summary>
@@ -138,6 +142,10 @@ namespace Nitou.TCC.Inputs
             @guard.Update(dt);
             @run.Update(dt);
 
+            @pitch.Update(dt);
+            @roll.Update(dt);
+
+            @movement.Update(dt);
         }
     }
 }

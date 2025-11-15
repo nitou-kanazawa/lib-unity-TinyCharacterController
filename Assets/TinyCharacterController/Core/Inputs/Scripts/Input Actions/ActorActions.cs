@@ -27,6 +27,10 @@ namespace Nitou.TCC.Inputs
         public Vector2Action @movement;
 
 
+        // 入力バッファ（オプション機能）
+        private InputBuffer _buffer;
+
+
 
         /// <summary>
         /// Reset all the actions.
@@ -49,7 +53,9 @@ namespace Nitou.TCC.Inputs
         /// <summary>
         /// Initializes all the actions by instantiate them. Each action will be instantiated with its specific type (Bool, Float or Vector2).
         /// </summary>
-        public void InitializeActions()
+        /// <param name="enableBuffering">入力バッファリングを有効にするか</param>
+        /// <param name="bufferDuration">バッファ保持時間（秒）</param>
+        public void InitializeActions(bool enableBuffering = false, float bufferDuration = 0.2f)
         {
             @jump = new BoolAction();
             @jump.Initialize();
@@ -84,6 +90,12 @@ namespace Nitou.TCC.Inputs
 
             @movement = new Vector2Action();
             @movement.Initialize();
+
+            // 入力バッファの初期化（オプション）
+            if (enableBuffering)
+            {
+                _buffer = new InputBuffer(bufferDuration);
+            }
         }
 
         /// <summary>
@@ -146,6 +158,79 @@ namespace Nitou.TCC.Inputs
             @roll.Update(dt);
 
             @movement.Update(dt);
+
+            // 入力バッファの更新と記録
+            if (_buffer != null)
+            {
+                _buffer.Update();
+
+                // Started/Canceledイベントをバッファに記録
+                if (@jump.Started) _buffer.RecordPressed("Jump");
+                if (@jump.Canceled) _buffer.RecordReleased("Jump");
+
+                if (@attack1.Started) _buffer.RecordPressed("Attack1");
+                if (@attack1.Canceled) _buffer.RecordReleased("Attack1");
+
+                if (@attack2.Started) _buffer.RecordPressed("Attack2");
+                if (@attack2.Canceled) _buffer.RecordReleased("Attack2");
+
+                if (@dodge.Started) _buffer.RecordPressed("Dodge");
+                if (@dodge.Canceled) _buffer.RecordReleased("Dodge");
+
+                if (@guard.Started) _buffer.RecordPressed("Guard");
+                if (@guard.Canceled) _buffer.RecordReleased("Guard");
+
+                if (@run.Started) _buffer.RecordPressed("Run");
+                if (@run.Canceled) _buffer.RecordReleased("Run");
+            }
         }
+
+
+        // ----------------------------------------------------------------------------
+        // Input Buffer Helper Methods
+
+        /// <summary>
+        /// 指定時間内にアクションが押されたかチェック（先行入力）
+        /// </summary>
+        public bool WasJumpPressedRecently(float withinTime = 0.2f)
+            => _buffer?.WasPressed("Jump", withinTime) ?? false;
+
+        /// <summary>
+        /// 指定時間内に攻撃1が押されたかチェック
+        /// </summary>
+        public bool WasAttack1PressedRecently(float withinTime = 0.2f)
+            => _buffer?.WasPressed("Attack1", withinTime) ?? false;
+
+        /// <summary>
+        /// 指定時間内に攻撃2が押されたかチェック
+        /// </summary>
+        public bool WasAttack2PressedRecently(float withinTime = 0.2f)
+            => _buffer?.WasPressed("Attack2", withinTime) ?? false;
+
+        /// <summary>
+        /// 指定時間内に回避が押されたかチェック
+        /// </summary>
+        public bool WasDodgePressedRecently(float withinTime = 0.2f)
+            => _buffer?.WasPressed("Dodge", withinTime) ?? false;
+
+        /// <summary>
+        /// コマンドシーケンスを検出
+        /// </summary>
+        /// <param name="sequence">アクション名の配列（例: ["Attack1", "Attack1", "Attack2"]）</param>
+        /// <param name="maxDuration">シーケンス全体の許容時間（秒）</param>
+        public bool DetectCommandSequence(string[] sequence, float maxDuration = 1.0f)
+            => _buffer?.DetectSequence(sequence, maxDuration) ?? false;
+
+        /// <summary>
+        /// バッファをクリア
+        /// </summary>
+        public void ClearBuffer()
+            => _buffer?.Clear();
+
+        /// <summary>
+        /// バッファのデバッグ情報を取得
+        /// </summary>
+        public string GetBufferDebugInfo()
+            => _buffer?.GetDebugInfo() ?? "Buffer not initialized";
     }
 }

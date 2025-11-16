@@ -37,7 +37,7 @@ namespace Nitou.TCC.Controller.Effect
         [Title("Parameters")]
         /// <summary>
         /// 重力の倍率．
-        /// Multiply by the <see cref="Physics.gravity"/> value.
+        /// Mulply by the ti<see cref="Physics.gravity"/> value.
         /// </summary>
         [Tooltip("Gravity multiplier")]
         [PropertyRange(0, 10)]

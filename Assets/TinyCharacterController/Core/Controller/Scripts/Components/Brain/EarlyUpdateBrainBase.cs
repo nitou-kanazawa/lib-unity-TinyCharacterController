@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Nitou.TCC.Controller.Core
 {
     /// <summary>
-    /// 
+    /// Brain の更新前に実行される EarlyUpdate の基底クラス．
     /// </summary>
     public abstract class EarlyUpdateBrainBase : MonoBehaviour
     {
@@ -24,7 +24,7 @@ namespace Nitou.TCC.Controller.Core
 
         protected void OnUpdate()
         {
-            // If executed at the timing of FixedUpdate, deltaTime returns the value of FixedUpdate.
+            // FixedUpdate のタイミングで実行される場合、deltaTime は FixedUpdate の値を返す
             var deltaTime = Time.deltaTime;
 
             foreach (var update in _updates)

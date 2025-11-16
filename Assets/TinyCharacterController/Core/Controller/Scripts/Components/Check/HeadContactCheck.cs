@@ -15,10 +15,9 @@ using Nitou.Gizmo;
 namespace Nitou.TCC.Controller.Check
 {
     /// <summary>
-    ///     This is a component that performs upward object detection.
-    ///     It performs upward detection, considering the height set in CharacterSettings.
-    ///     It also considers slightly ambiguous detection, not just complete contact with other objects, and calls UnityEvents
-    ///     upon collision.
+    /// 上方向のオブジェクト検出を行うコンポーネント．
+    /// CharacterSettings で設定された高さを考慮して上方向の検出を行う．
+    /// 完全な接触だけでなく、わずかに曖昧な検出も考慮し、衝突時に UnityEvent を呼び出す．
     /// </summary>
     [DisallowMultipleComponent]
     [AddComponentMenu(MenuList.MenuCheck + nameof(HeadContactCheck))]
@@ -28,31 +27,30 @@ namespace Nitou.TCC.Controller.Check
                                     IComponentCondition
     {
         /// <summary>
-        ///     Offset from the head position.
-        ///     This value is used to determine whether objects above are in contact.
-        ///     If objects cannot be detected when in contact with the ceiling, set this value to a higher value.
+        /// 頭の位置からのオフセット．
+        /// この値は上方のオブジェクトが接触しているかを判定するために使用される．
+        /// 天井に接触しているときにオブジェクトが検出できない場合、この値を大きく設定する．
         /// </summary>
         [Title("Settings")] [Tooltip("Offset from the head position")] [Range(0, 0.5f)] [SerializeField, Indent]
         private float _headPositionOffset = 0.1f;
 
         /// <summary>
-        ///     Maximum distance at which upward objects can be detected.
-        ///     This is used when checking if there is an object above the head even if there is no direct contact, such as when
-        ///     entering a low-ceiling area.
-        ///     This value must always be higher than the height of <see cref="CharacterSettings.Height" />.
+        /// 上方向のオブジェクトを検出できる最大距離．
+        /// 天井の低いエリアに入ったときなど、直接接触していなくても頭上にオブジェクトがあるかを確認する際に使用される．
+        /// この値は常に <see cref="CharacterSettings.Height" /> の高さよりも大きくなければならない．
         /// </summary>
         [FormerlySerializedAs("MaxRange")] [Tooltip("Maximum distance at which upward objects can be detected")] [Range(0, 10f)] [SerializeField, Indent]
         private float MaxHeight = 2.5f;
 
 
         /// <summary>
-        ///     This UnityEvent calls the callback when the head makes contact during this frame.
+        /// このフレームで頭が接触したときにコールバックを呼び出す UnityEvent．
         /// </summary>
         [Title("Callbacks")] [SerializeField, Indent]
         private UnityEvent _onContact;
 
         /// <summary>
-        ///     Executes when the value of InRange changes.
+        /// InRange の値が変化したときに実行される．
         /// </summary>
         [SerializeField, Indent] private UnityEvent _onChangeInRange;
 
@@ -63,7 +61,7 @@ namespace Nitou.TCC.Controller.Check
         // 定数
 
         /// <summary>
-        ///     Number of detectable colliders.
+        /// 検出可能なコライダーの数．
         /// </summary>
         private const int MAX_CONTACT_SIZE = 5;
 
@@ -77,40 +75,39 @@ namespace Nitou.TCC.Controller.Check
         int IEarlyUpdateComponent.Order => Order.Check;
 
         /// <summary>
-        ///     Returns true if the head is in contact with other objects during this frame.
+        /// このフレームで頭が他のオブジェクトと接触している場合は true を返す．
         /// </summary>
         public bool IsHitCollisionInThisFrame { get; private set; }
 
         /// <summary>
-        ///     If <see cref="IsHeadContact" /> is true, returns the distance from <see cref="ContactPoint" /> to RootPosition.
+        /// <see cref="IsHeadContact" /> が true の場合、<see cref="ContactPoint" /> から RootPosition までの距離を返す．
         /// </summary>
         public float DistanceFromRootPosition { get; private set; }
 
         /// <summary>
-        ///     Height to the head.
+        /// 頭までの高さ．
         /// </summary>
         private float Height => _characterSettings.Height + _headPositionOffset;
 
         /// <summary>
-        ///     Returns true if the head is in contact with other objects.
+        /// 頭が他のオブジェクトと接触している場合は true を返す．
         /// </summary>
         public bool IsHeadContact { get; private set; }
 
         /// <summary>
-        ///     Returns true if there is a collider within the character's head to Max Range range.
+        /// キャラクターの頭から Max Range の範囲内にコライダーがある場合は true を返す．
         /// </summary>
         public bool IsObjectOverhead { get; private set; }
 
         /// <summary>
-        ///     If true, returns the contact point if <see cref="IsHeadContact" /> is true, and returns the head position if
-        ///     false.
+        /// <see cref="IsHeadContact" /> が true の場合は接触点を返し、false の場合は頭の位置を返す．
         /// </summary>
         /// <seealso cref="MaxHeight" />
         public Vector3 ContactPoint { get; private set; }
 
         /// <summary>
-        ///     Returns the collided gameObject. Returns null if <see cref="IsHeadContact" /> is false.
-        ///     It is recommended to check the existence of <see cref="IsHeadContact" /> before using this property.
+        /// 衝突した GameObject を返す．<see cref="IsHeadContact" /> が false の場合は null を返す．
+        /// このプロパティを使用する前に <see cref="IsHeadContact" /> の存在を確認することを推奨する．
         /// </summary>
         public GameObject ContactedObject { get; private set; }
 
@@ -126,32 +123,32 @@ namespace Nitou.TCC.Controller.Check
         {
             using var profile = new ProfilerScope(nameof(HeadContactCheck));
 
-            // Cache the current value to detect changes from the previous frame.
+            // 前フレームからの変化を検出するために現在の値をキャッシュする
             var preInRange = IsObjectOverhead;
 
-            // Prepare parameters needed for Raycast.
-            // Cast the ray from the center of the body to avoid contact with the ground.
+            // Raycast に必要なパラメータを準備する
+            // 地面との接触を避けるため、体の中心からレイを投げる
             var offset = _characterSettings.Height * 0.5f;
             IsObjectOverhead = DetectCollidersAboveHead(offset, out var closestHit);
 
             if (IsObjectOverhead)
             {
-                // Behavior when a collider is detected.
+                // コライダーが検出されたときの動作
 
                 SetPropertiesWhenInRange(closestHit, offset);
 
-                // Execute the event because an object has hit.
+                // オブジェクトがヒットしたのでイベントを実行する
                 if (IsHitCollisionInThisFrame)
                     _onContact?.Invoke();
             }
             else
             {
-                // No collider detected.
+                // コライダーが検出されなかった
 
                 SetPropertiesWhenOutOfRange();
             }
 
-            // Invoke the event if the presence in range changes.
+            // 範囲内の存在が変化した場合はイベントを呼び出す
             if (preInRange != IsObjectOverhead)
                 _onChangeInRange?.Invoke();
         }
@@ -162,7 +159,7 @@ namespace Nitou.TCC.Controller.Check
                 TryGetComponent(out _characterSettings);
 
             if (_characterSettings.Height > MaxHeight)
-                messageList.Add("Max Range should be set to a value greater than or equal to _settings.Height.");
+                messageList.Add("Max Range は _settings.Height 以上の値に設定する必要があります．");
         }
 
 
@@ -177,17 +174,17 @@ namespace Nitou.TCC.Controller.Check
         }
 
         /// <summary>
-        ///     Sets properties when out of range.
-        ///     Called when no colliders are detected above the head.
+        /// 範囲外のときにプロパティを設定する．
+        /// 頭上にコライダーが検出されなかったときに呼び出される．
         /// </summary>
         private void SetPropertiesWhenOutOfRange()
         {
             var distance = MaxHeight + _headPositionOffset;
 
-            // ContactPoint is the position above the head.
+            // ContactPoint は頭上の位置
             ContactPoint = new Vector3(0, distance, 0);
 
-            // Distance is the position above the head.
+            // Distance は頭上の位置
             DistanceFromRootPosition = distance;
             IsHeadContact = false;
             ContactedObject = null;
@@ -195,45 +192,45 @@ namespace Nitou.TCC.Controller.Check
         }
 
         /// <summary>
-        ///     Sets properties when in range.
-        ///     Called when colliders are detected above the head.
+        /// 範囲内のときにプロパティを設定する．
+        /// 頭上にコライダーが検出されたときに呼び出される．
         /// </summary>
-        /// <param name="closestHit">The closest RaycastHit</param>
-        /// <param name="offset">Offset at the start of Raycast</param>
+        /// <param name="closestHit">最も近い RaycastHit</param>
+        /// <param name="offset">Raycast 開始時のオフセット</param>
         private void SetPropertiesWhenInRange(in RaycastHit closestHit, float offset)
         {
-            // Cache the current value to detect differences from the previous frame.
+            // 前フレームとの差異を検出するために現在の値をキャッシュする
             var preContactHead = IsHeadContact;
 
-            // Distance is the sum of RaycastHit's distance, the offset at the start of the Cast, and the SphereCast's offset.
+            // Distance は RaycastHit の距離、Cast 開始時のオフセット、SphereCast のオフセットの合計
             DistanceFromRootPosition = closestHit.distance + offset + _characterSettings.Radius + _headPositionOffset;
             ContactPoint = closestHit.point;
             ContactedObject = closestHit.collider.gameObject;
 
-            // If the distance from the ground is lower than the height setting, consider it a collision.
-            // Also, if the collision detection is different from the previous frame, consider it a hit in the current frame.
+            // 地面からの距離が高さ設定よりも低い場合、衝突と見なす
+            // また、衝突検出が前フレームと異なる場合、現在フレームでのヒットと見なす
             IsHeadContact = DistanceFromRootPosition < _characterSettings.Height + _headPositionOffset;
             IsHitCollisionInThisFrame = !preContactHead && IsHeadContact;
         }
 
         /// <summary>
-        ///     Detects colliders above the head and identifies the closest collider.
-        ///     Excludes the collider owned by itself.
+        /// 頭上のコライダーを検出し、最も近いコライダーを特定する．
+        /// 自身が所有するコライダーは除外する．
         /// </summary>
-        /// <param name="offset">Offset for detection</param>
-        /// <param name="closestHit">RayCast of the closest Collider</param>
-        /// <returns>True if a detectable Collider is within range</returns>
+        /// <param name="offset">検出のオフセット</param>
+        /// <param name="closestHit">最も近いコライダーの RayCast</param>
+        /// <returns>検出可能なコライダーが範囲内にある場合は true</returns>
         private bool DetectCollidersAboveHead(float offset, out RaycastHit closestHit)
         {
             var ray = new Ray(_transform.Position + new Vector3(0, offset + _headPositionOffset, 0), Vector3.up);
             var rayDistance = MaxHeight + _headPositionOffset - offset - _characterSettings.Radius;
 
-            // Perform a SphereCast upward to check for the presence of colliders above the head.
+            // 上方向に SphereCast を実行して頭上のコライダーの存在を確認する
             var count = Physics.SphereCastNonAlloc(ray, _characterSettings.Radius, Result,
                 rayDistance, _characterSettings.EnvironmentLayer,
                 QueryTriggerInteraction.Ignore);
 
-            // Get the closest Raycast excluding the Collider owned by itself.
+            // 自身が所有するコライダーを除外して最も近い Raycast を取得する
             var isHit = _characterSettings.ClosestHit(Result, count, rayDistance, out closestHit);
             return isHit;
         }
@@ -249,7 +246,7 @@ namespace Nitou.TCC.Controller.Check
                 GatherComponents();
             }
 
-            // If a collider is considered in contact, set the base color to red.
+            // コライダーが接触していると見なされる場合、基本色を赤に設定する
             if (IsHeadContact)
                 Gizmos.color = Color.red;
 
@@ -258,7 +255,7 @@ namespace Nitou.TCC.Controller.Check
 
             if (Application.isPlaying)
             {
-                // Represent the position where collision is detected based on DistanceFromRootPosition.
+                // DistanceFromRootPosition に基づいて衝突が検出された位置を表現する
                 var offset = _characterSettings.Radius;
                 var contactPosition = position + new Vector3(0, DistanceFromRootPosition - offset, 0);
                 DrawHitRangeGizmos(headPosition, contactPosition);
@@ -268,14 +265,14 @@ namespace Nitou.TCC.Controller.Check
             }
             else
             {
-                // Represent the position of the head based on MaxHeight.
+                // MaxHeight に基づいて頭の位置を表現する
                 var maxHeightPosition = position + new Vector3(0, MaxHeight, 0);
                 DrawHitRangeGizmos(headPosition, maxHeightPosition);
             }
 
             return;
 
-            // Represent capsule-shaped Gizmos.
+            // カプセル形状の Gizmos を表現する
             void DrawHitRangeGizmos(in Vector3 startPosition, in Vector3 endPosition)
             {
                 var leftOffset = new Vector3(_characterSettings.Radius, 0, 0);
@@ -283,17 +280,17 @@ namespace Nitou.TCC.Controller.Check
                 var forwardOffset = new Vector3(0, 0, _characterSettings.Radius);
                 var backOffset = new Vector3(0, 0, -_characterSettings.Radius);
 
-                // Represent vertical lines before and after the capsule.
+                // カプセルの前後の垂直線を表現する
                 Gizmos.DrawLine(startPosition + leftOffset, endPosition + leftOffset);
                 Gizmos.DrawLine(startPosition + rightOffset, endPosition + rightOffset);
                 Gizmos.DrawLine(startPosition + forwardOffset, endPosition + forwardOffset);
                 Gizmos.DrawLine(startPosition + backOffset, endPosition + backOffset);
 
-                // Represent circular shapes above and below the capsule.
+                // カプセルの上下の円形を表現する
                 Gizmos.DrawWireSphere(startPosition, _characterSettings.Radius);
                 Gizmos.DrawWireSphere(endPosition, _characterSettings.Radius);
 
-                // Fill the color with the circular shapes above and below the capsule.
+                // カプセルの上下の円形を色で塗りつぶす
                 var color = Colors.Yellow;
                 color.a = 0.4f;
                 NGizmo.DrawSphere(startPosition, _characterSettings.Radius, color);

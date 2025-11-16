@@ -12,10 +12,10 @@ namespace Nitou.TCC.Controller.Check {
     
 
     /// <summary>
-    /// This component monitors changes in the stored information and extracts added or removed elements.
-    /// If there is a change in the keys, it issues a callback.
+    /// 格納された情報の変化を監視し、追加・削除された要素を抽出するコンポーネント．
+    /// キーに変化があった場合、コールバックを発行する．
     ///
-    /// Adding or removing keys is expected to be performed from AnimationModifierBehaviour.
+    /// キーの追加・削除は AnimationModifierBehaviour から実行されることを想定している．
     /// </summary>
     [AddComponentMenu(MenuList.MenuCheck + nameof(AnimatorModifierCheck))]
     [DisallowMultipleComponent]
@@ -23,8 +23,8 @@ namespace Nitou.TCC.Controller.Check {
         IAnimationModifierUpdate {
 
         /// <summary>
-        /// Specify the update timing.
-        /// If the Animator is operating in Physics, specify FixedUpdate; otherwise, specify Update.
+        /// 更新タイミングを指定する．
+        /// Animator が Physics で動作している場合は FixedUpdate、それ以外の場合は Update を指定する．
         /// </summary>
         [SerializeField] UpdateMode _updateMode = UpdateMode.Update;
 
@@ -37,18 +37,18 @@ namespace Nitou.TCC.Controller.Check {
         private readonly List<PropertyName> _addedKeyList = new();
 
         /// <summary>
-        /// Callback when a key is added or removed.
+        /// キーが追加または削除されたときのコールバック．
         /// </summary>
         public UnityEvent OnChangeKey;
 
 
         /// <summary>
-        /// Determines if any key was added or removed during the frame.
+        /// フレーム中にキーが追加または削除されたかどうかを判定する．
         /// </summary>
         public bool ChangeKey { get; private set; }
 
         /// <summary>
-        /// A list of currently active keys.
+        /// 現在アクティブなキーのリスト．
         /// </summary>
         public List<PropertyName> CurrentKeys => _currentKeyList;
         
@@ -66,7 +66,7 @@ namespace Nitou.TCC.Controller.Check {
         }
 
         void IAnimationModifierUpdate.OnUpdate() {
-            // Delete all key information to reset the content.
+            // すべてのキー情報を削除して内容をリセットする
             _removedKeyList.Clear();
             _addedKeyList.Clear();
             _keyList.Clear();
@@ -75,8 +75,8 @@ namespace Nitou.TCC.Controller.Check {
             AddCurrentKeyList(_animator.GetCurrentAnimatorStateInfo(0));
             AddCurrentKeyList(_animator.GetNextAnimatorStateInfo(0));
 
-            // Compare the previous frame's key information with the current frame's key information,
-            // and if there are any keys that were not present in the previous frame, add them to the AddedKeyList.
+            // 前フレームのキー情報と現在フレームのキー情報を比較し、
+            // 前フレームに存在しなかったキーがあれば AddedKeyList に追加する
             foreach (var key in _keyList) {
                 if (_currentKeyList.Contains(key))
                     continue;
@@ -85,8 +85,8 @@ namespace Nitou.TCC.Controller.Check {
                 _addedKeyList.Add(key);
             }
 
-            // If a key from the previous frame is not included in the current key list when compared,
-            // it will be added to the RemoveKeyList.
+            // 前フレームのキーが現在のキーリストに含まれていない場合、
+            // RemoveKeyList に追加される
             foreach (var key in _currentKeyList) {
                 if (_keyList.Contains(key))
                     continue;
@@ -95,7 +95,7 @@ namespace Nitou.TCC.Controller.Check {
                 _removedKeyList.Add(key);
             }
 
-            // If a key is added or removed, update the CurrentList and call OnChangeKey.
+            // キーが追加または削除された場合、CurrentList を更新し OnChangeKey を呼び出す
             if (ChangeKey) {
                 CopyKeyList();
                 OnChangeKey?.Invoke();
@@ -107,47 +107,47 @@ namespace Nitou.TCC.Controller.Check {
         // Public Method
         
         /// <summary>
-        ///  Check if a key is held.
+        /// キーが保持されているかどうかを確認する．
         /// </summary>
-        /// <param name="key">check key</param>
-        /// <returns>True if has key.</returns>
+        /// <param name="key">確認するキー</param>
+        /// <returns>キーを保持している場合は true</returns>
         public bool HasKey(PropertyName key) => _currentKeyList.Contains(key);
 
         /// <summary>
-        ///  Check if a key is held.
+        /// キーが保持されているかどうかを確認する．
         /// </summary>
-        /// <param name="key">check key</param>
-        /// <returns>True if has key.</returns>
+        /// <param name="key">確認するキー</param>
+        /// <returns>キーを保持している場合は true</returns>
         public bool HasKey(string key) => HasKey(new PropertyName(key));
 
         /// <summary>
-        /// Check if a key was removed during this frame.
-        /// Keys are automatically removed if they are not added in the same frame.
+        /// このフレーム中にキーが削除されたかどうかを確認する．
+        /// 同じフレーム内で追加されなかったキーは自動的に削除される．
         /// </summary>
-        /// <param name="key">key</param>
-        /// <returns>True if removed during this frame.</returns>
+        /// <param name="key">キー</param>
+        /// <returns>このフレーム中に削除された場合は true</returns>
         public bool IsRemoved(PropertyName key) => _removedKeyList.Contains(key);
 
         /// <summary>
-        /// Check if a key was removed during this frame.
-        /// Keys are automatically removed if they are not added in the same frame.
+        /// このフレーム中にキーが削除されたかどうかを確認する．
+        /// 同じフレーム内で追加されなかったキーは自動的に削除される．
         /// </summary>
-        /// <param name="key">key</param>
-        /// <returns>True if removed during this frame.</returns>
+        /// <param name="key">キー</param>
+        /// <returns>このフレーム中に削除された場合は true</returns>
         public bool IsRemoved(string key) => IsRemoved(new PropertyName(key));
 
         /// <summary>
-        /// Check if a key was added during this frame.
+        /// このフレーム中にキーが追加されたかどうかを確認する．
         /// </summary>
-        /// <param name="key">key</param>
-        /// <returns>True if added during this frame.</returns>
+        /// <param name="key">キー</param>
+        /// <returns>このフレーム中に追加された場合は true</returns>
         public bool IsAdded(PropertyName key) => _addedKeyList.Contains(key);
 
         /// <summary>
-        /// Check if a key was added during this frame.
+        /// このフレーム中にキーが追加されたかどうかを確認する．
         /// </summary>
-        /// <param name="key">key</param>
-        /// <returns>True if added during this frame.</returns>
+        /// <param name="key">キー</param>
+        /// <returns>このフレーム中に追加された場合は true</returns>
         public bool IsAdded(string key) => IsAdded(new PropertyName(key));
         
 
@@ -166,7 +166,7 @@ namespace Nitou.TCC.Controller.Check {
                 CacheBehaviour(hash);
             }
 
-            // Register key list.
+            // キーリストを登録する
             foreach (var behaviour in _behaviours[hash]) {
                 if (behaviour.IsInRange(stateInfo))
                     _keyList.Add(behaviour.Key);

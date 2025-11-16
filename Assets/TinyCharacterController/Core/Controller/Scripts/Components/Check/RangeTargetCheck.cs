@@ -15,34 +15,34 @@ using Nitou.Gizmo;
 namespace Nitou.TCC.Controller.Check
 {
     /// <summary>
-    /// This component considers line of sight and obstacles to retrieve objects with specific tags within its range.
-    /// The component runs every frame and invoke a callback if there are any changes in its content.
-    /// This component is mainly used to retrieve objects within a certain range.
+    /// 視線と障害物を考慮して、範囲内にある特定のタグを持つオブジェクトを取得するコンポーネント．
+    /// 毎フレーム実行され、内容に変化がある場合はコールバックを呼び出す．
+    /// 主に一定範囲内のオブジェクトを取得するために使用される．
     /// </summary>
     [DisallowMultipleComponent]
     public class RangeTargetCheck : MonoBehaviour, IEarlyUpdateComponent
     {
         /// <summary>
-        /// The center point of the sensor.
+        /// センサーの中心点．
         /// </summary>
         [SerializeField] private Vector3 _sensorOffset = new Vector3(0, 0.5f, 0);
 
         /// <summary>
-        /// The layers that the sensor can detect.
+        /// センサーが検出できるレイヤー．
         /// </summary>
         [SerializeField] private LayerMask _hitLayer;
 
         /// <summary>
-        /// This is a layer that ignores in Environment Layer.
-        /// It is used to specify objects that should be movable but not detectable, such as transparent windows.
+        /// Environment Layer で無視するレイヤー．
+        /// 透明な窓など、移動可能だが検出不可にしたいオブジェクトを指定するために使用される．
         /// </summary>
         [SerializeField] private LayerMask _transparentLayer;
 
         /// <summary>
-        /// This is a property for specifying the target that the sensor will search for.
-        /// It allows you to set properties such as the target's tag, search range, and whether to consider visibility.
+        /// センサーが検索するターゲットを指定するプロパティ．
+        /// ターゲットのタグ、検索範囲、視認性を考慮するかどうかなどのプロパティを設定できる．
         ///
-        /// This setting determines the range of the component's sensor.
+        /// この設定はコンポーネントのセンサーの範囲を決定する．
         /// </summary>
         [SerializeField] private SearchRangeSettings[] _searchData;
 
@@ -76,12 +76,12 @@ namespace Nitou.TCC.Controller.Check
         }
 
         /// <summary>
-        /// Get a list of objects that possess certain tags within a specific range.
-        /// The gathering of this collection is based on an aggregation that takes place at the time of the Check.
-        /// Any tags that are not found in the _searchData will return Null.
+        /// 特定の範囲内にある特定のタグを持つオブジェクトのリストを取得する．
+        /// このコレクションの収集は Check 時に行われる集計に基づいている．
+        /// _searchData に見つからないタグは Null を返す．
         /// </summary>
-        /// <param name="tagName">Tag index</param>
-        /// <returns>A list of Transforms within the range.</returns>
+        /// <param name="tagName">タグのインデックス</param>
+        /// <returns>範囲内の Transform のリスト</returns>
         public List<Transform> GetTargets(string tagName)
         {
             var tagIndex = GetTagIndex(tagName);
@@ -89,22 +89,22 @@ namespace Nitou.TCC.Controller.Check
         }
 
         /// <summary>
-        /// Get a list of objects that possess certain tags within a specific range.
-        /// The gathering of this collection is based on an aggregation that takes place at the time of the Check.
-        /// Any tags that are not found in the _searchData will return Null.
+        /// 特定の範囲内にある特定のタグを持つオブジェクトのリストを取得する．
+        /// このコレクションの収集は Check 時に行われる集計に基づいている．
+        /// _searchData に見つからないタグは Null を返す．
         /// </summary>
-        /// <param name="index">Index of tag.</param>
-        /// <returns>A list of Transforms within the range.</returns>
+        /// <param name="index">タグのインデックス</param>
+        /// <returns>範囲内の Transform のリスト</returns>
         public List<Transform> GetTargets(int index)
         {
             return index == -1 ? null : _searchTargets[index].Targets;
         }
 
         /// <summary>
-        /// Check if there are no objects with the specified tag.
+        /// 指定されたタグを持つオブジェクトが存在しないかどうかを確認する．
         /// </summary>
-        /// <param name="tagIndex">Index of tag.</param>
-        /// <returns>Returns True if there is no object with the specified tag, or if the tag is not included in the search target.</returns>
+        /// <param name="tagIndex">タグのインデックス</param>
+        /// <returns>指定されたタグを持つオブジェクトが存在しない、またはタグが検索対象に含まれていない場合は true を返す</returns>
         public bool IsEmpty(int tagIndex)
         {
             if (tagIndex < _searchTargets.Length && tagIndex >= 0)
@@ -114,10 +114,10 @@ namespace Nitou.TCC.Controller.Check
         }
 
         /// <summary>
-        /// Check if there are no objects with the specified tag.
+        /// 指定されたタグを持つオブジェクトが存在しないかどうかを確認する．
         /// </summary>
-        /// <param name="tagName">Name of tag.</param>
-        /// <returns>Returns True if there is no object with the specified tag, or if the tag is not included in the search target.</returns>
+        /// <param name="tagName">タグの名前</param>
+        /// <returns>指定されたタグを持つオブジェクトが存在しない、またはタグが検索対象に含まれていない場合は true を返す</returns>
         public bool IsEmpty(string tagName)
         {
             var tagIndex = GetTagIndex(tagName);
@@ -125,12 +125,12 @@ namespace Nitou.TCC.Controller.Check
         }
 
         /// <summary>
-        /// Get a nearest target with a specified tag using pre-calculated results.
-        /// It returns False if the requested tag is not included in the range or if there are no targets within the range.
+        /// 事前計算された結果を使用して、指定されたタグを持つ最も近いターゲットを取得する．
+        /// 要求されたタグが範囲に含まれていない場合、または範囲内にターゲットがない場合は False を返す．
         /// </summary>
-        /// <param name="tagName">Name of tag.</param>
-        /// <param name="target">Nearest target.</param>
-        /// <returns>Target was found.</returns>
+        /// <param name="tagName">タグの名前</param>
+        /// <param name="target">最も近いターゲット</param>
+        /// <returns>ターゲットが見つかった場合は true</returns>
         public bool TryGetClosestTarget(string tagName, out Transform target)
         {
             var tagIndex = GetTagIndex(tagName);
@@ -145,23 +145,23 @@ namespace Nitou.TCC.Controller.Check
         }
 
         /// <summary>
-        /// Get the index where the tag is stored.
+        /// タグが格納されているインデックスを取得する．
         /// </summary>
-        /// <param name="tagName">Name of tag.</param>
-        /// <returns>Index of tag.</returns>
+        /// <param name="tagName">タグの名前</param>
+        /// <returns>タグのインデックス</returns>
         public int GetTagIndex(string tagName)
         {
             return _tags.IndexOf(tagName);
         }
 
         /// <summary>
-        /// Get a nearest target with a specified tag using pre-calculated results.
-        /// It returns False if the requested tag is not included in the range or if there are no targets within the range.
+        /// 事前計算された結果を使用して、指定されたタグを持つ最も近いターゲットを取得する．
+        /// 要求されたタグが範囲に含まれていない場合、または範囲内にターゲットがない場合は False を返す．
         /// </summary>
-        /// <param name="tagName">Name of tag.</param>
-        /// <param name="target">Nearest target.</param>
-        /// <param name="preTarget">Pre nearest target.</param>
-        /// <returns>Target was found.</returns>
+        /// <param name="tagName">タグの名前</param>
+        /// <param name="target">最も近いターゲット</param>
+        /// <param name="preTarget">前回の最も近いターゲット</param>
+        /// <returns>ターゲットが見つかった場合は true</returns>
         public bool TryGetClosestTarget(string tagName, out Transform target, out Transform preTarget)
         {
             var tagIndex = GetTagIndex(tagName);
@@ -180,14 +180,14 @@ namespace Nitou.TCC.Controller.Check
         }
 
         /// <summary>
-        /// Get a list of newly added or removed targets within the specified tag range.
-        /// It returns False if there is no change in the list, or if the specified tag is not included in the search target.
-        /// If the specified tag is not included in the search target, Added and Removed will be Null.
+        /// 指定されたタグ範囲内で新しく追加または削除されたターゲットのリストを取得する．
+        /// リストに変更がない場合、または指定されたタグが検索対象に含まれていない場合は False を返す．
+        /// 指定されたタグが検索対象に含まれていない場合、Added と Removed は Null になる．
         /// </summary>
-        /// <param name="tagName">Name of tag.</param>
-        /// <param name="added">List of objects in range</param>
-        /// <param name="removed">List of objects out of range</param>
-        /// <returns>Objects have been added or removed.</returns>
+        /// <param name="tagName">タグの名前</param>
+        /// <param name="added">範囲内のオブジェクトのリスト</param>
+        /// <param name="removed">範囲外のオブジェクトのリスト</param>
+        /// <returns>オブジェクトが追加または削除された場合は true</returns>
         public bool ChangedValues(string tagName, out List<Transform> added, out List<Transform> removed)
         {
             var tagIndex = GetTagIndex(tagName);
@@ -195,14 +195,14 @@ namespace Nitou.TCC.Controller.Check
         }
 
         /// <summary>
-        /// Get a list of newly added or removed targets within the specified tag range.
-        /// It returns False if there is no change in the list, or if the specified tag is not included in the search target.
-        /// If the specified tag is not included in the search target, Added and Removed will be Null.
+        /// 指定されたタグ範囲内で新しく追加または削除されたターゲットのリストを取得する．
+        /// リストに変更がない場合、または指定されたタグが検索対象に含まれていない場合は False を返す．
+        /// 指定されたタグが検索対象に含まれていない場合、Added と Removed は Null になる．
         /// </summary>
-        /// <param name="tagIndex">Index of tag.</param>
-        /// <param name="added">List of objects in range</param>
-        /// <param name="removed">List of objects out of range</param>
-        /// <returns>Objects have been added or removed.</returns>
+        /// <param name="tagIndex">タグのインデックス</param>
+        /// <param name="added">範囲内のオブジェクトのリスト</param>
+        /// <param name="removed">範囲外のオブジェクトのリスト</param>
+        /// <returns>オブジェクトが追加または削除された場合は true</returns>
         public bool ChangedValues(int tagIndex, out List<Transform> added, out List<Transform> removed)
         {
             if (tagIndex == -1)
@@ -265,7 +265,7 @@ namespace Nitou.TCC.Controller.Check
         {
             using var profiler = new ProfilerScope("Range Check");
 
-            // Get a list of Colliders with the specified layer centered on the sensor position.
+            // センサー位置を中心に、指定されたレイヤーを持つコライダーのリストを取得する
 
             var sensorPosition = _transform.Position + _sensorOffset;
             var cameraPosition = _settings.CameraTransform.position;
@@ -279,7 +279,7 @@ namespace Nitou.TCC.Controller.Check
             if (_useScreenCheck)
                 GeometryUtility.CalculateFrustumPlanes(_settings.CameraMain, CameraPlanes);
 
-            // Get Collider, Object Coordinates, Distance to Collider bounds.
+            // コライダー、オブジェクト座標、コライダー境界までの距離を取得する
 
             using var hitStatePo = UnityEngine.Pool.ListPool<ValueTuple<Collider, Vector3, float>>
                                               .Get(out var hitState);
@@ -292,7 +292,7 @@ namespace Nitou.TCC.Controller.Check
                 hitState.Add(new ValueTuple<Collider, Vector3, float>(col, closePoint, distance));
             }
 
-            // Allocate each tag from the list, and select newly added elements and deleted elements.
+            // リストから各タグを割り当て、新しく追加された要素と削除された要素を選択する
 
             for (var dataIndex = 0; dataIndex < _searchData.Length; dataIndex++)
             {
@@ -425,45 +425,45 @@ namespace Nitou.TCC.Controller.Check
         {
             [Header("Settings")]
             /// <summary>
-            /// The tag of the target objects.
+            /// ターゲットオブジェクトのタグ．
             /// </summary>
-            // [TagSelector] 
+            // [TagSelector]
             public string Tag;
 
             /// <summary>
-            /// Radius of the search range.
+            /// 検索範囲の半径．
             /// </summary>
             public float Range;
 
             [Header("Options")]
             /// <summary>
-            /// Exclude objects that are out of the camera's view.
+            /// カメラの視界外にあるオブジェクトを除外する．
             /// </summary>
             public bool ExcludeOutOfView;
 
             /// <summary>
-            /// Exclude objects with obstructions between them and the camera.
+            /// カメラとの間に障害物があるオブジェクトを除外する．
             /// </summary>
             public bool ExcludeHiddenFromCamera;
 
             /// <summary>
-            /// Exclude objects with obstructions between them and the player.
+            /// プレイヤーとの間に障害物があるオブジェクトを除外する．
             /// </summary>
             public bool ExcludeHiddenFromPlayer;
 
             /// <summary>
-            /// Calculate the nearest object. Enabled by default.
+            /// 最も近いオブジェクトを計算する．デフォルトで有効．
             /// </summary>
             public bool CalculateNearest = true;
 
             [Header("Event")]
             /// <summary>
-            /// Event triggered when the closest target changes.
+            /// 最も近いターゲットが変化したときにトリガーされるイベント．
             /// </summary>
             public UnityEvent OnChangeClosestTarget;
 
             /// <summary>
-            /// Event triggered when the list of detected targets changes.
+            /// 検出されたターゲットのリストが変化したときにトリガーされるイベント．
             /// </summary>
             public UnityEvent<(List<Transform>, List<Transform>)> OnChangeValue;
         }

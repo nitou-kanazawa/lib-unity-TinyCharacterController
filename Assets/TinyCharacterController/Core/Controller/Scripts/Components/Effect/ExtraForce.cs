@@ -27,17 +27,18 @@ namespace Nitou.TCC.Controller.Effect
         /// <summary>
         /// 摩擦．
         /// </summary>
-        [SerializeField, Indent][MinValue(0)] private float _friction = 1f;
+        [SerializeField, Indent] [MinValue(0)] private float _friction = 1f;
 
         /// <summary>
         /// 空気抵抗．
         /// </summary>
-        [SerializeField, Indent][MinValue(0)] private float _drag = 0.1f;
+        [SerializeField, Indent] [MinValue(0)] private float _drag = 0.1f;
 
         /// <summary>
         /// 加速度を停止するための閾値．
         /// </summary>
-        [SerializeField, Indent][MinValue(0.1f)] private float _threshold = 0.5f;
+        [SerializeField, Indent] [MinValue(0.1f)]
+        private float _threshold = 0.5f;
 
         /// <summary>
         /// 反発係数．1で完全反射、0で衝突時に停止．
@@ -102,28 +103,28 @@ namespace Nitou.TCC.Controller.Effect
 
         void IEarlyUpdateComponent.OnUpdate(float dt)
         {
-            // If there is a vector affecting the character, perform deceleration and bounce processing.
+            // キャラクターに影響するベクトルがある場合、減速と反発処理を実行する
             if (_velocity.magnitude > _threshold)
             {
-                // If there is a collider at the destination, reflect the vector.
+                // 目的地にコライダーがある場合、ベクトルを反射する
                 if (HasColliderOnDestination(dt, out var closestHit))
                 {
-                    // Event to be called when colliding with other objects.
-                    // Process before correcting Velocity.
+                    // 他オブジェクトと衝突したときに呼び出されるイベント
+                    // Velocity を補正する前に処理する
                     _onHitOtherCollider.OnNext(closestHit.collider);
 
                     if (_bounce > 0)
                     {
-                        // When colliding with other ExtraForce, propagate the impact.
+                        // 他の ExtraForce と衝突した場合、衝撃を伝播する
                         if (closestHit.collider.TryGetComponent(out ExtraForce other) &&
                             closestHit.collider.TryGetComponent(out CharacterSettings otherSettings))
                         {
-                            // Force = Mass * Acceleration
+                            // 力 = 質量 × 加速度
                             var ownForce = _settings.Mass * _velocity;
                             var otherForce = otherSettings.Mass * other._velocity;
                             var velocity = (ownForce + otherForce) / (_settings.Mass + otherSettings.Mass);
 
-                            // Add acceleration to self and the target of the collision.
+                            // 自身と衝突対象に加速度を追加する
                             other.AddForce(velocity * other._bounce);
                             _velocity = Vector3.Reflect(velocity, closestHit.normal) * _bounce;
                         }
@@ -134,13 +135,13 @@ namespace Nitou.TCC.Controller.Effect
                     }
                 }
 
-                // Decelerate the character's vector. The deceleration rate switches between ground and air.
+                // キャラクターのベクトルを減速する．減速率は地面と空中で切り替わる
                 var value = _groundCheck.IsOnGround ? _friction : _drag;
                 _velocity -= _velocity * (dt * value);
             }
             else
             {
-                // If the acceleration falls below the threshold, disable the vector.
+                // 加速度が閾値を下回った場合、ベクトルを無効化する
                 _velocity = Vector3.zero;
             }
         }
@@ -150,25 +151,25 @@ namespace Nitou.TCC.Controller.Effect
         // Public Method
 
         /// <summary>
-        /// Add impact to the character.
+        /// キャラクターに衝撃を追加する．
         /// </summary>
-        /// <param name="value">Power</param>
+        /// <param name="value">力</param>
         public void AddForce(Vector3 value)
         {
             _velocity += value / _settings.Mass;
         }
 
         /// <summary>
-        /// Override velocity.
+        /// 速度を上書きする．
         /// </summary>
-        /// <param name="value">new value.</param>
+        /// <param name="value">新しい値</param>
         public void SetVelocity(Vector3 value)
         {
             _velocity = value;
         }
 
         /// <summary>
-        /// 
+        /// 速度をリセットする．
         /// </summary>
         public void ResetVelocity()
         {
@@ -180,7 +181,7 @@ namespace Nitou.TCC.Controller.Effect
         // Private Method
 
         /// <summary>
-        ///     Gather all components attached own object.
+        /// 自身のオブジェクトにアタッチされているコンポーネントを収集する．
         /// </summary>
         private void GatherComponents()
         {
@@ -191,52 +192,52 @@ namespace Nitou.TCC.Controller.Effect
         }
 
         /// <summary>
-        ///     Method to retrieve the shape of a capsule.
+        /// カプセルの形状を取得するメソッド．
         /// </summary>
-        /// <param name="headPoint">Coordinates of the top of the capsule.</param>
-        /// <param name="bottomPoint">Coordinates of the bottom of the capsule.</param>
+        /// <param name="headPoint">カプセルの上部の座標</param>
+        /// <param name="bottomPoint">カプセルの下部の座標</param>
         private void GetBottomHeadPosition(out Vector3 headPoint, out Vector3 bottomPoint)
         {
-            // Get the current position of the capsule.
+            // カプセルの現在位置を取得する
             var point = _transform.Position;
 
-            // Get the height of the capsule.
+            // カプセルの高さを取得する
             var height = _settings.Height;
 
-            // Get the radius of the capsule.
+            // カプセルの半径を取得する
             var radius = _settings.Radius;
 
-            // Calculate the coordinates of the bottom of the capsule.
+            // カプセルの下部の座標を計算する
             bottomPoint = point + new Vector3(0, radius, 0);
 
-            // Calculate the coordinates of the top of the capsule.
+            // カプセルの上部の座標を計算する
             headPoint = point + new Vector3(0, height - radius, 0);
         }
 
         /// <summary>
-        ///     Determines if there is an object at the destination of movement.
+        /// 移動先にオブジェクトがあるかどうかを判定する．
         /// </summary>
-        /// <param name="dt">Delta time since the previous frame.</param>
-        /// <param name="closestHit">Information about the closest collider. It will be set to default if no objects are present.</param>
-        /// <returns>True if an object is present.</returns>
+        /// <param name="dt">前フレームからのデルタ時間</param>
+        /// <param name="closestHit">最も近いコライダーの情報．オブジェクトがない場合はデフォルト値が設定される</param>
+        /// <returns>オブジェクトが存在する場合は true</returns>
         private bool HasColliderOnDestination(float dt, out RaycastHit closestHit)
         {
-            // Get the positions of the character's head and bottom.
+            // キャラクターの頭部と下部の位置を取得する
             GetBottomHeadPosition(out var bottom, out var top);
 
-            // Calculate the distance: Character's radius + 1 frame of movement.
+            // 距離を計算：キャラクターの半径 + 1フレーム分の移動
             var distance = _settings.Radius * 0.5f + _velocity.magnitude * dt;
 
-            // Create an array for collision detection.
+            // 衝突検出用の配列を作成する
             var hits = ArrayPool<RaycastHit>.Shared.Rent(HIT_CAPACITY);
 
-            // Perform collision detection with the character's shape.
+            // キャラクターの形状で衝突検出を実行する
             var hitCount = Physics.CapsuleCastNonAlloc(top, bottom,
                 _settings.Radius, _velocity.normalized, hits, distance,
                 _settings.EnvironmentLayer, QueryTriggerInteraction.Ignore);
 
-            // Find the closest collider among the colliders within the range, excluding the collider to which self belongs.
-            // isCapsuleHit indicates whether the hit was successful.
+            // 範囲内のコライダーの中で、自身が所属するコライダーを除いた最も近いコライダーを見つける
+            // isCapsuleHit はヒットが成功したかどうかを示す
             var isCapsuleHit = _settings.ClosestHit(hits, hitCount, distance, out var hit);
 
             ArrayPool<RaycastHit>.Shared.Return(hits);
@@ -244,18 +245,18 @@ namespace Nitou.TCC.Controller.Effect
 
             if (isCapsuleHit)
             {
-                // Get the normal of the contacting surface.
-                // Without this step, there is a possibility of unexpected flipping during contact with the ground.
+                // 接触面の法線を取得する
+                // このステップがないと、地面との接触時に予期しない反転が発生する可能性がある
                 var normal = _velocity.normalized;
                 var ray = new Ray(hit.point - normal * 0.1f, normal);
 
-                // Perform a raycast to find the closest hit point on the collider.
+                // レイキャストを実行してコライダー上の最も近いヒット点を見つける
                 var result = hit.collider.Raycast(ray, out closestHit, 1);
 
                 return result;
             }
 
-            // If there is no collision, set closestHit to the default value and return False.
+            // 衝突がない場合、closestHit をデフォルト値に設定して False を返す
             closestHit = default;
             return false;
         }
@@ -268,19 +269,19 @@ namespace Nitou.TCC.Controller.Effect
         {
             if (!Application.isPlaying) return;
 
-            // Calculate the center position of the character.
+            // キャラクターの中心位置を計算する
             var centerPosition = _transform.Position + new Vector3(0, _settings.Height * 0.5f, 0);
 
-            // Calculate the target position for movement.
+            // 移動のターゲット位置を計算する
             var maxDistance = _velocity.magnitude * 0.28f;
             var targetPosition = centerPosition + _velocity.normalized * maxDistance;
 
-            // Represent the movement vector.
+            // 移動ベクトルを表現する
             var sphereColor = Color.blue;
             sphereColor.a = 0.4f;
             NGizmo.DrawSphere(targetPosition, _settings.Radius, sphereColor);
 
-            // Represent the line to the target position and the wireframe of the movement vector.
+            // ターゲット位置への線と移動ベクトルのワイヤーフレームを表現する
             var color = Color.white;
             NGizmo.DrawLine(targetPosition, centerPosition, color);
             NGizmo.DrawWireSphere(targetPosition, _settings.Radius, color);

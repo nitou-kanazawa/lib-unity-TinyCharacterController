@@ -14,47 +14,47 @@ using Nitou.Gizmo;
 namespace Nitou.TCC.Controller.Check
 {
     /// <summary>
-    /// This is a component that performs sight detection.
-    /// It detects targets within a specified range from the viewpoint, considering obstacles.
-    /// It calls <see cref="InsightTargets"/> when some targets are within the sight or when all objects have exited the sight.
+    /// 視界検出を行うコンポーネント．
+    /// 視点から指定された範囲内にいるターゲットを、障害物を考慮して検出する．
+    /// 視界内にターゲットがいる場合、またはすべてのオブジェクトが視界から出たときに <see cref="InsightTargets"/> を呼び出す．
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class SightCheck : MonoBehaviour, IEarlyUpdateComponent
     {
         /// <summary>
-        /// The position of the head to be used for detection.
+        /// 検出に使用する頭の位置．
         /// </summary>
         [Title("Sight Settings")] [SerializeField, Indent]
         public Transform _headTransform;
 
         /// <summary>
-        /// The range of the sight.
+        /// 視界の範囲．
         /// </summary>
         [SerializeField, Indent] public int _range = 10;
 
         /// <summary>
-        /// The angle of the sight.
+        /// 視界の角度．
         /// </summary>
         [SerializeField, Indent] public int _angle = 30;
 
         /// <summary>
-        /// The layer to use for detection. Objects in this layer will be visible.
+        /// 検出に使用するレイヤー．このレイヤーのオブジェクトが視認可能になる．
         /// </summary>
         public LayerMask VisibleLayerMask;
 
         /// <summary>
-        /// The tags to use for detection. Objects with these tags will be visible.
+        /// 検出に使用するタグ．これらのタグを持つオブジェクトが視認可能になる．
         /// </summary>
         [SerializeField, Indent] public string[] _targetTagList;
 
         /// <summary>
-        /// If true, check for the presence of obstacles.
-        /// Obstacle detection uses <see cref="CharacterSettings._environmentLayer"/>.
+        /// true の場合、障害物の存在を確認する．
+        /// 障害物検出には <see cref="CharacterSettings._environmentLayer"/> が使用される．
         /// </summary>
         [Title("Options")] public bool RaycastCheck = true;
 
         /// <summary>
-        /// Calls an event when an object enters or exits the sight.
+        /// オブジェクトが視界に入った、または出たときにイベントを呼び出す．
         /// </summary>
         public UnityEvent<bool> OnChangeInsightAnyTargetState;
         
@@ -67,22 +67,22 @@ namespace Nitou.TCC.Controller.Check
         int IEarlyUpdateComponent.Order => Order.Check;
 
         /// <summary>
-        /// Gets a list of objects within the sight.
+        /// 視界内にあるオブジェクトのリストを取得する．
         /// </summary>
         public List<GameObject> InsightTargets { get; private set; } = new();
 
         /// <summary>
-        /// Gets the first object found within the sight.
+        /// 視界内で見つかった最初のオブジェクトを取得する．
         /// </summary>
         public GameObject InsightTarget => InsightTargets.Count > 0 ? InsightTargets[0] : null;
 
         /// <summary>
-        /// If true, there are objects within the sight.
+        /// true の場合、視界内にオブジェクトが存在する．
         /// </summary>
         public bool IsInsightAnyTarget => InsightTargets.Count > 0;
-   
+
         /// <summary>
-        /// The maximum number of objects that can be detected at once.
+        /// 一度に検出できるオブジェクトの最大数．
         /// </summary>
         private const int CAPACITY = 100;
 
@@ -93,53 +93,53 @@ namespace Nitou.TCC.Controller.Check
         // Lifecycle Events
         private void Awake()
         {
-            // Collect a list of related components.
+            // 関連コンポーネントのリストを収集する
             GatherComponents();
         }
 
         void IEarlyUpdateComponent.OnUpdate(float deltaTime)
         {
-            // Cache the previous information to detect changes in the sight.
+            // 視界の変化を検出するために前の情報をキャッシュする
             var isAnyInsightTargetPreviousFrame = IsInsightAnyTarget;
 
-            // Get the coordinates and direction of the sensor's position.
+            // センサーの位置の座標と方向を取得する
             var headPosition = _headTransform.position;
             var forward = _headTransform.forward;
 
-            // Collect all colliders around the character.
+            // キャラクター周辺のすべてのコライダーを収集する
             var count = Physics.OverlapSphereNonAlloc(headPosition, _range, Results,
                 VisibleLayerMask, QueryTriggerInteraction.Ignore);
 
-            // Extract targets from the list of colliders.
+            // コライダーのリストからターゲットを抽出する
             InsightTargets.Clear();
             for (var i = 0; i < count; i++)
             {
                 var col = Results[i];
 
-                // Skip processing if the detected object is one's own collider or not in the tag list.
+                // 検出されたオブジェクトが自身のコライダーまたはタグリストにない場合は処理をスキップする
                 if (_settings.IsOwnCollider(col) ||
                     col.gameObject.ContainTag(_targetTagList) == false)
                     continue;
 
-                // Detect the position of the closest edge within the sight.
+                // 視界内の最も近い端の位置を検出する
                 var closestPoint = col.ClosestPointOnBounds(headPosition);
                 var deltaPosition = closestPoint - headPosition;
 
-                // Skip processing if the target is outside the sight.
+                // ターゲットが視界外にある場合は処理をスキップする
                 if (Vector3.Angle(forward, deltaPosition) > _angle * 0.5f)
                     continue;
 
-                // Skip processing if RaycastCheck is enabled and the target is obstructed by an obstacle.
+                // RaycastCheck が有効で、ターゲットが障害物に遮られている場合は処理をスキップする
                 if (RaycastCheck &&
                     IsCollideTarget(headPosition, closestPoint, col))
                     continue;
 
-                // Add the object to the list of objects within the sight.
+                // 視界内のオブジェクトのリストにオブジェクトを追加する
                 if (InsightTargets.Contains(col.gameObject) == false)
                     InsightTargets.Add(col.gameObject);
             }
 
-            // Notify if the sight state has changed.
+            // 視界の状態が変化した場合は通知する
             if (IsInsightAnyTarget != isAnyInsightTargetPreviousFrame)
                 OnChangeInsightAnyTargetState.Invoke(IsInsightAnyTarget);
         }
@@ -149,46 +149,46 @@ namespace Nitou.TCC.Controller.Check
         // Private Method
 
         /// <summary>
-        /// Checks for obstacles between the target objects.
-        /// Excludes the collider of the sensor and the target collider.
+        /// ターゲットオブジェクト間の障害物をチェックする．
+        /// センサーのコライダーとターゲットコライダーは除外する．
         /// </summary>
-        /// <param name="position">The position of the sensor.</param>
-        /// <param name="targetPosition">The closest position of the target.</param>
-        /// <param name="targetCollider">The target object's collider.</param>
-        /// <returns>True if obstructed by an obstacle.</returns>
+        /// <param name="position">センサーの位置</param>
+        /// <param name="targetPosition">ターゲットの最も近い位置</param>
+        /// <param name="targetCollider">ターゲットオブジェクトのコライダー</param>
+        /// <returns>障害物に遮られている場合は true</returns>
         private bool IsCollideTarget(in Vector3 position, in Vector3 targetPosition, in Collider targetCollider)
         {
             var deltaPosition = (targetPosition - position);
             var direction = deltaPosition.normalized;
             var distance = deltaPosition.magnitude;
 
-            // Allocate a buffer.
+            // バッファを割り当てる
             var hits = new RaycastHit[CAPACITY];
 
-            // Check if the sight is clear towards the target from the sensor.
+            // センサーからターゲットへの視界がクリアかどうかを確認する
             var count = Physics.RaycastNonAlloc(position, direction, hits, distance, _settings.EnvironmentLayer,
                 QueryTriggerInteraction.Ignore);
 
-            // Skip processing if the detected collider is the target's collider or belongs to oneself.
+            // 検出されたコライダーがターゲットのコライダーまたは自身に属する場合は処理をスキップする
             var isCollide = false;
             for (var i = 0; i < count; i++)
             {
                 var hit = hits[i];
-                // Skip processing if the collider belongs to the target or oneself.
+                // コライダーがターゲットまたは自身に属する場合は処理をスキップする
                 if (targetCollider == hit.collider || _settings.IsOwnCollider(hit.collider))
                     continue;
 
-                // Interrupt the search process because it is obstructed by an obstacle.
+                // 障害物に遮られているため検索処理を中断する
                 isCollide = true;
                 break;
             }
 
-            // Return false if obstructed.
+            // 遮られている場合は false を返す
             return isCollide;
         }
 
         /// <summary>
-        /// Collect a list of components.
+        /// コンポーネントのリストを収集する．
         /// </summary>
         private void GatherComponents()
         {
@@ -200,25 +200,25 @@ namespace Nitou.TCC.Controller.Check
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            // Ensure that the maximum and minimum values are within valid ranges.
+            // 最大値と最小値が有効な範囲内にあることを確認する
             _range = Mathf.Max(0, _range);
             _angle = Mathf.Clamp(_angle, 0, 360);
         }
 
         private void Reset()
         {
-            // Set the default value of the layer to include in the sight.
+            // 視界に含めるレイヤーのデフォルト値を設定する
             VisibleLayerMask = LayerMask.GetMask("Default");
         }
 
         // TODO: Gizmosの修正
         /*
         private void OnDrawGizmosSelected() {
-            // Do nothing if the game is not playing.
+            // ゲームがプレイ中でない場合は何もしない
             if (Application.isPlaying == false)
                 return;
 
-            // Represent objects within the sight using Gizmos.
+            // 視界内のオブジェクトを Gizmos を使用して表現する
             foreach (var obj in InsightTargets) {
                 var position = obj.transform.position;
                 Gizmos_.DrawSphere(position, 1f, Colors.Yellow);

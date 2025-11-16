@@ -8,9 +8,9 @@ using Nitou.Gizmo;
 namespace Nitou.TCC.Controller.Effect
 {
     /// <summary>
-    /// A component that sets a custom acceleration for a character.
-    /// The acceleration is set externally and is not changed by the component.
-    /// The acceleration set here is reflected in the character by the Brain.
+    /// キャラクターにカスタムの加速度を設定するコンポーネント．
+    /// 加速度は外部から設定され、コンポーネント自体は変更しない．
+    /// ここで設定された加速度は Brain によってキャラクターに反映される．
     /// </summary>
     [AddComponentMenu(MenuList.MenuEffect + nameof(AdditionalVelocity))]
     [DisallowMultipleComponent]
@@ -27,7 +27,7 @@ namespace Nitou.TCC.Controller.Effect
         }
 
         /// <summary>
-        /// Speed to move
+        /// 移動速度．
         /// </summary>
         public float Speed => Velocity.magnitude;
 

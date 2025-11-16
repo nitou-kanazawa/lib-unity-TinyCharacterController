@@ -8,44 +8,40 @@ using Nitou.TCC.Utils;
 
 namespace Nitou.TCC.Controller.Core
 {
-    using Controller.Interfaces.Core;
-    using Controller.Interfaces.Components;
-    using Controller.Shared;
-
     /// <summary>
-    /// This brain operates using <see cref="UnityEngine.CharacterController"/>.
-    /// The height and width of the Agent are determined by <see cref="CharacterSettings.Height"/> and <see cref="CharacterSettings.Radius"/>.
+    /// <see cref="UnityEngine.CharacterController"/> を使用して動作する Brain．
+    /// Agentの高さと幅は <see cref="CharacterSettings.Height"/> と <see cref="CharacterSettings.Radius"/> によって決定される．
     /// </summary>
-    [AddComponentMenu(MenuList.MenuBrain + nameof(CharacterBrain))]
-    [DefaultExecutionOrder(Order.UpdateBrain)]
+    [AddComponentMenu(MenuList.MenuBrain + "Character Brain")]
     [DisallowMultipleComponent]
+    [DefaultExecutionOrder(Order.UpdateBrain)]
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(CharacterSettings))]
     public sealed class CharacterBrain : BrainBase, IActorSettingUpdateReceiver
     {
         /// <summary>
-        /// Reference to the component for moving the character.
+        /// キャラクターを移動させるためのコンポーネントへの参照．
         /// </summary>
         private CharacterController _controller;
 
         /// <summary>
-        /// Component for performing pre-calculations.
-        /// Required to toggle ON/OFF the component from within.
+        /// 事前計算を実行するためのコンポーネント．
+        /// 内部からコンポーネントのON/OFFを切り替えるために必要．
         /// </summary>
         private EarlyUpdateBrainBase _earlyUpdate;
 
         /// <summary>
-        /// Setting of axes along which the character can move.
+        /// キャラクターが移動できる軸の設定．
         /// </summary>
         [SerializeField, Indent] private bool3 _freezeAxis = new(false, false, false);
 
         /// <summary>
-        /// Possible to push when colliding with a Rigidbody.
+        /// Rigidbody と衝突したときに押すことが可能かどうか．
         /// </summary>
         [SerializeField, Indent] private bool _pushable = true;
 
-        [DisableInPlayMode] [SerializeField, Indent]
-        private bool _detectCollisions = true;
+        [DisableInPlayMode]
+        [SerializeField, Indent] private bool _detectCollisions = true;
 
         private Vector3 _lockAxis = Vector3.one;
         private static readonly Collider[] Colliders = new Collider[5];
@@ -57,7 +53,7 @@ namespace Nitou.TCC.Controller.Core
         // Property
 
         /// <summary>
-        /// FreezeAxis content in Vector3
+        /// Vector3 形式の FreezeAxis の内容．
         /// </summary>
         public Vector3 LockAxis
         {
@@ -66,24 +62,23 @@ namespace Nitou.TCC.Controller.Core
         }
 
         /// <summary>
-        /// Setting of axes along which the character can move.
+        /// キャラクターが移動できる軸の設定．
         /// </summary>
         public bool3 FreezeAxis => _freezeAxis;
 
         /// <summary>
-        /// Update timing. CharacterBrain updates during the Update phase.
+        /// 更新タイミング．CharacterBrain は Update フェーズで更新される．
         /// </summary>
         public override UpdateTiming Timing => UpdateTiming.Update;
 
 
         // ----------------------------------------------------------------------------
-        // Lifecycle Events
+
+        #region Lifecycle Events
+
         private void Awake()
         {
-            // Initialize the parent class.
             base.Initialize();
-
-            // Collect components.
             GatherComponents();
 
             // Apply LockAxis.
@@ -127,16 +122,18 @@ namespace Nitou.TCC.Controller.Core
             body.AddForce(pushDir * Settings.Mass, ForceMode.Force);
         }
 
+        #endregion
+
 
         // ----------------------------------------------------------------------------
         // Public Method
 
         /// <summary>
-        /// Update freeze position.
+        /// フリーズ位置を更新する．
         /// </summary>
-        /// <param name="x">lock x axis</param>
-        /// <param name="y">lock y axis</param>
-        /// <param name="z">lock z axis</param>
+        /// <param name="x">X軸をロックするかどうか．</param>
+        /// <param name="y">Y軸をロックするかどうか．</param>
+        /// <param name="z">Z軸をロックするかどうか．</param>
         public void SetFreezeAxis(bool x, bool y, bool z)
         {
             _lockAxis.x = x ? 0 : 1;
@@ -148,15 +145,15 @@ namespace Nitou.TCC.Controller.Core
         }
 
         /// <summary>
-        /// Callback when CharacterSettings is updated.
+        /// CharacterSettings が更新されたときのコールバック．
         /// </summary>
-        /// <param name="settings">CharacterSettings.</param>
+        /// <param name="settings">更新された CharacterSettings．</param>
         void IActorSettingUpdateReceiver.OnUpdateSettings(CharacterSettings settings)
         {
-            // If the Controller is not set, retrieve it.
+            // Controller が設定されていない場合は取得する
             if (_controller == null) TryGetComponent(out _controller);
 
-            // Get the height, center point, and width.
+            // 高さ、中心点、幅を取得する
             _controller.height = settings.Height - _controller.skinWidth * 2;
             _controller.center = new Vector3(0, settings.Height * 0.5f + _controller.skinWidth, 0);
             _controller.radius = settings.Radius;
@@ -167,24 +164,24 @@ namespace Nitou.TCC.Controller.Core
         // Protected Method
 
         /// <summary>
-        /// Update the character's position.
+        /// キャラクターの位置を更新する．
         /// </summary>
-        /// <param name="total">The final position.</param>
-        /// <param name="deltaTime">Delta time.</param>
+        /// <param name="total">最終的な位置．</param>
+        /// <param name="deltaTime">デルタタイム．</param>
         protected override void ApplyPosition(in Vector3 total, float deltaTime)
         {
             var totalVelocity = Vector3.Scale(_lockAxis, total);
             var velocity = totalVelocity * deltaTime;
 
-            // If GroundCheck is present, correct the position to fit the ground.
+            // GroundCheck が存在する場合、地面に合わせて位置を補正する
             if (_hasGroundCheck && _groundCheck.IsFirmlyOnGround && totalVelocity.y <= 0)
             {
                 var distance = _groundCheck.DistanceFromGround;
                 velocity -= new Vector3(0, distance, 0);
             }
 
-            // If CharacterController is enabled, move within the context of CharacterController.
-            // Otherwise, move the character with Transform.
+            // CharacterController が有効な場合、CharacterController のコンテキスト内で移動する
+            // それ以外の場合は、Transform でキャラクターを移動させる
             if (_controller.enabled)
             {
                 _controller.Move(velocity);
@@ -198,31 +195,32 @@ namespace Nitou.TCC.Controller.Core
         }
 
         /// <summary>
-        /// Apply the character's rotation.
+        /// キャラクターの回転を適用する．
         /// </summary>
-        /// <param name="rotation">The final rotation.</param>
+        /// <param name="rotation">最終的な回転．</param>
         protected override void ApplyRotation(in Quaternion rotation)
         {
             CachedTransform.rotation = rotation;
         }
 
         /// <summary>
-        /// Get the initial position and rotation.
+        /// 初期位置と回転を取得する．
         /// </summary>
+        /// <param name="position">取得する位置．</param>
+        /// <param name="rotation">取得する回転．</param>
         protected override void GetPositionAndRotation(out Vector3 position, out Quaternion rotation)
         {
             CachedTransform.GetPositionAndRotation(out position, out rotation);
         }
 
         /// <summary>
-        /// Update the position.
-        /// In this process, the position is updated immediately and is not affected by other Control or Effect.
+        /// 位置を更新する．
+        /// この処理では、位置が即座に更新され、他の Control や Effect の影響を受けない．
         /// </summary>
-        /// <param name="position">The new position.</param>
-        /// <returns>True if the movement is possible.</returns>
+        /// <param name="position">新しい位置．</param>
         protected override void SetPositionDirectly(in Vector3 position)
         {
-            // It is necessary to temporarily stop CharacterController in order to update the coordinates.
+            // 座標を更新するために、CharacterController を一時的に停止する必要がある
             if (_controller.enabled)
             {
                 _controller.enabled = false;
@@ -231,18 +229,17 @@ namespace Nitou.TCC.Controller.Core
             }
             else
             {
-                // Update the position.
+                // 位置を更新する
                 CachedTransform.position = position;
             }
         }
 
         /// <summary>
-        /// Update the character's rotation.
+        /// キャラクターの回転を更新する．
         /// </summary>
-        /// <param name="rotation">The new rotation.</param>
+        /// <param name="rotation">新しい回転．</param>
         protected override void SetRotationDirectly(in Quaternion rotation)
         {
-            // Rotation = rotation;
             CachedTransform.rotation = rotation;
         }
 
@@ -266,32 +263,35 @@ namespace Nitou.TCC.Controller.Core
         // Private Method
 
         /// <summary>
-        /// Gather and add a list of components used by <see cref="CharacterBrain"/>.
+        /// <see cref="CharacterBrain"/> で使用するコンポーネントのリストを収集して追加する．
         /// </summary>
         private void GatherComponents()
         {
             TryGetComponent(out CachedTransform);
             TryGetComponent(out _controller);
             _hasGroundCheck = TryGetComponent(out _groundCheck);
+            _earlyUpdate = gameObject.GetOrAddComponent<EarlyUpdateBrain>();
 
-            _earlyUpdate = gameObject.AddComponent<EarlyUpdateBrain>();
-
-            // Disable the component at the start to prevent it from running immediately.
+            // すぐに実行されないように、開始時にコンポーネントを無効化する
             _earlyUpdate.enabled = false;
         }
 
         /// <summary>
-        /// Push other character brain.
+        /// 他のキャラクター Brain を押す．
         /// </summary>
-        /// <param name="direction">the direction of push</param>
-        /// <param name="mass">The character mass</param>
+        /// <param name="direction">押す方向．</param>
+        /// <param name="mass">キャラクターの質量．</param>
         private void PushedOtherController(Vector3 direction, float mass)
         {
+            // ゼロ除算を防ぐため、質量が無効な場合は早期リターン
+            if (Settings.Mass <= 0 || mass <= 0)
+                return;
+
             var max = Mathf.Max(Settings.Mass, mass);
             var rate = (mass / Settings.Mass) / max;
 
             var velocity = Vector3.Scale(direction, new Vector3(1, 0f, 1)) * rate * Time.deltaTime;
-            velocity.y = 0.001f; // avoid character controller bugs.
+            velocity.y = 0.001f; // CharacterController のバグを回避
 
             _controller.Move(velocity);
         }

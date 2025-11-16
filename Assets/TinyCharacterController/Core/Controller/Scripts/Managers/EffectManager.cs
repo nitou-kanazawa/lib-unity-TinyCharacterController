@@ -8,7 +8,8 @@ namespace Nitou.TCC.Controller.Core
 {
     internal sealed class EffectManager
     {
-        private readonly List<IEffect> _components = new(); // List of additional acceleration components
+        // 追加の加速度コンポーネントのリスト
+        private readonly List<IEffect> _components = new();
 
         public Vector3 Velocity { get; private set; }
 

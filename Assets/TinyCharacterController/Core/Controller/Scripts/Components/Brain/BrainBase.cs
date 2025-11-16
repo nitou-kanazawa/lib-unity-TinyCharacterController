@@ -27,7 +27,6 @@ namespace Nitou.TCC.Controller.Core
         protected Quaternion Rotation;
         protected Vector3 Position;
 
-
         protected CharacterSettings Settings;
         protected Transform CachedTransform;
 
@@ -48,33 +47,33 @@ namespace Nitou.TCC.Controller.Core
         public int TurnSpeed => _turnManager.CurrentTurn?.TurnSpeed ?? 0;
 
         /// <summary>
-        /// Character orientation in world space.
+        /// ワールド空間におけるキャラクターの向き（Yaw角度）．
         /// </summary>
         public float YawAngle => _turnManager.TargetYawAngle;
 
         /// <summary>
-        /// Local vector for the direction the character is facing
+        /// キャラクターが向いている方向のローカルベクトル．
         /// </summary>
         public Vector3 LocalVelocity => Quaternion.Inverse(CachedTransform.rotation) * ControlVelocity;
 
         /// <summary>
-        /// Movement vector of the character in world space.
+        /// ワールド空間におけるキャラクターの移動ベクトル．
         /// </summary>
         public Vector3 ControlVelocity => _moveManager.Velocity;
 
         /// <summary>
-        /// Additional movement vectors that are added.
-        /// For example, gravity or impact.
+        /// 追加される移動ベクトル．
+        /// 例えば、重力や衝撃など．
         /// </summary>
         public Vector3 EffectVelocity => _effectManager.Velocity;
 
         /// <summary>
-        /// The vector that is the sum of the character's movement vector and the additive movement vector.
+        /// キャラクターの移動ベクトルと追加移動ベクトルの合計．
         /// </summary>
         public Vector3 TotalVelocity { get; private set; }
 
         /// <summary>
-        /// Difference between the current direction and the target direction
+        /// 現在の向きと目標の向きとの差分角度．
         /// </summary>
         public float DeltaTurnAngle => _turnManager.DeltaTurnAngle;
 
@@ -131,7 +130,7 @@ namespace Nitou.TCC.Controller.Core
         }
 
         /// <summary>
-        /// Update information in Brain.<br/>
+        /// Brain の情報を更新する．
         /// </summary>
         protected void UpdateBrain()
         {
@@ -204,12 +203,13 @@ namespace Nitou.TCC.Controller.Core
         /// <summary>
         /// 位置と回転のワープ移動．
         /// </summary>
-        /// <param name="position">New position.</param>
-        /// <param name="direction">New rotation. If Vector3.zero, maintain current orientation.</param>
+        /// <param name="position">新しい位置．</param>
+        /// <param name="direction">新しい向き．Vector3.zero の場合、現在の向きを維持する．</param>
         public void Warp(Vector3 position, Vector3 direction)
         {
-            // If Direction is vector3.zero, maintain current orientation
-            var rotation = direction != Vector3.zero
+            // direction が vector3.zero の場合、現在の向きを維持する
+            // 浮動小数点精度問題を回避するため、sqrMagnitudeで判定
+            var rotation = direction.sqrMagnitude > float.Epsilon
                 ? Quaternion.LookRotation(direction)
                 : CachedTransform.rotation;
             _warpManager.SetPositionAndRotation(position, rotation);
@@ -220,8 +220,8 @@ namespace Nitou.TCC.Controller.Core
         /// <summary>
         /// 位置と回転のワープ移動．
         /// </summary>
-        /// <param name="position">New position</param>
-        /// <param name="rotation">new rotation.</param>
+        /// <param name="position">新しい位置．</param>
+        /// <param name="rotation">新しい回転．</param>
         public void Warp(Vector3 position, Quaternion rotation)
         {
             _warpManager.SetPositionAndRotation(position, rotation);
@@ -233,7 +233,7 @@ namespace Nitou.TCC.Controller.Core
         /// 位置のみのワープ移動．
         /// ワープによる移動が<see cref="IMove"/>より優先される．
         /// </summary>
-        /// <param name="position">New position.</param>
+        /// <param name="position">新しい位置．</param>
         public void Warp(Vector3 position)
         {
             _warpManager.SetPosition(position);
@@ -244,7 +244,7 @@ namespace Nitou.TCC.Controller.Core
         /// 回転のみのワープ移動．
         /// ワープによる移動が<see cref="IMove"/>より優先される．
         /// </summary>
-        /// <param name="rotation">new rotation.</param>
+        /// <param name="rotation">新しい回転．</param>
         public void Warp(Quaternion rotation)
         {
             _warpManager.SetRotation(rotation);
@@ -252,10 +252,10 @@ namespace Nitou.TCC.Controller.Core
         }
 
         /// <summary>
-        /// Warp to take into account the movement of the midpoint.
-        /// Warp behavior depends on Brain.
+        /// 中間点の移動を考慮したワープ移動．
+        /// ワープの挙動はBrainに依存する．
         /// </summary>
-        /// <param name="position">New coordinates</param>
+        /// <param name="position">新しい座標．</param>
         public void Move(Vector3 position)
         {
             _warpManager.Move(position);
@@ -269,40 +269,42 @@ namespace Nitou.TCC.Controller.Core
         /// <summary>
         /// 最終的な位置を適用する．
         /// </summary>
-        /// <param name="totalVelocity">Current acceleration</param>
-        /// <param name="deltaTime">Delta time</param>
+        /// <param name="totalVelocity">現在の加速度．</param>
+        /// <param name="deltaTime">デルタタイム．</param>
         protected abstract void ApplyPosition(in Vector3 totalVelocity, float deltaTime);
 
         /// <summary>
         /// 最終的な回転を適用する．
         /// </summary>
+        /// <param name="rotation">適用する回転．</param>
         protected abstract void ApplyRotation(in Quaternion rotation);
 
         /// <summary>
-        /// Move the position of the character to the <see cref="newPosition"/>.
-        /// Unlike <see cref="Warp(UnityEngine.Vector3)"/>, it is affected by other vectors.
+        /// キャラクターの位置を <paramref name="newPosition"/> に移動する．
+        /// <see cref="Warp(UnityEngine.Vector3)"/> とは異なり、他のベクトルの影響を受ける．
         /// </summary>
-        /// <param name="newPosition">new position</param>
-        /// <returns>move success</returns>
+        /// <param name="newPosition">新しい位置．</param>
         protected abstract void SetPositionDirectly(in Vector3 newPosition);
 
         /// <summary>
-        /// Turn the character to the <see cref="newRotation"/>.
-        /// Unlink <see cref="Warp(UnityEngine.Quaternion)"/>, it is affected by other turn.
+        /// キャラクターを <paramref name="newRotation"/> に回転させる．
+        /// <see cref="Warp(UnityEngine.Quaternion)"/> とは異なり、他の回転の影響を受ける．
         /// </summary>
-        /// <param name="newRotation">new rotation.</param>
+        /// <param name="newRotation">新しい回転．</param>
         protected abstract void SetRotationDirectly(in Quaternion newRotation);
 
         /// <summary>
-        /// Move the character to the <see cref="newPosition"/>.
-        /// Unlink <see cref="Warp(UnityEngine.Vector3)"/>, it is affected by other move.
+        /// キャラクターを <paramref name="newPosition"/> に移動する．
+        /// <see cref="Warp(UnityEngine.Vector3)"/> とは異なり、他の移動の影響を受ける．
         /// </summary>
-        /// <param name="newPosition">new position</param>
+        /// <param name="newPosition">新しい位置．</param>
         protected abstract void MovePosition(in Vector3 newPosition);
 
         /// <summary>
-        /// Cache Position and Rotation for each inherited Brain.
+        /// 継承した各 Brain の Position と Rotation をキャッシュする．
         /// </summary>
+        /// <param name="position">キャッシュする位置．</param>
+        /// <param name="rotation">キャッシュする回転．</param>
         protected abstract void GetPositionAndRotation(out Vector3 position, out Quaternion rotation);
     }
 }

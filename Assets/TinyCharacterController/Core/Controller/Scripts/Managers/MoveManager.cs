@@ -1,16 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Nitou.TCC.Utils;
-using Nitou.TCC.Controller.Interfaces.Components;
 using Nitou.TCC.Controller.Interfaces.Core;
 
 namespace Nitou.TCC.Controller.Core
 {
-    internal class MoveManager
+    internal sealed class MoveManager
     {
         private IPriorityLifecycle<IMove> _moveLifeCycle;
 
-        // List of components for controlling character movement
+        // キャラクターの移動を制御するコンポーネントのリスト
         private readonly List<IMove> _moves = new();
 
         public bool HasHighestPriority { get; private set; } = false;

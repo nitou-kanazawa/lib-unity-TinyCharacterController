@@ -14,12 +14,12 @@ namespace Nitou.TCC.Controller.Effect
 {
     /// <summary>
     /// アクターに重力を適用するコンポーネント．
-    /// 
-    /// It adds downward acceleration at the speed set in Gravity.
-    /// The acceleration multiplier can be multiplied for each character.
-    /// There is no acceleration while in contact with the ground.
-    /// Events are executed at the timing of landing and takeoff.
-    /// Components that move up and down, such as jumping, may manipulate this value.
+    ///
+    /// Gravity で設定された速度で下方向の加速度を追加する．
+    /// 加速度の倍率は各キャラクターごとに設定可能．
+    /// 地面と接触している間は加速度がない．
+    /// 着地と離陸のタイミングでイベントが実行される．
+    /// ジャンプなど上下移動するコンポーネントがこの値を操作する場合がある．
     /// </summary>
     [AddComponentMenu(MenuList.MenuEffect + nameof(Gravity))]
     [DisallowMultipleComponent]
@@ -65,29 +65,29 @@ namespace Nitou.TCC.Controller.Effect
         int IEarlyUpdateComponent.Order => Order.Gravity;
 
         /// <summary>
-        /// 現在の落下速度.
-        /// Negative value if falling, positive value if rising.
+        /// 現在の落下速度．
+        /// 落下中は負の値、上昇中は正の値．
         /// </summary>
         public float FallSpeed => _velocity.y;
 
         /// <summary>
-        /// 現在の状態.
+        /// 現在の状態．
         /// </summary>
         public State CurrentState => _state;
 
         /// <summary>
-        /// 現在フレームで地面を離れたかどうか
+        /// 現在フレームで地面を離れたかどうか．
         /// </summary>
         public bool IsLeaved { get; private set; }
 
         /// <summary>
-        /// 現在フレームで着地したかどうか
+        /// 現在フレームで着地したかどうか．
         /// </summary>
         public bool IsLanded { get; private set; }
 
         /// <summary>
         /// 重力スケール．
-        /// 2 for a 2x faster fall, 0.5 for a lower gravity environment.
+        /// 2倍速で落下する場合は2、低重力環境の場合は0.5．
         /// </summary>
         public float GravityScale
         {
@@ -153,10 +153,10 @@ namespace Nitou.TCC.Controller.Effect
         // Public Method
 
         /// <summary>
-        /// Set the fall speed.
-        /// For example, to stop the fall, specify Vector3.Zero.
+        /// 落下速度を設定する．
+        /// 例えば、落下を停止する場合は Vector3.Zero を指定する．
         /// </summary>
-        /// <param name="velocity">new velocity</param>
+        /// <param name="velocity">新しい速度．</param>
         public void SetVelocity(Vector3 velocity)
         {
             _velocity = velocity;

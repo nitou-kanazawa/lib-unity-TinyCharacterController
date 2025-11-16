@@ -129,13 +129,13 @@ namespace Nitou.TCC.Controller.Control
         }
 
         /// <summary>
-        /// Movement vector in world coordinates
-        /// �l��Update��ɍX�V�����D
+        /// ワールド座標での移動ベクトル．
+        /// 値は Update 時に更新される．
         /// </summary>
         public Vector3 MoveVelocity { get; private set; }
 
         /// <summary>
-        /// Current Velocity
+        /// 現在の速度．
         /// </summary>
         public Vector3 Velocity
         {
@@ -148,29 +148,29 @@ namespace Nitou.TCC.Controller.Control
         }
 
         /// <summary>
-        /// Character-based movement vector
+        /// キャラクター基準の移動ベクトル．
         /// </summary>
         public Vector3 LocalVelocity => Quaternion.Inverse(_transform.rotation) * MoveVelocity;
 
         /// <summary>
-        /// The direction the character wants to move in world coordinates.
-        /// This value multiplied by Speed is the actual amount of movement.
+        /// ワールド座標でキャラクターが移動したい方向．
+        /// この値に Speed を掛けたものが実際の移動量となる．
         /// </summary>
         public Vector3 Direction { get; private set; }
 
         /// <summary>
-        /// The direction of movement from the character's perspective
+        /// キャラクター視点での移動方向．
         /// </summary>
         public Vector3 LocalDirection => Quaternion.Inverse(_transform.rotation) * Direction;
 
         /// <summary>
-        /// Delta turn angle from previous frame.
-        /// This value does not take TurnSpeed into account.
+        /// 前フレームからの回転角度の変化量．
+        /// この値は TurnSpeed を考慮しない．
         /// </summary>
         public float DeltaTurnAngle { get; private set; }
 
         /// <summary>
-        /// Maximum character movement speed
+        /// キャラクターの最大移動速度．
         /// </summary>
         public float MoveSpeed
         {
@@ -179,7 +179,7 @@ namespace Nitou.TCC.Controller.Control
         }
 
         /// <summary>
-        /// Turn speed
+        /// 回転速度．
         /// </summary>
         public int TurnSpeed
         {
@@ -187,9 +187,9 @@ namespace Nitou.TCC.Controller.Control
             set => _turnSpeed = value;
         }
 
-        /// <summary>.
-        /// Determines if MoveControl is used to move the character.
-        /// If a higher value than other Priority is set, this component is used.
+        /// <summary>
+        /// MoveControl がキャラクターの移動に使用されるかどうかを決定する優先度．
+        /// 他の Priority より高い値が設定されている場合、このコンポーネントが使用される．
         /// </summary>
         public int MovePriority
         {
@@ -202,8 +202,8 @@ namespace Nitou.TCC.Controller.Control
         }
 
         /// <summary>
-        /// <see cref="ITurn"/>�Ƃ��Ă̗D��x�D
-        /// 0�ȉ��̏ꍇ�͎g�p����Ȃ��D
+        /// <see cref="ITurn"/> としての優先度．
+        /// 0以下の場合は使用されない．
         /// </summary>
         public int TurnPriority
         {
@@ -212,18 +212,18 @@ namespace Nitou.TCC.Controller.Control
         }
 
         /// <summary>
-        /// 移動方向の変化量 (degree)
+        /// 移動方向の変化量（degree）．
         /// </summary>
         public float DeltaDirectionAngle => Vector3.SignedAngle(_transform.forward, _moveDirection, Vector3.up);
 
         /// <summary>
-        /// True if the character's movement axis is restricted.
+        /// キャラクターの移動軸が制限されている場合は true．
         /// </summary>
         public bool IsLockAxis => _lockAxis.sqrMagnitude > 0;
 
-        /// <summary>.
-        /// True if the character is moving.
-        /// Movement is determined based on <see cref="_moveStopThreshold"/>.
+        /// <summary>
+        /// キャラクターが移動中の場合は true．
+        /// 移動は <see cref="_moveStopThreshold"/> に基づいて判定される．
         /// </summary>
         public bool IsMove { get; private set; }
 
@@ -287,9 +287,9 @@ namespace Nitou.TCC.Controller.Control
         // Public Method
 
         /// <summary>
-        /// Moves according to the stick input.
+        /// スティック入力に応じて移動する．
         /// </summary>
-        /// <param name="leftStick">Direction of movement.</param>
+        /// <param name="leftStick">移動方向．</param>
         public void Move(Vector2 leftStick)
         {
             // 入力情報をキャッシュする
@@ -332,7 +332,7 @@ namespace Nitou.TCC.Controller.Control
 
         private void ProcessTurn(float dt)
         {
-            // Determines direction of movement according to ground information
+            // 地面情報に応じて移動方向を決定する
             var normal = _hasGroundCheck && _groundCheck.IsOnGround ? _groundCheck.GroundSurfaceNormal : Vector3.up;
             normal = Vector3.Angle(Vector3.up, normal) < _angle ? normal : Vector3.up;
             Direction = Vector3.ProjectOnPlane(_moveDirection, normal);

@@ -188,13 +188,13 @@ namespace Nitou.TCC.Controller.Check
         // Public Method
 
         /// <summary>
-        /// アクター自身にアタッチされているコライダーを無視してRaycastを実行する．
-        /// このAPIは例えばキャラクターの前方にある段差を検出するために使用される．
+        /// アクター自身にアタッチされているコライダーを無視して Raycast を実行する．
+        /// この API は例えばキャラクターの前方にある段差を検出するために使用される．
         /// </summary>
-        /// <param name="position">開始位置。</param>
-        /// <param name="distance">レイの範囲。</param>
-        /// <param name="hit">ヒットしたRaycastHitを返します。</param>
-        /// <returns>コライダーにヒットした場合はtrueを返します。</returns>
+        /// <param name="position">開始位置．</param>
+        /// <param name="distance">レイの範囲．</param>
+        /// <param name="hit">ヒットした RaycastHit を返す．</param>
+        /// <returns>コライダーにヒットした場合は true を返す．</returns>
         public bool Raycast(Vector3 position, float distance, out RaycastHit hit)
         {
             var groundCheckCount = Physics.RaycastNonAlloc(position, Vector3.down, _hits, distance,

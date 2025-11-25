@@ -58,5 +58,23 @@ namespace Nitou.TCC.Utils
 
             return false;
         }
+
+
+        // ----------------------------------------------------------------------------
+        // コンポーネント
+
+        /// <summary>
+        /// 指定した型のコンポーネントを取得する拡張メソッド．
+        /// 存在しない場合は追加して返す．
+        /// </summary>
+        /// <typeparam name="T">取得または追加するコンポーネントの型．</typeparam>
+        /// <param name="self">対象のGameObject．</param>
+        /// <returns>取得または追加されたコンポーネント．</returns>
+        public static T GetOrAddComponent<T>(this GameObject self) where T : Component {
+            if (self.TryGetComponent<T>(out var component)) {
+                return component;
+            }
+            return self.AddComponent<T>();
+        }
     }
 }

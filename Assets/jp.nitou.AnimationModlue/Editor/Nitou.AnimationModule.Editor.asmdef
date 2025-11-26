@@ -3,16 +3,19 @@
     "rootNamespace": "Nitou.AnimationModule.Editor",
     "references": [
         "GUID:d3427e995d75f7149bb2cc43aad774c4",
-        "GUID:560b04d1a97f54a4e82edc0cbbb69285"
+        "GUID:77221876cc6b8244180b96e320b1bcd4"
     ],
     "includePlatforms": [
         "Editor"
     ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "R3.dll",
+        "Sirenix.OdinInspector.Attributes.dll"
+    ],
+    "autoReferenced": false,
     "defineConstraints": [],
     "versionDefines": [],
     "noEngineReferences": false

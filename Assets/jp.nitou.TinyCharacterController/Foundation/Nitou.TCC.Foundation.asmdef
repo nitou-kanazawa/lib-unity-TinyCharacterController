@@ -1,0 +1,24 @@
+{
+    "name": "Nitou.TCC.Foundation",
+    "rootNamespace": "Nitou.TCC.Foundation",
+    "references": [
+        "Nitou.NGizmos"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Sirenix.OdinInspector.Attributes.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.nitou.ngizmo",
+            "expression": "",
+            "define": "TCC_USE_NGIZMOS"
+        }
+    ],
+    "noEngineReferences": false
+}

@@ -1,0 +1,33 @@
+{
+    "name": "Nitou.TCC.FMS",
+    "rootNamespace": "Nitou.TCC.FMS",
+    "references": [
+        "Nitou.TCC.Controller",
+        "Nitou.TCC.Inputs",
+        "Nitou.TCC.Foundation",
+        "Unity.InputSystem",
+        "Nitou.NGizmos",
+        "Unity.Mathematics",
+        "Unity.Burst",
+        "Unity.Collections",
+        "R3.Unity"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "R3.dll",
+        "Sirenix.OdinInspector.Attributes.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.nitou.ngizmo",
+            "expression": "",
+            "define": "TCC_USE_NGIZMOS"
+        }
+    ],
+    "noEngineReferences": false
+}

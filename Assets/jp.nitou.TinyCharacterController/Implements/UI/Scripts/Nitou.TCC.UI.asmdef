@@ -1,0 +1,27 @@
+{
+    "name": "Nitou.TCC.UI",
+    "rootNamespace": "Nitou.TCC.UI",
+    "references": [
+        "Nitou.TCC.Foundation",
+        "Nitou.TCC.Controller",
+        "Nitou.NGizmos",
+        "Unity.Mathematics",
+        "Unity.Burst",
+        "Unity.Collections"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.nitou.ngizmo",
+            "expression": "",
+            "define": "TCC_USE_NGIZMOS"
+        }
+    ],
+    "noEngineReferences": false
+}

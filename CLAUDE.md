@@ -129,8 +129,21 @@ The Inputs module (`Assets/TinyCharacterController/Core/Inputs/Runtime/`) provid
 
 The project includes custom packages in `Packages/`:
 - **jp.nitou.batchprocessor** (v0.9.0): Batch processing system for Unity update loop optimization via PlayerLoop injection
-- **jp.nitou.ngizmo** (v0.8.0): Custom gizmo drawing library used by TCC components (enabled via TCC_USE_NGIZMOS define)
-- **jp.nitou.gameobjectpool** (v0.9.0): GameObject pooling system (no longer actively used in TCC)
+- **com.nitou.ngizmo** (v0.8.0): Custom gizmo drawing library used by TCC components (enabled via TCC_USE_NGIZMOS define)
+- **jp.nitou.gameobjectpool**: GameObject pooling system (deprecated, consider using com.annulusgames.u-pools instead)
+- **com.kybernetik.animancer**: Animation system (commercial plugin for advanced animation management)
+
+### Experimental Modules
+
+The project includes experimental systems in `Assets/` (not part of the main package):
+- **GOAP** (`Assets/Goap/`): Goal-Oriented Action Planning AI system (uses R3.dll for reactive programming)
+  - Provides GoapAgent for decision-making AI
+  - Includes Belief system, Action strategies, and Sensor components
+  - Currently in development/prototype phase
+- **Demo** (`Assets/Demo/`): Example scenes demonstrating TCC features
+  - SampleScene.unity: Basic character control demonstration
+  - AI Behavior.unity: AI behavior examples
+  - AI Navigation.unity: NavMesh-based AI navigation examples
 
 ## Development Commands
 
@@ -149,34 +162,40 @@ Or add to `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
-    "com.nitou.tiny-character-controller": "https://github.com/nitou-kanazawa/lib-unity-TinyCharacterController.git?path=Assets/TinyCharacterController"
+    "jp.nitou.tiny-character-controller": "https://github.com/nitou-kanazawa/lib-unity-TinyCharacterController.git?path=Assets/TinyCharacterController"
   }
 }
 ```
 
+**Note**: The package name is `jp.nitou.tiny-character-controller` (not `com.nitou.`)
+
 ## Dependencies
 
 ### Required External Packages
-- **UniTask**: Async/await support for Unity (from GitHub)
-- **UniRx**: Reactive extensions (from GitHub)
+- **UniTask** (from GitHub): Async/await support for Unity
+- **UniRx** (from GitHub): Reactive extensions for Unity
 - **Unity Input System** (v1.14.2): New input system for player controls
-- **Sirenix Odin Inspector**: Enhanced editor attributes (REQUIRED for Controller module)
-- **Universal Render Pipeline** (v17.2.0): Unity URP
+- **Sirenix Odin Inspector**: Enhanced editor attributes (REQUIRED for Controller module - compilation will fail without it)
+- **Universal Render Pipeline** (v17.2.0): Unity URP rendering
 
 ### Optional Packages
-- **Unity AI Navigation** (v2.0.9): For NavMesh-based movement
+- **Unity AI Navigation** (v2.0.9): For NavMesh-based movement (required for NavmeshBrain)
 - **Unity Timeline** (v1.8.9): For cutscenes and sequences
+- **Unity Behavior** (v1.0.13): Visual scripting for AI behaviors
+- **uPools** (from GitHub): Modern GameObject pooling alternative
 
 ## Code Conventions
 
 ### Namespace Structure
 - `Nitou.TCC.Controller.Core`: Brain and manager implementations
 - `Nitou.TCC.Controller.Interfaces`: Component interfaces (IMove, ITurn, IEffect, etc.)
-- `Nitou.TCC.Controller.Shared`: Shared utilities and settings
+- `Nitou.TCC.Controller.Shared`: Shared utilities and settings (includes Order.cs for update timing constants)
 - `Nitou.TCC.Inputs`: Input handling and ActorBrain classes
+- `Nitou.TCC.Implements`: Concrete component implementations
 - `Nitou.TCC.Utils`: General utility functions
 - `Nitou.BatchProcessor`: Custom update loop system
 - `Nitou.NGizmos`: Gizmo drawing utilities
+- `Nitou.Goap`: Experimental GOAP AI system (separate module)
 
 ### Component Design Patterns
 1. **Priority-based execution**: Components implement priority values; highest priority wins
@@ -197,11 +216,12 @@ Or add to `Packages/manifest.json`:
 
 The project uses a custom PlayerLoop injection system via GameControllerManager (from jp.nitou.batchprocessor):
 
-**Update Order Constants** (see `Order.cs`):
+**Update Order Constants** (see `Assets/TinyCharacterController/Core/Controller/Scripts/Shared/Order.cs`):
 ```
 Early Update Phase:
-  -1000: PrepareEarlyUpdate (position/rotation caching)
+  -1000: PrepareEarlyUpdate (position/rotation caching), GameObjectPool
   -101:  EarlyUpdateBrain execution
+  -100:  IndicatorRegister
 
 Update/FixedUpdate Phase:
   -200:  Check components (GroundCheck, sensors)

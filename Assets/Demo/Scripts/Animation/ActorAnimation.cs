@@ -1,7 +1,7 @@
 using System;
-using UniRx;
 using UnityEngine;
 using Animancer;
+using R3;
 
 namespace Project.Actor
 {
@@ -26,7 +26,7 @@ namespace Project.Actor
         /// <summary>
         /// Animator���X�V���ꂽ�Ƃ��ɒʒm����Observable�D
         /// </summary>
-        public IObservable<Vector3> OnAnimatorMoved => _animatorMoveSubject;
+        public Observable<Vector3> OnAnimatorMoved => _animatorMoveSubject;
 
 
         // Lifecycle Events

@@ -1,14 +1,13 @@
 using System;
-using UniRx;
-using UniRx.Triggers;
 using UnityEngine;
 using Sirenix.OdinInspector;
-using Nitou;
 using Nitou.TCC.Controller.Core;
 using Nitou.TCC.Controller.Check;
 using Nitou.TCC.Controller.Control;
 using Nitou.TCC.Controller.Interfaces.Components;
 using Nitou.TCC.Inputs;
+using R3;
+using R3.Triggers;
 
 namespace Project.Actor
 {

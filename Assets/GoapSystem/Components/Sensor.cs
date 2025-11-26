@@ -54,8 +54,16 @@ namespace Nitou.Goap.Components
 
         private void OnDrawGizmos()
         {
+            if (_collider == null) return;
+
             Gizmos.color = IsTargetInRange ? Color.red : Color.greenYellow;
             Gizmos.DrawWireSphere(_collider.center, _detectionRadius);
+        }
+
+        private void OnValidate()
+        {
+            if (_collider == null)
+                _collider = GetComponent<SphereCollider>();
         }
 
         #endregion

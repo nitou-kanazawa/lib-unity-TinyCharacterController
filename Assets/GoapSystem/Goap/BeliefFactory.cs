@@ -7,7 +7,7 @@ namespace Nitou.Goap
 {
     public class BeliefFactory
     {
-        private readonly GoapAgent _agent;
+        private readonly IGoapAgent _agent;
         private readonly Dictionary<string, AgentBelief> _beliefs = new();
 
         /// <summary>
@@ -78,6 +78,6 @@ namespace Nitou.Goap
         /// <param name="position"></param>
         /// <param name="distance"></param>
         /// <returns></returns>
-        private bool IsRangeOf(Vector3 position, float distance) => Vector3.Distance(_agent.transform.position, position) <= distance;
+        private bool IsRangeOf(Vector3 position, float distance) => Vector3.Distance(_agent.Transform.position, position) <= distance;
     }
 }

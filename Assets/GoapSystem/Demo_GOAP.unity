@@ -256,7 +256,7 @@ GameObject:
   m_Component:
   - component: {fileID: 811772046}
   - component: {fileID: 811772048}
-  - component: {fileID: 811772047}
+  - component: {fileID: 811772049}
   m_Layer: 0
   m_Name: Sensor
   m_TagString: Untagged
@@ -279,20 +279,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1608627108}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &811772047
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 811772045}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 330db6506f174a3a8c21e72b4a68e48e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Nitou.GOAP::Nitou.Goap.Components.Sensor
-  _detectionRadius: 5
-  _timeInterval: 1
 --- !u!135 &811772048
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -314,6 +300,20 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &811772049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 811772045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 330db6506f174a3a8c21e72b4a68e48e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Nitou.GOAP::Nitou.Goap.Components.Sensor
+  _detectionRadius: 5
+  _timeInterval: 1
 --- !u!1 &1350591917
 GameObject:
   m_ObjectHideFlags: 0

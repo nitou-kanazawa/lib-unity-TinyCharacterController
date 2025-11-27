@@ -20,7 +20,7 @@ namespace Nitou.TCC.CharacterControl.Check
     /// </summary>
     [AddComponentMenu(MenuList.MenuCheck + nameof(SightCheck))]
     [DisallowMultipleComponent]
-    public sealed class SightCheck : MonoBehaviour, 
+    public sealed class SightCheck : ComponentBase,
                                      IEarlyUpdateComponent
     {
         /// <summary>
@@ -60,8 +60,6 @@ namespace Nitou.TCC.CharacterControl.Check
         /// </summary>
         public UnityEvent<bool> OnChangeInsightAnyTargetState;
 
-        private CharacterSettings _settings;
-
 
         // ----------------------------------------------------------------------------
         // Property
@@ -93,11 +91,6 @@ namespace Nitou.TCC.CharacterControl.Check
 
         // ----------------------------------------------------------------------------
         // Lifecycle Events
-        private void Awake()
-        {
-            // 関連コンポーネントのリストを収集する
-            GatherComponents();
-        }
 
         void IEarlyUpdateComponent.OnUpdate(float deltaTime)
         {
@@ -119,7 +112,7 @@ namespace Nitou.TCC.CharacterControl.Check
                 var col = Results[i];
 
                 // 検出されたオブジェクトが自身のコライダーまたはタグリストにない場合は処理をスキップする
-                if (_settings.IsOwnCollider(col) ||
+                if (CharacterSettings.IsOwnCollider(col) ||
                     col.gameObject.ContainTag(_targetTagList) == false)
                     continue;
 
@@ -168,7 +161,7 @@ namespace Nitou.TCC.CharacterControl.Check
             var hits = new RaycastHit[CAPACITY];
 
             // センサーからターゲットへの視界がクリアかどうかを確認する
-            var count = Physics.RaycastNonAlloc(position, direction, hits, distance, _settings.EnvironmentLayer,
+            var count = Physics.RaycastNonAlloc(position, direction, hits, distance, CharacterSettings.EnvironmentLayer,
                 QueryTriggerInteraction.Ignore);
 
             // 検出されたコライダーがターゲットのコライダーまたは自身に属する場合は処理をスキップする
@@ -177,7 +170,7 @@ namespace Nitou.TCC.CharacterControl.Check
             {
                 var hit = hits[i];
                 // コライダーがターゲットまたは自身に属する場合は処理をスキップする
-                if (targetCollider == hit.collider || _settings.IsOwnCollider(hit.collider))
+                if (targetCollider == hit.collider || CharacterSettings.IsOwnCollider(hit.collider))
                     continue;
 
                 // 障害物に遮られているため検索処理を中断する
@@ -187,14 +180,6 @@ namespace Nitou.TCC.CharacterControl.Check
 
             // 遮られている場合は false を返す
             return isCollide;
-        }
-
-        /// <summary>
-        /// コンポーネントのリストを収集する．
-        /// </summary>
-        private void GatherComponents()
-        {
-            _settings = gameObject.GetComponentInParent<CharacterSettings>();
         }
 
 

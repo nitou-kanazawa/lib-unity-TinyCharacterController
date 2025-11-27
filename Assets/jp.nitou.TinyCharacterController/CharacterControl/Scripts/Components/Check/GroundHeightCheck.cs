@@ -8,7 +8,7 @@ namespace Nitou.TCC.CharacterControl.Check
 {
     [AddComponentMenu(MenuList.MenuCheck + nameof(GroundHeightCheck))]
     [DisallowMultipleComponent]
-    public sealed class GroundHeightCheck : MonoBehaviour,
+    public sealed class GroundHeightCheck : ComponentBase,
                                             IGroundContact
     {
         /// <summary>
@@ -23,7 +23,6 @@ namespace Nitou.TCC.CharacterControl.Check
         private float _toleranceHeight = 0.2f;
 
         // references
-        private CharacterSettings _characterSettings;
         private ITransform _transform;
 
 
@@ -40,22 +39,14 @@ namespace Nitou.TCC.CharacterControl.Check
 
         #region Lifecycle Events
 
-        private void Awake()
+        protected override void OnComponentInitialized()
         {
-            GatherComponents();
+            CharacterSettings.TryGetComponent(out _transform);
         }
 
         #endregion
 
-        private void GatherComponents()
-                {
-                    _characterSettings = GetComponentInParent<CharacterSettings>() ?? throw new System.NullReferenceException(nameof(_characterSettings));
-        
-                    // Components
-                    _characterSettings.TryGetComponent(out _transform);
-                }
-        
-        
+
         private void OnDrawGizmosSelected()
         {
             Gizmos.color = GetGizmosColor();

@@ -21,7 +21,7 @@ namespace Nitou.TCC.CharacterControl.Check
     /// </summary>
     [DisallowMultipleComponent]
     [AddComponentMenu(MenuList.MenuCheck + nameof(GroundCheck))]
-    public sealed class GroundCheck : MonoBehaviour,
+    public sealed class GroundCheck : ComponentBase,
                                       IGroundContact, IGroundObject,
                                       IEarlyUpdateComponent
     {
@@ -42,11 +42,10 @@ namespace Nitou.TCC.CharacterControl.Check
         /// 地面と認識される最大傾斜角度．
         /// 最も近い地面の傾斜がこの角度を超える場合、IsGroundはfalseになる
         /// </summary>
-        [PropertyRange(0, 90)] 
+        [PropertyRange(0, 90)]
         [SerializeField, Indent] private int _maxSlope = 60;
 
         // references
-        private CharacterSettings _characterSettings;
         private ITransform _transform;
 
         // 内部処理用
@@ -129,9 +128,9 @@ namespace Nitou.TCC.CharacterControl.Check
 
         #region Lifecycle Events
 
-        private void Awake()
+        protected override void OnComponentInitialized()
         {
-            GatherComponents();
+            CharacterSettings.TryGetComponent(out _transform);
         }
 
         private void OnDestroy()
@@ -144,15 +143,15 @@ namespace Nitou.TCC.CharacterControl.Check
             using var _ = new ProfilerScope(nameof(GroundCheck));
 
             var preGroundObject = GroundObject;
-            var offset = _characterSettings.Radius * 2;
+            var offset = CharacterSettings.Radius * 2;
             var origin = new Vector3(0, offset, 0) + (_transform?.Position ?? transform.position);
             var groundCheckDistance = _ambiguousDistance + offset;
 
             // Perform ground detection while ignoring the character's own collider.
             var groundCheckCount = Physics.SphereCastNonAlloc(
-                origin, _characterSettings.Radius, Vector3.down, _hits,
+                origin, CharacterSettings.Radius, Vector3.down, _hits,
                 groundCheckDistance,
-                _characterSettings.EnvironmentLayer, QueryTriggerInteraction.Ignore);
+                CharacterSettings.EnvironmentLayer, QueryTriggerInteraction.Ignore);
 
             var isHit = ClosestHit(_hits, groundCheckCount, groundCheckDistance, out _groundCheckHit);
 
@@ -161,7 +160,7 @@ namespace Nitou.TCC.CharacterControl.Check
             {
                 var inLimitAngle = Vector3.Angle(Vector3.up, _groundCheckHit.normal) < _maxSlope;
 
-                DistanceFromGround = _groundCheckHit.distance - (offset - _characterSettings.Radius);
+                DistanceFromGround = _groundCheckHit.distance - (offset - CharacterSettings.Radius);
                 IsOnGround = DistanceFromGround < _ambiguousDistance;
                 IsFirmlyOnGround = DistanceFromGround <= _preciseDistance && inLimitAngle;
                 GroundContactPoint = _groundCheckHit.point;
@@ -205,22 +204,15 @@ namespace Nitou.TCC.CharacterControl.Check
         public bool Raycast(Vector3 position, float distance, out RaycastHit hit)
         {
             var groundCheckCount = Physics.RaycastNonAlloc(position, Vector3.down, _hits, distance,
-                _characterSettings.EnvironmentLayer, QueryTriggerInteraction.Ignore);
+                CharacterSettings.EnvironmentLayer, QueryTriggerInteraction.Ignore);
 
             // 最も近いオブジェクト
-            return _characterSettings.ClosestHit(_hits, groundCheckCount, distance, out hit);
+            return CharacterSettings.ClosestHit(_hits, groundCheckCount, distance, out hit);
         }
 
 
         // ----------------------------------------------------------------------------
         // Private Method
-        private void GatherComponents()
-        {
-            _characterSettings = GetComponentInParent<CharacterSettings>() ?? throw new System.NullReferenceException(nameof(_characterSettings));
-
-            // Components
-            _characterSettings.TryGetComponent(out _transform);
-        }
 
         private bool ClosestHit(IReadOnlyList<RaycastHit> hits, int count, float maxDistance, out RaycastHit closestHit)
         {
@@ -231,7 +223,7 @@ namespace Nitou.TCC.CharacterControl.Check
             foreach (var hit in hits.Take(count))
             {
                 var isOverOriginHeight = (hit.distance == 0);
-                if (isOverOriginHeight || hit.distance > min || _characterSettings.IsOwnCollider(hit.collider) || hit.collider == null)
+                if (isOverOriginHeight || hit.distance > min || CharacterSettings.IsOwnCollider(hit.collider) || hit.collider == null)
                     continue;
 
                 min = hit.distance;
@@ -256,26 +248,24 @@ namespace Nitou.TCC.CharacterControl.Check
         {
             void DrawHitRangeGizmos(Vector3 startPosition, Vector3 endPosition)
             {
-                var leftOffset = new Vector3(_characterSettings.Radius, 0, 0);
-                var rightOffset = new Vector3(-_characterSettings.Radius, 0, 0);
-                var forwardOffset = new Vector3(0, 0, _characterSettings.Radius);
-                var backOffset = new Vector3(0, 0, -_characterSettings.Radius);
+                var leftOffset = new Vector3(CharacterSettings.Radius, 0, 0);
+                var rightOffset = new Vector3(-CharacterSettings.Radius, 0, 0);
+                var forwardOffset = new Vector3(0, 0, CharacterSettings.Radius);
+                var backOffset = new Vector3(0, 0, -CharacterSettings.Radius);
 
                 Gizmos.DrawLine(startPosition + leftOffset, endPosition + leftOffset);
                 Gizmos.DrawLine(startPosition + rightOffset, endPosition + rightOffset);
                 Gizmos.DrawLine(startPosition + forwardOffset, endPosition + forwardOffset);
                 Gizmos.DrawLine(startPosition + backOffset, endPosition + backOffset);
-                NGizmo.DrawSphere(startPosition, _characterSettings.Radius, Color.yellow);
-                NGizmo.DrawSphere(endPosition, _characterSettings.Radius, Color.yellow);
+                NGizmo.DrawSphere(startPosition, CharacterSettings.Radius, Color.yellow);
+                NGizmo.DrawSphere(endPosition, CharacterSettings.Radius, Color.yellow);
             }
 
-            if (_characterSettings == null)
-            {
-                _characterSettings = gameObject.GetComponentInParent<CharacterSettings>();
-            }
+            if (CharacterSettings == null)
+                GatherCharacterSettings();
 
             var position = transform.position;
-            var offset = _characterSettings.Height * 0.5f;
+            var offset = CharacterSettings.Height * 0.5f;
 
 
             if (Application.isPlaying)
@@ -283,10 +273,10 @@ namespace Nitou.TCC.CharacterControl.Check
                 Gizmos.color = IsOnGround ? Color.red : Gizmos.color;
                 Gizmos.color = IsFirmlyOnGround ? Color.blue : Gizmos.color;
 
-                var topPosition = new Vector3 { y = _characterSettings.Radius - _preciseDistance };
+                var topPosition = new Vector3 { y = CharacterSettings.Radius - _preciseDistance };
                 var bottomPosition = IsOnGround
-                    ? new Vector3 { y = _characterSettings.Radius - DistanceFromGround }
-                    : new Vector3 { y = _characterSettings.Radius - _ambiguousDistance };
+                    ? new Vector3 { y = CharacterSettings.Radius - DistanceFromGround }
+                    : new Vector3 { y = CharacterSettings.Radius - _ambiguousDistance };
 
                 DrawHitRangeGizmos(position + topPosition, position + bottomPosition);
 
@@ -300,8 +290,8 @@ namespace Nitou.TCC.CharacterControl.Check
             }
             else
             {
-                var topPosition = new Vector3 { y = _characterSettings.Radius - _preciseDistance };
-                var bottomPosition = new Vector3 { y = _characterSettings.Radius - _ambiguousDistance };
+                var topPosition = new Vector3 { y = CharacterSettings.Radius - _preciseDistance };
+                var bottomPosition = new Vector3 { y = CharacterSettings.Radius - _ambiguousDistance };
                 DrawHitRangeGizmos(position + topPosition, position + bottomPosition);
             }
         }

@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using Sirenix.OdinInspector;
 using Nitou.TCC.CharacterControl.Core;
 using Nitou.TCC.CharacterControl.Interfaces.Components;
 using Nitou.TCC.CharacterControl.Manager;
 using Nitou.TCC.CharacterControl.Shared;
 using Nitou.TCC.CharacterControl.Smb;
+using Sirenix.OdinInspector;
 
 namespace Nitou.TCC.CharacterControl.Check
 {

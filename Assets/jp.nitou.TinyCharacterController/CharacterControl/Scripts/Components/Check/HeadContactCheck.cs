@@ -21,7 +21,7 @@ namespace Nitou.TCC.CharacterControl.Check
     /// </summary>
     [DisallowMultipleComponent]
     [AddComponentMenu(MenuList.MenuCheck + nameof(HeadContactCheck))]
-    public class HeadContactCheck : MonoBehaviour,
+    public class HeadContactCheck : ComponentBase,
                                     IOverheadDetection,
                                     IEarlyUpdateComponent,
                                     IComponentCondition
@@ -59,7 +59,6 @@ namespace Nitou.TCC.CharacterControl.Check
         [SerializeField, Indent] private UnityEvent _onChangeInRange;
 
         // references
-        private CharacterSettings _characterSettings;
         private ITransform _transform;
 
         // 定数
@@ -92,7 +91,7 @@ namespace Nitou.TCC.CharacterControl.Check
         /// <summary>
         /// 頭までの高さ．
         /// </summary>
-        private float Height => _characterSettings.Height + _headPositionOffset;
+        private float Height => CharacterSettings.Height + _headPositionOffset;
 
         /// <summary>
         /// 頭が他のオブジェクトと接触している場合は true を返す．
@@ -123,9 +122,9 @@ namespace Nitou.TCC.CharacterControl.Check
 
         #region Lifecycle Events
 
-        private void Awake()
+        protected override void OnComponentInitialized()
         {
-            GatherComponents();
+            CharacterSettings.TryGetComponent(out _transform);
         }
 
         void IEarlyUpdateComponent.OnUpdate(float deltaTime)
@@ -137,7 +136,7 @@ namespace Nitou.TCC.CharacterControl.Check
 
             // Raycast に必要なパラメータを準備する
             // 地面との接触を避けるため、体の中心からレイを投げる
-            var offset = _characterSettings.Height * 0.5f;
+            var offset = CharacterSettings.Height * 0.5f;
             IsObjectOverhead = DetectCollidersAboveHead(offset, out var closestHit);
 
             if (IsObjectOverhead)
@@ -164,10 +163,10 @@ namespace Nitou.TCC.CharacterControl.Check
 
         void IComponentCondition.OnConditionCheck(List<string> messageList)
         {
-            if (_characterSettings == null)
-                TryGetComponent(out _characterSettings);
+            if (CharacterSettings == null)
+                TryGetComponent(out CharacterSettings);
 
-            if (_characterSettings.Height > MaxHeight)
+            if (CharacterSettings.Height > MaxHeight)
                 messageList.Add("Max Range は _settings.Height 以上の値に設定する必要があります．");
         }
 
@@ -175,13 +174,6 @@ namespace Nitou.TCC.CharacterControl.Check
 
         // ----------------------------------------------------------------------------
         // Private Method
-        private void GatherComponents()
-        {
-            _characterSettings = GetComponentInParent<CharacterSettings>() ?? throw new System.NullReferenceException(nameof(_characterSettings));
-
-            // Components
-            _characterSettings.TryGetComponent(out _transform);
-        }
 
         /// <summary>
         /// 範囲外のときにプロパティを設定する．
@@ -213,13 +205,13 @@ namespace Nitou.TCC.CharacterControl.Check
             var preContactHead = IsHeadContact;
 
             // Distance は RaycastHit の距離、Cast 開始時のオフセット、SphereCast のオフセットの合計
-            DistanceFromRootPosition = closestHit.distance + offset + _characterSettings.Radius + _headPositionOffset;
+            DistanceFromRootPosition = closestHit.distance + offset + CharacterSettings.Radius + _headPositionOffset;
             ContactPoint = closestHit.point;
             ContactedObject = closestHit.collider.gameObject;
 
             // 地面からの距離が高さ設定よりも低い場合、衝突と見なす
             // また、衝突検出が前フレームと異なる場合、現在フレームでのヒットと見なす
-            IsHeadContact = DistanceFromRootPosition < _characterSettings.Height + _headPositionOffset;
+            IsHeadContact = DistanceFromRootPosition < CharacterSettings.Height + _headPositionOffset;
             IsHitCollisionInThisFrame = !preContactHead && IsHeadContact;
         }
 
@@ -233,15 +225,15 @@ namespace Nitou.TCC.CharacterControl.Check
         private bool DetectCollidersAboveHead(float offset, out RaycastHit closestHit)
         {
             var ray = new Ray(_transform.Position + new Vector3(0, offset + _headPositionOffset, 0), Vector3.up);
-            var rayDistance = MaxHeight + _headPositionOffset - offset - _characterSettings.Radius;
+            var rayDistance = MaxHeight + _headPositionOffset - offset - CharacterSettings.Radius;
 
             // 上方向に SphereCast を実行して頭上のコライダーの存在を確認する
-            var count = Physics.SphereCastNonAlloc(ray, _characterSettings.Radius, Result,
-                rayDistance, _characterSettings.EnvironmentLayer,
+            var count = Physics.SphereCastNonAlloc(ray, CharacterSettings.Radius, Result,
+                rayDistance, CharacterSettings.EnvironmentLayer,
                 QueryTriggerInteraction.Ignore);
 
             // 自身が所有するコライダーを除外して最も近い Raycast を取得する
-            var isHit = _characterSettings.ClosestHit(Result, count, rayDistance, out closestHit);
+            var isHit = CharacterSettings.ClosestHit(Result, count, rayDistance, out closestHit);
             return isHit;
         }
 
@@ -251,7 +243,7 @@ namespace Nitou.TCC.CharacterControl.Check
         // TODO: Gizmosの修正
         private void OnDrawGizmosSelected()
         {
-            if (_characterSettings == null)
+            if (CharacterSettings == null)
             {
                 GatherComponents();
             }
@@ -261,12 +253,12 @@ namespace Nitou.TCC.CharacterControl.Check
                 Gizmos.color = Color.red;
 
             var position = transform.position;
-            var headPosition = position + new Vector3(0, Height - _characterSettings.Radius, 0);
+            var headPosition = position + new Vector3(0, Height - CharacterSettings.Radius, 0);
 
             if (Application.isPlaying)
             {
                 // DistanceFromRootPosition に基づいて衝突が検出された位置を表現する
-                var offset = _characterSettings.Radius;
+                var offset = CharacterSettings.Radius;
                 var contactPosition = position + new Vector3(0, DistanceFromRootPosition - offset, 0);
                 DrawHitRangeGizmos(headPosition, contactPosition);
 
@@ -285,10 +277,10 @@ namespace Nitou.TCC.CharacterControl.Check
             // カプセル形状の Gizmos を表現する
             void DrawHitRangeGizmos(in Vector3 startPosition, in Vector3 endPosition)
             {
-                var leftOffset = new Vector3(_characterSettings.Radius, 0, 0);
-                var rightOffset = new Vector3(-_characterSettings.Radius, 0, 0);
-                var forwardOffset = new Vector3(0, 0, _characterSettings.Radius);
-                var backOffset = new Vector3(0, 0, -_characterSettings.Radius);
+                var leftOffset = new Vector3(CharacterSettings.Radius, 0, 0);
+                var rightOffset = new Vector3(-CharacterSettings.Radius, 0, 0);
+                var forwardOffset = new Vector3(0, 0, CharacterSettings.Radius);
+                var backOffset = new Vector3(0, 0, -CharacterSettings.Radius);
 
                 // カプセルの前後の垂直線を表現する
                 Gizmos.DrawLine(startPosition + leftOffset, endPosition + leftOffset);
@@ -297,14 +289,14 @@ namespace Nitou.TCC.CharacterControl.Check
                 Gizmos.DrawLine(startPosition + backOffset, endPosition + backOffset);
 
                 // カプセルの上下の円形を表現する
-                Gizmos.DrawWireSphere(startPosition, _characterSettings.Radius);
-                Gizmos.DrawWireSphere(endPosition, _characterSettings.Radius);
+                Gizmos.DrawWireSphere(startPosition, CharacterSettings.Radius);
+                Gizmos.DrawWireSphere(endPosition, CharacterSettings.Radius);
 
                 // カプセルの上下の円形を色で塗りつぶす
                 var color = Colors.Yellow;
                 color.a = 0.4f;
-                NGizmo.DrawSphere(startPosition, _characterSettings.Radius, color);
-                NGizmo.DrawSphere(endPosition, _characterSettings.Radius, color);
+                NGizmo.DrawSphere(startPosition, CharacterSettings.Radius, color);
+                NGizmo.DrawSphere(endPosition, CharacterSettings.Radius, color);
             }
         }
 #endif

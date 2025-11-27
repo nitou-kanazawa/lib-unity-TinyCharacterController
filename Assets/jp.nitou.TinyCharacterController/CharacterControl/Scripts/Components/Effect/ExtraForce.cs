@@ -47,7 +47,6 @@ namespace Nitou.TCC.CharacterControl.Effect
         private float _bounce = 0f;
 
         // References
-        private CharacterSettings _settings;
         private IGroundContact _groundCheck;
         private ITransform _transform;
 
@@ -91,9 +90,10 @@ namespace Nitou.TCC.CharacterControl.Effect
 
         // ----------------------------------------------------------------------------
         // Lifecycle Events
-        private void Awake()
+        protected override void OnComponentInitialized()
         {
-            GatherComponents();
+            CharacterSettings.TryGetComponent(out _transform);
+            CharacterSettings.TryGetActorComponent(CharacterComponent.Check, out _groundCheck);
         }
 
         private void OnDestroy()
@@ -120,9 +120,9 @@ namespace Nitou.TCC.CharacterControl.Effect
                             closestHit.collider.TryGetComponent(out CharacterSettings otherSettings))
                         {
                             // 力 = 質量 × 加速度
-                            var ownForce = _settings.Mass * _velocity;
+                            var ownForce = CharacterSettings.Mass * _velocity;
                             var otherForce = otherSettings.Mass * other._velocity;
-                            var velocity = (ownForce + otherForce) / (_settings.Mass + otherSettings.Mass);
+                            var velocity = (ownForce + otherForce) / (CharacterSettings.Mass + otherSettings.Mass);
 
                             // 自身と衝突対象に加速度を追加する
                             other.AddForce(velocity * other._bounce);
@@ -156,7 +156,7 @@ namespace Nitou.TCC.CharacterControl.Effect
         /// <param name="value">力</param>
         public void AddForce(Vector3 value)
         {
-            _velocity += value / _settings.Mass;
+            _velocity += value / CharacterSettings.Mass;
         }
 
         /// <summary>
@@ -181,17 +181,6 @@ namespace Nitou.TCC.CharacterControl.Effect
         // Private Method
 
         /// <summary>
-        /// 自身のオブジェクトにアタッチされているコンポーネントを収集する．
-        /// </summary>
-        private void GatherComponents()
-        {
-            _settings = GetComponentInParent<CharacterSettings>();
-
-            _settings.TryGetComponent(out _transform);
-            _settings.TryGetActorComponent(CharacterComponent.Check, out _groundCheck);
-        }
-
-        /// <summary>
         /// カプセルの形状を取得するメソッド．
         /// </summary>
         /// <param name="headPoint">カプセルの上部の座標</param>
@@ -202,10 +191,10 @@ namespace Nitou.TCC.CharacterControl.Effect
             var point = _transform.Position;
 
             // カプセルの高さを取得する
-            var height = _settings.Height;
+            var height = CharacterSettings.Height;
 
             // カプセルの半径を取得する
-            var radius = _settings.Radius;
+            var radius = CharacterSettings.Radius;
 
             // カプセルの下部の座標を計算する
             bottomPoint = point + new Vector3(0, radius, 0);
@@ -226,19 +215,19 @@ namespace Nitou.TCC.CharacterControl.Effect
             GetBottomHeadPosition(out var bottom, out var top);
 
             // 距離を計算：キャラクターの半径 + 1フレーム分の移動
-            var distance = _settings.Radius * 0.5f + _velocity.magnitude * dt;
+            var distance = CharacterSettings.Radius * 0.5f + _velocity.magnitude * dt;
 
             // 衝突検出用の配列を作成する
             var hits = ArrayPool<RaycastHit>.Shared.Rent(HIT_CAPACITY);
 
             // キャラクターの形状で衝突検出を実行する
             var hitCount = Physics.CapsuleCastNonAlloc(top, bottom,
-                _settings.Radius, _velocity.normalized, hits, distance,
-                _settings.EnvironmentLayer, QueryTriggerInteraction.Ignore);
+                CharacterSettings.Radius, _velocity.normalized, hits, distance,
+                CharacterSettings.EnvironmentLayer, QueryTriggerInteraction.Ignore);
 
             // 範囲内のコライダーの中で、自身が所属するコライダーを除いた最も近いコライダーを見つける
             // isCapsuleHit はヒットが成功したかどうかを示す
-            var isCapsuleHit = _settings.ClosestHit(hits, hitCount, distance, out var hit);
+            var isCapsuleHit = CharacterSettings.ClosestHit(hits, hitCount, distance, out var hit);
 
             ArrayPool<RaycastHit>.Shared.Return(hits);
 
@@ -270,7 +259,7 @@ namespace Nitou.TCC.CharacterControl.Effect
             if (!Application.isPlaying) return;
 
             // キャラクターの中心位置を計算する
-            var centerPosition = _transform.Position + new Vector3(0, _settings.Height * 0.5f, 0);
+            var centerPosition = _transform.Position + new Vector3(0, CharacterSettings.Height * 0.5f, 0);
 
             // 移動のターゲット位置を計算する
             var maxDistance = _velocity.magnitude * 0.28f;
@@ -279,12 +268,12 @@ namespace Nitou.TCC.CharacterControl.Effect
             // 移動ベクトルを表現する
             var sphereColor = Color.blue;
             sphereColor.a = 0.4f;
-            NGizmo.DrawSphere(targetPosition, _settings.Radius, sphereColor);
+            NGizmo.DrawSphere(targetPosition, CharacterSettings.Radius, sphereColor);
 
             // ターゲット位置への線と移動ベクトルのワイヤーフレームを表現する
             var color = Color.white;
             NGizmo.DrawLine(targetPosition, centerPosition, color);
-            NGizmo.DrawWireSphere(targetPosition, _settings.Radius, color);
+            NGizmo.DrawWireSphere(targetPosition, CharacterSettings.Radius, color);
         }
 #endif
     }

@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
-using UnityEngine.Serialization;
 using Nitou.TCC.CharacterControl.Interfaces.Core;
 using Nitou.TCC.CharacterControl.Interfaces.Components;
 using Nitou.TCC.CharacterControl.Shared;
@@ -28,8 +27,10 @@ namespace Nitou.TCC.CharacterControl.Components
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Transform))]
     // [RequireInterface(typeof(IBrain))]
-    public class MoveNavmeshControl : MonoBehaviour,
-                                      IMove, ITurn, IUpdateComponent,
+    public sealed class MoveNavmeshControl : ComponentBase,
+                                      IMove,
+                                      ITurn,
+                                      IUpdateComponent,
                                       IComponentCondition
     {
         /// <summary>
@@ -38,33 +39,32 @@ namespace Nitou.TCC.CharacterControl.Components
         /// Also, the component used in this setting cannot be shared by multiple components.
         /// The Agent set here should be registered as a child object of the character.
         /// </summary>
-        [SerializeField] private NavMeshAgent _agent;
+        [SerializeField, Indent] private NavMeshAgent _agent;
 
         /// <summary>
         /// Maximum character movement speed
         /// </summary>
-        [Header("Settings")]
-        [SerializeField] 
-        private float _speed = 4;
+        [Title("Settings")]
+        [SerializeField, Indent] private float _speed = 4;
 
         /// <summary>
         /// Character turn speed.
         /// </summary>
         [Range(-1, 50)]
-        public int TurnSpeed = 8;
+        [SerializeField, Indent] public int TurnSpeed = 8;
 
         /// <summary>
         /// Character move priority.
         /// </summary>
-        [Header("movement and orientation")]
+        [Title("movement and orientation")]
         [GUIColor("green")]
-        public int MovePriority = 1;
+        [SerializeField, Indent] public int MovePriority = 1;
 
         /// <summary>
         /// Character Turn Priority.
         /// </summary>
         [GUIColor("green")]
-        public int TurnPriority = 1;
+        [SerializeField, Indent] public int TurnPriority = 1;
 
         /// <summary>
         /// Callback when destination is reached
@@ -74,7 +74,6 @@ namespace Nitou.TCC.CharacterControl.Components
         private float _yawAngle;
         private Vector3 _moveVelocity;
 
-        private ITransform _transform;
 
         /// <summary>
         /// True if the character has reached the target point.
@@ -114,7 +113,7 @@ namespace Nitou.TCC.CharacterControl.Components
         /// <param name="distance">distance from the target</param>.
         public void SetTargetPosition(Vector3 position, float distance)
         {
-            var deltaPosition = _transform.Position - position;
+            var deltaPosition = Transform.Position - position;
             deltaPosition.y = 0;
             var direction = deltaPosition.normalized * distance;
             SetTargetPosition(position + direction);
@@ -138,12 +137,11 @@ namespace Nitou.TCC.CharacterControl.Components
 
         int IUpdateComponent.Order => Order.Control;
 
-        #region Lifecycle Events
-        
-        private void Awake()
-        {
-            TryGetComponent(out _transform);
 
+        #region Lifecycle Events
+
+        protected override void OnComponentInitialized()
+        {
             if (_agent == null)
             {
                 var agent = new GameObject("agent", typeof(NavMeshAgent));
@@ -156,7 +154,7 @@ namespace Nitou.TCC.CharacterControl.Components
             _agent.updatePosition = false;
             _agent.updateRotation = false;
         }
-        
+
         void IUpdateComponent.OnUpdate(float deltaTime)
         {
             using var profiler = new ProfilerScope(nameof(MoveNavmeshControl));
@@ -167,7 +165,7 @@ namespace Nitou.TCC.CharacterControl.Components
 
             if (_agent.isOnOffMeshLink)
             {
-                var deltaPosition = _agent.currentOffMeshLinkData.endPos - _transform.Position;
+                var deltaPosition = _agent.currentOffMeshLinkData.endPos - Transform.Position;
                 deltaPosition.y = 0;
                 var direction = deltaPosition.normalized;
 
@@ -175,11 +173,11 @@ namespace Nitou.TCC.CharacterControl.Components
                     _agent.CompleteOffMeshLink();
 
                 _moveVelocity = direction * _speed;
-                _agent.nextPosition = _transform.Position + _moveVelocity * deltaTime;
+                _agent.nextPosition = Transform.Position + _moveVelocity * deltaTime;
             }
             else
             {
-                var deltaPosition = _agent.steeringTarget - _transform.Position;
+                var deltaPosition = _agent.steeringTarget - Transform.Position;
                 deltaPosition.y = 0;
 
                 var isMoving = distance - deltaTime * _speed > 0;
@@ -202,13 +200,13 @@ namespace Nitou.TCC.CharacterControl.Components
                 var currentSpeed = distance < Speed * deltaTime ? distance / deltaTime : Speed;
                 // _moveVelocity = direction * currentSpeed;
                 _moveVelocity = _agent.desiredVelocity.normalized * currentSpeed;
-                _agent.nextPosition = _transform.Position + _moveVelocity * deltaTime;
+                _agent.nextPosition = Transform.Position + _moveVelocity * deltaTime;
             }
         }
 
         #endregion
-        
-        
+
+
         void IComponentCondition.OnConditionCheck(List<string> messageList)
         {
             if (_agent != null && _agent.transform.parent != transform)
@@ -217,8 +215,7 @@ namespace Nitou.TCC.CharacterControl.Components
             }
         }
 
-        
-        
+
 #if UNITY_EDITOR
 
         private void Reset()

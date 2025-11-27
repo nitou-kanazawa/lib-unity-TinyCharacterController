@@ -21,7 +21,7 @@ namespace Nitou.TCC.CharacterControl.Check
     /// </summary>
     [DisallowMultipleComponent]
     [AddComponentMenu(MenuList.MenuCheck + nameof(HeadContactCheck))]
-    public class HeadContactCheck : ComponentBase,
+    public sealed class HeadContactCheck : ComponentBase,
                                     IOverheadDetection,
                                     IEarlyUpdateComponent,
                                     IComponentCondition
@@ -164,7 +164,7 @@ namespace Nitou.TCC.CharacterControl.Check
         void IComponentCondition.OnConditionCheck(List<string> messageList)
         {
             if (CharacterSettings == null)
-                TryGetComponent(out CharacterSettings);
+                GatherCharacterSettings();
 
             if (CharacterSettings.Height > MaxHeight)
                 messageList.Add("Max Range は _settings.Height 以上の値に設定する必要があります．");
@@ -244,9 +244,7 @@ namespace Nitou.TCC.CharacterControl.Check
         private void OnDrawGizmosSelected()
         {
             if (CharacterSettings == null)
-            {
-                GatherComponents();
-            }
+                GatherCharacterSettings();
 
             // コライダーが接触していると見なされる場合、基本色を赤に設定する
             if (IsHeadContact)

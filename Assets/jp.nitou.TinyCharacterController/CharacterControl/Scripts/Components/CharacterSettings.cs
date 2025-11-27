@@ -16,21 +16,21 @@ namespace Nitou.TCC.CharacterControl.Core
     [AddComponentMenu(MenuList.MenuBrain + nameof(CharacterSettings))]
     public sealed class CharacterSettings : MonoBehaviour
     {
-        [Title("Body Settings")] [SerializeField, Indent]
-        private float _mass = 1;
+        [Title("Body Settings")]
+        [SerializeField, Indent] private float _mass = 1;
 
         [SerializeField, Indent] private float _height = 1.4f;
         [SerializeField, Indent] private float _radius = 0.5f;
         [SerializeField, Indent] private MovementReference _movementReference;
 
-        [Title("Hierarchy")] [SerializeField, Indent]
-        private Transform _checkParent;
+        [Title("Hierarchy")]
+        [SerializeField, Indent] private Transform _checkParent;
 
         [SerializeField, Indent] private Transform _effectParent;
         [SerializeField, Indent] private Transform _controlParent;
 
-        [Title("Environment Settings")] [SerializeField, Indent]
-        private LayerMask _environmentLayer;
+        [Title("Environment Settings")]
+        [SerializeField, Indent] private LayerMask _environmentLayer;
 
         // Camera
         private Camera _camera;
@@ -39,14 +39,15 @@ namespace Nitou.TCC.CharacterControl.Core
         // GameObject配下のコライダーリスト
         private readonly List<Collider> _hierarchyColliders = new();
 
-        // �萔
+        // 定数
         private const float MIN_HEIGHT = 0.1f;
         private const float MIN_RADIUS = 0.1f;
         private const float MIN_MASS = 0.001f;
 
 
         // ----------------------------------------------------------------------------
-        // Property
+
+        #region Properties
 
         /// <summary>
         /// キャラクターの半径．
@@ -92,11 +93,9 @@ namespace Nitou.TCC.CharacterControl.Core
         /// </summary>
         public LayerMask EnvironmentLayer => _environmentLayer;
 
-
         public Transform CheckParent => _checkParent;
         public Transform EffectParent => _effectParent;
         public Transform ControlParent => _controlParent;
-
 
         /// <summary>
         /// カメラが設定されているかどうか．
@@ -144,9 +143,12 @@ namespace Nitou.TCC.CharacterControl.Core
             }
         }
 
+        #endregion
+
 
         // ----------------------------------------------------------------------------
-        // MonoBehaviour Method
+        #region Lifecycle Events
+
         private void Awake()
         {
             // Get a list of colliders.
@@ -169,6 +171,13 @@ namespace Nitou.TCC.CharacterControl.Core
             UpdateSettings();
         }
 
+#if UNITY_EDITOR
+        private void Reset()
+        {
+            _environmentLayer = LayerMaskUtil.OnlyDefault();
+        }
+#endif
+        #endregion
 
         // ----------------------------------------------------------------------------
         // Public Method
@@ -251,15 +260,6 @@ namespace Nitou.TCC.CharacterControl.Core
             }
             ListPool<IActorSettingUpdateReceiver>.Release(controls);
         }
-
-
-        // ----------------------------------------------------------------------------
-#if UNITY_EDITOR
-        private void Reset()
-        {
-            _environmentLayer = LayerMaskUtil.OnlyDefault();
-        }
-#endif
     }
 
 
@@ -272,7 +272,14 @@ namespace Nitou.TCC.CharacterControl.Core
         Others,
     }
 
-    public static class ActorComponentUtil
+    public static class CharacterSettingsExtensions
+    {
+  
+        
+    }
+    
+    
+    public static class CharacterComponentUtils
     {
         /// <summary>
         /// Actorコンポーネントを設定したGameObjectから取得する

@@ -1,6 +1,5 @@
 using Nitou.TCC.CharacterControl.Core;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Nitou.TCC.CharacterControl.Interfaces.Core;
 using Nitou.TCC.CharacterControl.Shared;
 using Sirenix.OdinInspector;

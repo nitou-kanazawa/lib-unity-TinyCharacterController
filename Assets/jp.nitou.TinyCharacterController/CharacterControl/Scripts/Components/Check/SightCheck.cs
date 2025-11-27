@@ -7,6 +7,7 @@ using Nitou.TCC.CharacterControl.Interfaces.Components;
 using Nitou.TCC.CharacterControl.Core;
 using Nitou.TCC.CharacterControl.Interfaces.Core;
 using Nitou.TCC.CharacterControl.Shared;
+using R3;
 #if TCC_USE_NGIZMOS
 using Nitou.Gizmo;
 #endif
@@ -26,8 +27,8 @@ namespace Nitou.TCC.CharacterControl.Check
         /// <summary>
         /// 検出に使用する頭の位置．
         /// </summary>
-        [Title("Sight Settings")] [SerializeField, Indent]
-        public Transform _headTransform;
+        [Title("Sight Settings")] 
+        [SerializeField, Indent] public Transform _headTransform;
 
         /// <summary>
         /// 視界の範囲．
@@ -53,14 +54,19 @@ namespace Nitou.TCC.CharacterControl.Check
         /// true の場合、障害物の存在を確認する．
         /// 障害物検出には <see cref="CharacterSettings._environmentLayer"/> が使用される．
         /// </summary>
-        [Title("Options")] public bool RaycastCheck = true;
+        [Title("Options")] 
+        public bool RaycastCheck = true;
 
+        private Subject<bool> _onChangeInsightAnyTargetStateObject = new();
+        
         /// <summary>
-        /// オブジェクトが視界に入った、または出たときにイベントを呼び出す．
+        /// 一度に検出できるオブジェクトの最大数．
         /// </summary>
-        public UnityEvent<bool> OnChangeInsightAnyTargetState;
+        private const int CAPACITY = 100;
+        
+        private static readonly Collider[] Results = new Collider[CAPACITY];
 
-
+        
         // ----------------------------------------------------------------------------
         // Property
 
@@ -82,12 +88,10 @@ namespace Nitou.TCC.CharacterControl.Check
         public bool IsInsightAnyTarget => InsightTargets.Count > 0;
 
         /// <summary>
-        /// 一度に検出できるオブジェクトの最大数．
+        /// オブジェクトが視界に入った、または出たときにイベントを呼び出す．
         /// </summary>
-        private const int CAPACITY = 100;
-
-        private static readonly Collider[] Results = new Collider[CAPACITY];
-
+        public Observable<bool> OnChangeInsightAnyTargetStateObject => _onChangeInsightAnyTargetStateObject;
+        
 
         // ----------------------------------------------------------------------------
         // Lifecycle Events
@@ -136,7 +140,7 @@ namespace Nitou.TCC.CharacterControl.Check
 
             // 視界の状態が変化した場合は通知する
             if (IsInsightAnyTarget != isAnyInsightTargetPreviousFrame)
-                OnChangeInsightAnyTargetState.Invoke(IsInsightAnyTarget);
+                _onChangeInsightAnyTargetStateObject.OnNext(IsInsightAnyTarget);
         }
 
 

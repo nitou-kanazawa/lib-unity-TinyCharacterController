@@ -22,7 +22,7 @@ namespace Nitou.TCC.CharacterControl.Control
     // [RequireInterface(typeof(IGravity))]
     // [RequireInterface(typeof(IGroundContact))]
     // [RequireInterface(typeof(IOverheadDetection))]
-    public class JumpControl : ComponentBase,
+    public sealed class JumpControl : ComponentBase,
                                IMove,
                                ITurn,
                                IUpdateComponent
@@ -310,17 +310,15 @@ namespace Nitou.TCC.CharacterControl.Control
         private void OnDrawGizmosSelected()
         {
             const float cursorRadius = 0.1f;
-            if (_characterSettings == null)
-            {
-                _characterSettings = GetComponentInParent<CharacterSettings>();
-            }
+            if (CharacterSettings == null)
+                GatherCharacterSettings();
 
             var position = transform.position;
-            var width = _characterSettings.Radius;
+            var width = CharacterSettings.Radius;
 
             if (_leaveTime > 0)
             {
-                var characterCenter = position + new Vector3(0, _characterSettings.Height * 0.5f, 0);
+                var characterCenter = position + new Vector3(0, CharacterSettings.Height * 0.5f, 0);
                 var velocityOffset = _velocity + new Vector3(0, _gravity.FallSpeed, 0);
                 var velocityPosition = characterCenter + velocityOffset * 0.3f;
                 Gizmos.DrawLine(characterCenter, velocityPosition);
@@ -329,7 +327,7 @@ namespace Nitou.TCC.CharacterControl.Control
             else
             {
                 var top = position + new Vector3(0, JumpHeight, 0);
-                var size = new Vector3(_characterSettings.Radius, 0, _characterSettings.Radius);
+                var size = new Vector3(CharacterSettings.Radius, 0, CharacterSettings.Radius);
                 NGizmo.DrawCube(top, size, Colors.Blue);
                 Gizmos.DrawLine(position, top);
             }

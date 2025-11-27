@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using Nitou.TCC.CharacterControl.Interfaces.Core;
 using UnityEngine;
+using Nitou.TCC.CharacterControl.Interfaces.Core;
 
 namespace Nitou.TCC.CharacterControl.Core
 {

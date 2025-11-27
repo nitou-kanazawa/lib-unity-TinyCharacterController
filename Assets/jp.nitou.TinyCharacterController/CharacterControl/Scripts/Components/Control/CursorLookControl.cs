@@ -22,17 +22,17 @@ namespace Nitou.TCC.CharacterControl.Control
     public sealed class CursorLookControl : MonoBehaviour,
                                             ITurn, IUpdateComponent
     {
-        [Required] [SerializeField, Indent] private Camera _camera;
+        [Required]
+        [SerializeField, Indent] private Camera _camera;
 
-        [Title("Cursor behavior settings")]
         /// <summary>
         /// カーソルの最大距離．
         /// カメラの移動範囲を制限するために使用されます。
         /// 例えば、カメラをカーソル位置に追従させたい場合など。
         /// </summary>
+        [Title("Cursor behavior settings")]
         [Tooltip("Maximum distance of cursor")]
-        [SerializeField, Indent]
-        private float _maxDistance = 3;
+        [SerializeField, Indent] private float _maxDistance = 3;
 
         /// <summary>
         /// カーソルへの向きを補正するためのオフセット．
@@ -41,19 +41,21 @@ namespace Nitou.TCC.CharacterControl.Control
         /// </summary>
         [SerializeField, Indent] private Vector3 _originOffset = Vector3.zero;
 
-        [Title("Plane settings")] [SerializeField, Indent]
-        private Vector3 _planeAxis = Vector3.up;
+        [Title("Plane settings")]
+        [SerializeField, Indent] private Vector3 _planeAxis = Vector3.up;
 
         [SerializeField, Indent] private float _planeOffset;
 
-        [Title("Character orientation control")] [GUIColor("green")] [SerializeField, Indent]
-        private int _turnPriority = 1;
+        [Title("Character orientation control")] 
+        [GUIColor("green")] 
+        [SerializeField, Indent] private int _turnPriority = 1;
 
-        [PropertyRange(-1, 100)] [SerializeField, Indent]
-        private int _turnSpeed = 30;
+        [PropertyRange(-1, 100)] 
+        [SerializeField, Indent] private int _turnSpeed = 30;
 
 
         private Vector2 _mousePosition;
+        
         private ITransform _transform;
         private CharacterSettings _characterSettings;
 

@@ -1105,17 +1105,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 540839f9f1a259e469e15817ca1e3755, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Nitou.TCC.Utils::Nitou.Pool.GameObjectPool
-  <Index>k__BackingField: -1
-  _prefab: {fileID: 0}
-  _isActiveOnGet: 1
-  _parent: {fileID: 0}
-  _prewarmCount: 0
-  _hideSpawnObject: 0
-  _cachedPrefabInstanceID: 0
-  _hasParent: 0
-  _hasRigidbody: 0
-  _isInitialize: 0
-  _siblingIndex: 0
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0

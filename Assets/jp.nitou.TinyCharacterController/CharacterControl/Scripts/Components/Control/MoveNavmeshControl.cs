@@ -41,29 +41,28 @@ namespace Nitou.TCC.CharacterControl.Components
         [SerializeField] private NavMeshAgent _agent;
 
         /// <summary>
-        ///　Maximum character movement speed
+        /// Maximum character movement speed
         /// </summary>
         [Header("Settings")]
-        [SerializeField] [FormerlySerializedAs("Speed")]
+        [SerializeField] 
         private float _speed = 4;
 
         /// <summary>
         /// Character turn speed.
         /// </summary>
-        [FormerlySerializedAs("_turnSpeed")] [Range(-1, 50)]
+        [Range(-1, 50)]
         public int TurnSpeed = 8;
 
         /// <summary>
         /// Character move priority.
         /// </summary>
-        [FormerlySerializedAs("_movePriority")] [Header("movement and orientation")]
+        [Header("movement and orientation")]
         [GUIColor("green")]
         public int MovePriority = 1;
 
         /// <summary>
         /// Character Turn Priority.
         /// </summary>
-        [FormerlySerializedAs("_turnPriority")]
         [GUIColor("green")]
         public int TurnPriority = 1;
 
@@ -72,10 +71,10 @@ namespace Nitou.TCC.CharacterControl.Components
         /// </summary>
         public UnityEvent OnArrivedAtDestination;
 
-        private ITransform _transform;
         private float _yawAngle;
         private Vector3 _moveVelocity;
 
+        private ITransform _transform;
 
         /// <summary>
         /// True if the character has reached the target point.
@@ -138,7 +137,8 @@ namespace Nitou.TCC.CharacterControl.Components
         float ITurn.YawAngle => _yawAngle;
 
         int IUpdateComponent.Order => Order.Control;
-        
+
+        #region Lifecycle Events
         
         private void Awake()
         {
@@ -156,7 +156,6 @@ namespace Nitou.TCC.CharacterControl.Components
             _agent.updatePosition = false;
             _agent.updateRotation = false;
         }
-
         
         void IUpdateComponent.OnUpdate(float deltaTime)
         {
@@ -207,6 +206,9 @@ namespace Nitou.TCC.CharacterControl.Components
             }
         }
 
+        #endregion
+        
+        
         void IComponentCondition.OnConditionCheck(List<string> messageList)
         {
             if (_agent != null && _agent.transform.parent != transform)
@@ -215,6 +217,7 @@ namespace Nitou.TCC.CharacterControl.Components
             }
         }
 
+        
         
 #if UNITY_EDITOR
 

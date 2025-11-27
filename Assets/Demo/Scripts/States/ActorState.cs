@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using UnityEngine;
 using Animancer;
-using Nitou.TCC;
 using Nitou.TCC.CharacterControl.Core;
 using Nitou.TCC.CharacterControl.Control;
 using Nitou.TCC.Integration;
@@ -11,7 +9,7 @@ namespace Project.Actor
     /// <summary>
     /// アクターのステート基底クラス
     /// </summary>
-    public abstract class ActorState : Nitou.TCC.Implements.State<ActorCore, ActorFMS.SetupParam>
+    public abstract class ActorState : Nitou.TCC.AI.FMS.State<ActorCore, ActorFMS.SetupParam>
     {
         // Reference
         public CharacterSettings Settings { get; private set; }

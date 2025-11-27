@@ -10,7 +10,7 @@ using Nitou.TCC.CharacterControl.Core;
 
 namespace Project.Actor
 {
-    using StateBase = Nitou.TCC.Implements.State<ActorCore, ActorFMS.SetupParam>;
+    using StateBase = Nitou.TCC.AI.FMS.State<ActorCore, ActorFMS.SetupParam>;
 
     public sealed class StrafeMoveState : ActorState
     {

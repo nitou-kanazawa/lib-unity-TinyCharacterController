@@ -1,6 +1,6 @@
-using Nitou.TCC.CharacterControl.Check;
 using UnityEngine;
 using Nitou.TCC.Integration;
+using Nitou.TCC.CharacterControl.Check;
 using Nitou.TCC.CharacterControl.Control;
 using Nitou.TCC.CharacterControl.Effect;
 

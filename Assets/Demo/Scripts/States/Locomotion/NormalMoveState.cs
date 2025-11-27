@@ -2,12 +2,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using Animancer;
 using Sirenix.OdinInspector;
-using Nitou.TCC.CharacterControl.Control;
-using Nitou.TCC.CharacterControl.Core;
 
 namespace Project.Actor
 {
-    using StateBase = Nitou.TCC.Implements.State<ActorCore, ActorFMS.SetupParam>;
+    using StateBase = Nitou.TCC.AI.FMS.State<ActorCore, ActorFMS.SetupParam>;
 
     /// <summary>
     /// 戦闘時の基本移動ステート．
@@ -53,7 +51,7 @@ namespace Project.Actor
         public override void EnterBehaviour(float dt, StateBase fromState)
         {
             Debug.Log("Normal Move");
-            
+
             // 移動コンポーネントの設定
             //Movement.LookingDirection.CurrentMode = LookingDirection.Mode.Movement;  // ※移動方向を向く
             //Movement.PlanarMovement.CanRun = _canRun;
@@ -131,7 +129,6 @@ namespace Project.Actor
                     return;
                 }
 
-  
 
                 //    // 回避ステップ
                 //    if (InputActions.dodge.Started) {

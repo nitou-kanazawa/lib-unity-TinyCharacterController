@@ -7,7 +7,7 @@ using Nitou.TCC.Integration;
 
 namespace Project.Actor
 {
-    public class ActorFMS : Nitou.TCC.Implements.SimpleFMS<ActorCore, ActorFMS.SetupParam>
+    public class ActorFMS : Nitou.TCC.AI.FMS.SimpleFMS<ActorCore, ActorFMS.SetupParam>
     {
         /// ----------------------------------------------------------------------------
         // Protected Method 
@@ -38,7 +38,7 @@ namespace Project.Actor
         /// <summary>
         /// <see cref="ActorFMS"/> �̃Z�b�g�A�b�v�p�f�[�^
         /// </summary>
-        public class SetupParam : Nitou.TCC.Implements.StateSetupParam
+        public class SetupParam : Nitou.TCC.AI.FMS.StateSetupParam
         {
             public readonly CharacterSettings actorSettings;
             public readonly ActorBrain actorBrain;

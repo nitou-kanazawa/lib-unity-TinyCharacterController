@@ -29,6 +29,8 @@ namespace Nitou.TCC.CharacterControl.Check
         [SerializeField, Indent] private float _wallDetectionDistance = 0.1f;
 
         private int _order;
+        
+        // References
         private IBrain _brain;
         private ITransform _transform;
         private CharacterSettings _settings;

@@ -24,6 +24,7 @@ namespace Nitou.TCC.AI.FMS
     {
         /// <summary>
         /// ステートマシンが保持しているコンテキスト．
+        /// 
         /// </summary>
         public TContext Context { get; private set; }
 

@@ -10,7 +10,7 @@ using UnityEngine.Jobs;
 using UnityEngine.Pool;
 using UnityEngine.Profiling;
 
-namespace Nitou.TCC.Implements.UI
+namespace Nitou.TCC.UI.UI
 {
     public sealed class IndicatorSystem : SystemBase<Indicator, IndicatorSystem>, 
                                           IPostUpdate

@@ -1,6 +1,6 @@
 
 
-namespace Nitou.TCC.Utils
+namespace Nitou.TCC.Foundation
 {
     public readonly struct ProfilerScope : System.IDisposable{
 

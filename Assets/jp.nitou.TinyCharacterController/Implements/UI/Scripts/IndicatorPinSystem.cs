@@ -7,7 +7,7 @@ using UnityEngine.Jobs;
 using UnityEngine.Profiling;
 using Nitou.BatchProcessor;
 
-namespace Nitou.TCC.Implements.UI
+namespace Nitou.TCC.UI.UI
 {
     /// <summary>
     /// A system for batch processing <see cref="IndicatorPin"/> components.

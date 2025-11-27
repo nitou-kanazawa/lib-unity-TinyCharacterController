@@ -3,7 +3,7 @@
     "rootNamespace": "Nitou.TCC.UI",
     "references": [
         "Nitou.TCC.Foundation",
-        "Nitou.TCC.Controller",
+        "Nitou.TCC.CharacterControl",
         "Nitou.NGizmos",
         "Unity.Mathematics",
         "Unity.Burst",

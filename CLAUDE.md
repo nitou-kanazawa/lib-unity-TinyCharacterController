@@ -27,11 +27,12 @@ This design allows mixing and matching components (e.g., add dash, climbing, swi
 ## Architecture
 
 ### Core Module Structure
-- **Foundation** (`Nitou.TCC.Foundation`): Base utilities and shared systems (located in `Assets/TinyCharacterController/Foundation/`)
-- **Controller** (`Nitou.TCC.Controller`): Core character control logic with Brain components and managers (`Assets/TinyCharacterController/Core/Controller/`)
-- **Inputs** (`Nitou.TCC.Inputs`): Input handling with ActorBrain classes and input action handlers (`Assets/TinyCharacterController/Core/Inputs/`)
-- **Implements** (`Nitou.TCC.Implements`): Concrete implementations of character behaviors (`Assets/TinyCharacterController/Implements/`)
-- **Tools** (`Nitou.TCC.Tools`): Development tools and editor utilities (`Assets/TinyCharacterController/Tools/`)
+- **Foundation** (`Nitou.TCC.Foundation`): Base utilities and shared systems (located in `Assets/jp.nitou.TinyCharacterController/Foundation/`)
+- **CharacterControl** (`Nitou.TCC.CharacterControl`): Core character control logic with Brain components and managers (`Assets/jp.nitou.TinyCharacterController/CharacterControl/`)
+- **Integration** (`Nitou.TCC.Integration`): Input handling with ActorBrain classes and input action handlers (`Assets/jp.nitou.TinyCharacterController/Integration/`)
+- **AI** (`Nitou.TCC.AI`): AI decision-making systems including FMS, Behavior Tree support (`Assets/jp.nitou.TinyCharacterController/AI/`)
+- **Implements** (`Nitou.TCC.Implements`): Concrete implementations like UI components (`Assets/jp.nitou.TinyCharacterController/Implements/`)
+- **Tools** (`Nitou.TCC.Tools`): Development tools and editor utilities (`Assets/jp.nitou.TinyCharacterController/Tools/`)
 
 ### Brain System Architecture
 
@@ -70,7 +71,7 @@ All managers use priority-based component selection via `TryGetHighestPriority()
 
 ### Component Interfaces and Priority System
 
-Key interfaces in `Nitou.TCC.Controller.Interfaces`:
+Key interfaces in `Nitou.TCC.CharacterControl.Interfaces`:
 
 **Priority-based Interfaces**:
 - **IPriority<T>**: Base interface with `int Priority` property (Priority ≤ 0 means inactive)
@@ -97,18 +98,20 @@ Dependency flow (bottom to top):
 ```
 Nitou.TCC.Foundation (base utilities)
     ↓
-Nitou.TCC.Controller (references Foundation)
+Nitou.TCC.CharacterControl (references Foundation)
     ↓
-Nitou.TCC.Inputs (references Controller + Foundation)
+Nitou.TCC.Integration (references CharacterControl + Foundation)
     ↓
-Nitou.TCC.Implements (references Controller + Inputs + Foundation)
+Nitou.TCC.AI (references Integration + CharacterControl + Foundation)
+    ↓
+Nitou.TCC.Implements.* (references as needed)
 ```
 
-Controller assembly requires Odin Inspector (`defineConstraints: ["ODIN_INSPECTOR"]`).
+CharacterControl assembly requires Odin Inspector (`defineConstraints: ["ODIN_INSPECTOR"]`).
 
 ### Input System Architecture
 
-The Inputs module (`Assets/TinyCharacterController/Core/Inputs/Runtime/`) provides actor-based input handling:
+The Integration module (`Assets/jp.nitou.TinyCharacterController/Integration/Runtime/`) provides actor-based input handling:
 
 **ActorActions System**:
 - Action types: `BoolAction` (buttons), `FloatAction` (axes), `Vector2Action` (2D input)
@@ -155,14 +158,14 @@ The project includes experimental systems in `Assets/` (not part of the main pac
 ### Package Installation
 Install main package via Unity Package Manager:
 ```
-https://github.com/nitou-kanazawa/lib-unity-TinyCharacterController.git?path=Assets/TinyCharacterController
+https://github.com/nitou-kanazawa/lib-unity-TinyCharacterController.git?path=Assets/jp.nitou.TinyCharacterController
 ```
 
 Or add to `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
-    "jp.nitou.tiny-character-controller": "https://github.com/nitou-kanazawa/lib-unity-TinyCharacterController.git?path=Assets/TinyCharacterController"
+    "jp.nitou.tiny-character-controller": "https://github.com/nitou-kanazawa/lib-unity-TinyCharacterController.git?path=Assets/jp.nitou.TinyCharacterController"
   }
 }
 ```
@@ -175,7 +178,7 @@ Or add to `Packages/manifest.json`:
 - **UniTask** (from GitHub): Async/await support for Unity
 - **UniRx** (from GitHub): Reactive extensions for Unity
 - **Unity Input System** (v1.14.2): New input system for player controls
-- **Sirenix Odin Inspector**: Enhanced editor attributes (REQUIRED for Controller module - compilation will fail without it)
+- **Sirenix Odin Inspector**: Enhanced editor attributes (REQUIRED for CharacterControl module - compilation will fail without it)
 - **Universal Render Pipeline** (v17.2.0): Unity URP rendering
 
 ### Optional Packages
@@ -187,15 +190,16 @@ Or add to `Packages/manifest.json`:
 ## Code Conventions
 
 ### Namespace Structure
-- `Nitou.TCC.Controller.Core`: Brain and manager implementations
-- `Nitou.TCC.Controller.Interfaces`: Component interfaces (IMove, ITurn, IEffect, etc.)
-- `Nitou.TCC.Controller.Shared`: Shared utilities and settings (includes Order.cs for update timing constants)
-- `Nitou.TCC.Inputs`: Input handling and ActorBrain classes
-- `Nitou.TCC.Implements`: Concrete component implementations
-- `Nitou.TCC.Utils`: General utility functions
+- `Nitou.TCC.Foundation`: Base utilities (extensions, batch processor, body references, etc.)
+- `Nitou.TCC.CharacterControl.Core`: Brain and manager implementations
+- `Nitou.TCC.CharacterControl.Interfaces`: Component interfaces (IMove, ITurn, IEffect, etc.)
+- `Nitou.TCC.CharacterControl.Shared`: Shared utilities and settings (includes Order.cs for update timing constants)
+- `Nitou.TCC.Integration`: Input handling and ActorBrain classes (PlayerBrain, EnemyBrain)
+- `Nitou.TCC.AI.FMS`: Finite State Machine for AI decision-making
+- `Nitou.TCC.UI`: UI-related implementations (Indicator systems, etc.)
 - `Nitou.BatchProcessor`: Custom update loop system
 - `Nitou.NGizmos`: Gizmo drawing utilities
-- `Nitou.Goap`: Experimental GOAP AI system (separate module)
+- `Nitou.Goap`: Experimental GOAP AI system (separate module, not in package)
 
 ### Component Design Patterns
 1. **Priority-based execution**: Components implement priority values; highest priority wins

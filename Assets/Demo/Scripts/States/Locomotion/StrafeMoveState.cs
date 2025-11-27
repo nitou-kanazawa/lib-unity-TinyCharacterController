@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Animancer;
 using Sirenix.OdinInspector;
-using Nitou.TCC.Controller.Control;
-using Nitou.TCC.Controller.Core;
+using Nitou.TCC.CharacterControl.Control;
+using Nitou.TCC.CharacterControl.Core;
 
 // REF:
 // - [Animancer - 03-02 Directional Mixers](https://kybernetik.com.au/animancer/docs/samples/mixers/directional/)

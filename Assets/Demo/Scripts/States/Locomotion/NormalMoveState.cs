@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Animancer;
 using Sirenix.OdinInspector;
-using Nitou.TCC.Controller.Control;
-using Nitou.TCC.Controller.Core;
+using Nitou.TCC.CharacterControl.Control;
+using Nitou.TCC.CharacterControl.Core;
 
 namespace Project.Actor
 {

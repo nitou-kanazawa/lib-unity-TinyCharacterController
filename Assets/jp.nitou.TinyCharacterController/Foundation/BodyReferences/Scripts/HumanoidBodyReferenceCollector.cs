@@ -1,7 +1,7 @@
 using UnityEngine;
 using Sirenix.OdinInspector;
 
-namespace Nitou.TCC.Utils.Humanoid
+namespace Nitou.TCC.Foundation.Humanoid
 {
     public enum BodyType
     {

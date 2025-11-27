@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Nitou.TCC.Utils.Humanoid
+namespace Nitou.TCC.Foundation.Humanoid
 {
     /// <summary>
     /// Humanoidの身体への参照を示すコンポーネント．

@@ -1,8 +1,8 @@
 {
   "name": "jp.nitou.tiny-character-controller",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "displayName": "Tiny Character Controller",
-  "description": "Character controller.",
+  "description": "Modular character controller system with component-based architecture.",
   "author": {
     "name": "Nitou",
     "url": "https://github.com/nitou-kanazawa"

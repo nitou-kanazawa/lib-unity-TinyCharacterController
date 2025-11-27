@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Nitou.TCC.Utils.Humanoid
+namespace Nitou.TCC.Foundation.Humanoid
 {
     /// <summary>
     /// Humanoidの参照を表すインタフェース．

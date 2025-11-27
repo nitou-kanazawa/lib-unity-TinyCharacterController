@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Nitou.TCC.Utils.Humanoid
+namespace Nitou.TCC.Foundation.Humanoid
 {
     /// <summary>
     /// Humanoidの頭の位置姿勢を示すコンポーネント．

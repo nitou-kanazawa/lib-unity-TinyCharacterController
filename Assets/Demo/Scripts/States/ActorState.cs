@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Animancer;
 using Nitou.TCC;
-using Nitou.TCC.Controller.Core;
-using Nitou.TCC.Controller.Control;
-using Nitou.TCC.Inputs;
+using Nitou.TCC.CharacterControl.Core;
+using Nitou.TCC.CharacterControl.Control;
+using Nitou.TCC.Integration;
 
 namespace Project.Actor
 {

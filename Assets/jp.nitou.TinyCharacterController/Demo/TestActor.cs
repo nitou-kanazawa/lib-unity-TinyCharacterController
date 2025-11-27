@@ -1,8 +1,8 @@
-using Nitou.TCC.Controller.Check;
+using Nitou.TCC.CharacterControl.Check;
 using UnityEngine;
-using Nitou.TCC.Inputs;
-using Nitou.TCC.Controller.Control;
-using Nitou.TCC.Controller.Effect;
+using Nitou.TCC.Integration;
+using Nitou.TCC.CharacterControl.Control;
+using Nitou.TCC.CharacterControl.Effect;
 
 
 public class TestActor : MonoBehaviour {

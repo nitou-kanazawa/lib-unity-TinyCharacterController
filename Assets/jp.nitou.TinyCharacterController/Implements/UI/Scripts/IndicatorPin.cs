@@ -1,11 +1,11 @@
 using UnityEngine;
 using UnityEngine.Serialization;
-using Nitou.TCC.Controller.Shared;
+using Nitou.TCC.CharacterControl.Shared;
 using Nitou.BatchProcessor;
 using Sirenix.OdinInspector;
 using Nitou.Gizmo;
 
-namespace Nitou.TCC.Implements.UI
+namespace Nitou.TCC.UI.UI
 {
     /// <summary>
     /// Component for synchronizing UI with 3D space coordinates.

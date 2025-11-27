@@ -1,10 +1,10 @@
 using Nitou.BatchProcessor;
-using Nitou.TCC.Controller.Shared;
+using Nitou.TCC.CharacterControl.Shared;
 using UnityEngine;
 using UnityEngine.Events;
 using Sirenix.OdinInspector;
 
-namespace Nitou.TCC.Implements.UI
+namespace Nitou.TCC.UI.UI
 {
     [DisallowMultipleComponent]
     [AddComponentMenu(MenuList.Ui + nameof(Indicator))]

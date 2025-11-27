@@ -5,7 +5,7 @@ using Sirenix.OdinInspector;
 using Nitou.Gizmo;
 #endif
 
-namespace Nitou.TCC.Utils
+namespace Nitou.TCC.Foundation
 {
     /// <summary>
     /// 

@@ -2,7 +2,7 @@ using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Nitou.TCC.Implements
+namespace Nitou.TCC.UI
 {
     /// <summary>
     /// Indicatorの計算用カメラユーティリティクラス。

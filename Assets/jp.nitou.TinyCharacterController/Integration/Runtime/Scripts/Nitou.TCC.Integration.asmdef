@@ -1,0 +1,22 @@
+{
+    "name": "Nitou.TCC.Integration",
+    "rootNamespace": "Nitou.TCC.Integration",
+    "references": [
+        "Nitou.TCC.Foundation",
+        "Nitou.TCC.CharacterControl",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Sirenix.OdinInspector.Attributes.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "ODIN_INSPECTOR"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

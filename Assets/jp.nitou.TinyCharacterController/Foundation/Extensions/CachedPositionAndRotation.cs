@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Nitou.TCC.Utils
+namespace Nitou.TCC.Foundation
 {
     /// <summary>
     /// <see cref="Transform"/>の位置姿勢のキャッシュ

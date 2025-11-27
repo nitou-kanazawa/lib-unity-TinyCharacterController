@@ -1,11 +1,11 @@
 using System;
 using UnityEngine;
 using Sirenix.OdinInspector;
-using Nitou.TCC.Controller.Core;
-using Nitou.TCC.Controller.Check;
-using Nitou.TCC.Controller.Control;
-using Nitou.TCC.Controller.Interfaces.Components;
-using Nitou.TCC.Inputs;
+using Nitou.TCC.CharacterControl.Core;
+using Nitou.TCC.CharacterControl.Check;
+using Nitou.TCC.CharacterControl.Control;
+using Nitou.TCC.CharacterControl.Interfaces.Components;
+using Nitou.TCC.Integration;
 using R3;
 using R3.Triggers;
 

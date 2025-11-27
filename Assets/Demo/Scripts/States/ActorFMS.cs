@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Nitou;
-using Nitou.TCC.Controller.Core;
-using Nitou.TCC.Inputs;
+using Nitou.TCC.CharacterControl.Core;
+using Nitou.TCC.Integration;
 
 namespace Project.Actor
 {

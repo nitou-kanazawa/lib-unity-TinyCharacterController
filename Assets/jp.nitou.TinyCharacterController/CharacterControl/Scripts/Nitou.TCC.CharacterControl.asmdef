@@ -1,0 +1,34 @@
+{
+    "name": "Nitou.TCC.CharacterControl",
+    "rootNamespace": "Nitou.TCC.CharacterControl",
+    "references": [
+        "GUID:957d667169b382a479e051a59f944304",
+        "GUID:bbf791a4b3949d24e8c1ffc518c3bba7",
+        "GUID:d8b63aba1907145bea998dd612889d6b",
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:2665a8d13d1b3f18800f46e256720795",
+        "GUID:e0cd26848372d4e5c891c569017e11f1",
+        "GUID:5f66ce9f07a9ddf42b3f72bb5d01e8e9",
+        "GUID:77221876cc6b8244180b96e320b1bcd4"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "R3.dll",
+        "Sirenix.OdinInspector.Attributes.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "ODIN_INSPECTOR"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.nitou.ngizmo",
+            "expression": "",
+            "define": "TCC_USE_NGIZMOS"
+        }
+    ],
+    "noEngineReferences": false
+}

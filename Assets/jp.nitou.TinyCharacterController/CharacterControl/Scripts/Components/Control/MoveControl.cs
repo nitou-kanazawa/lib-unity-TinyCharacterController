@@ -16,20 +16,19 @@ namespace Nitou.TCC.CharacterControl.Control
     [AddComponentMenu(MenuList.MenuControl + nameof(MoveControl))]
     [DisallowMultipleComponent]
     // [RequireInterface(typeof(IGroundContact))]
-    public sealed class MoveControl : MonoBehaviour,
+    public sealed class MoveControl : ComponentBase,
                                       IMove,
                                       ITurn,
                                       IPriorityLifecycle<ITurn>,
                                       IUpdateComponent
     {
-        [Title("Movement settings")]
         /// <summary>
         /// Determines if MoveControl is used to move the character.
         /// If a higher value than other Priority is set, this component is used.
         /// </summary>
+        [Title("Movement settings")]
         [GUIColor("green")]
-        [SerializeField, Indent]
-        private int _movePriority = 1;
+        [SerializeField, Indent] private int _movePriority = 1;
 
         /// <summary>
         /// アクターの最大移動速度．
@@ -67,35 +66,33 @@ namespace Nitou.TCC.CharacterControl.Control
         [SerializeField, Indent] private float _moveStopThreshold = 0.2f;
 
 
-        [Title("Turning Settings")]
         /// <summary>
         /// Determines if MoveControl is used for character orientation.
         /// If a higher value is set compared to other priorities, this component is used.
         /// </summary>
+        [Title("Turning Settings")]
         [GUIColor("green")]
-        [SerializeField, Indent]
-        private int _turnPriority = 1;
+        [SerializeField, Indent] private int _turnPriority = 1;
 
         /// <summary>
         /// アクター回転速度．
         /// （Priorityが高いときのみ適用）
         /// </summary>
         [PropertyRange(-1, 50)]
-        [SerializeField, Indent]
-        private int _turnSpeed = 15;
+        [SerializeField, Indent] private int _turnSpeed = 15;
 
         /// <summary>
         /// Threshold to determine if the character's orientation has reached.
         /// If it's 0, orientation changes immediately after stopping the movement.
         /// If it's 1, the orientation is updated until it reaches the target orientation.
         /// </summary>
-        [Range(0, 1)] [SerializeField, Indent] private float _turnStopThreshold = 0;
+        [Range(0, 1)] 
+        [SerializeField, Indent] private float _turnStopThreshold = 0;
 
         // references
-        private CharacterSettings _characterSettings;
+        private Transform _transform;
         private IBrain _brain;
         private IGroundContact _groundCheck;
-        private Transform _transform;
 
         // state
         private bool _hasGroundCheck;
@@ -116,7 +113,7 @@ namespace Nitou.TCC.CharacterControl.Control
         /// <summary>
         /// 
         /// </summary>
-        public MovementReference MovementReference => _characterSettings.MovementReference;
+        public MovementReference MovementReference => CharacterSettings.MovementReference;
 
         /// <summary>
         /// 現在の移動速度．
@@ -257,19 +254,8 @@ namespace Nitou.TCC.CharacterControl.Control
 
 
         // ----------------------------------------------------------------------------
-        // Lifecycle Events
-
-        private void Awake()
-        {
-            // ActorSettings
-            _characterSettings = gameObject.GetComponentInParent<CharacterSettings>() ?? throw new System.NullReferenceException(nameof(_characterSettings));
-
-            // Components
-            _characterSettings.TryGetComponent<Transform>(out _transform);
-            _characterSettings.TryGetComponent<IBrain>(out _brain);
-            _hasGroundCheck = _characterSettings.TryGetActorComponent(CharacterComponent.Check, out _groundCheck);
-        }
-
+        #region Lifecycle Events
+        
         private void OnDestroy() {
         }
 
@@ -281,6 +267,7 @@ namespace Nitou.TCC.CharacterControl.Control
                 ProcessTurn(dt);
             }
         }
+        #endregion
 
 
         // ----------------------------------------------------------------------------
@@ -343,6 +330,12 @@ namespace Nitou.TCC.CharacterControl.Control
             _isTurning = Vector3.Angle(_transform.forward, _moveDirection) > (1 - _turnStopThreshold) * 360;
         }
 
+        protected override void OnComponentInitialized()
+        {
+            CharacterSettings.TryGetComponent(out _transform);
+            CharacterSettings.TryGetComponent(out _brain);
+            _hasGroundCheck = CharacterSettings.TryGetActorComponent(CharacterComponent.Check, out _groundCheck);
+        } 
 
         // ----------------------------------------------------------------------------
 #if UNITY_EDITOR && TCC_USE_NGIZMOS

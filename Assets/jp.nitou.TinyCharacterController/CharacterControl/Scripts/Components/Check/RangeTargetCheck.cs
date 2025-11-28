@@ -21,7 +21,7 @@ namespace Nitou.TCC.CharacterControl.Check
     /// </summary>
     [AddComponentMenu(MenuList.MenuCheck + nameof(RangeTargetCheck))]
     [DisallowMultipleComponent]
-    public sealed class RangeTargetCheck : MonoBehaviour,
+    public sealed class RangeTargetCheck : ComponentBase,
                                            IEarlyUpdateComponent
     {
         /// <summary>
@@ -48,15 +48,14 @@ namespace Nitou.TCC.CharacterControl.Check
         /// </summary>
         [SerializeField] private SearchRangeSettings[] _searchData;
 
-        // 
+        //
         private readonly List<string> _tags = new();
         private SearchedTarget[] _searchTargets;
         private float _maxDistance = -1;
         private bool _useScreenCheck = true;
         private LayerMask _raycastHitLayer;
 
-        // 
-        private CharacterSettings _settings;
+        //
         private ITransform _transform;
 
         // 
@@ -229,11 +228,11 @@ namespace Nitou.TCC.CharacterControl.Check
 
         #region Lifecycle Events
 
-        private void Awake()
+        protected override void OnComponentInitialized()
         {
-            GatherComponents();
+            CharacterSettings.TryGetComponent(out _transform);
 
-            _raycastHitLayer = _settings.EnvironmentLayer & ~_transparentLayer;
+            _raycastHitLayer = CharacterSettings.EnvironmentLayer & ~_transparentLayer;
 
             foreach (var data in _searchData)
             {
@@ -257,7 +256,7 @@ namespace Nitou.TCC.CharacterControl.Check
             // センサー位置を中心に、指定されたレイヤーを持つコライダーのリストを取得する
 
             var sensorPosition = _transform.Position + _sensorOffset;
-            var cameraPosition = _settings.CameraTransform.position;
+            var cameraPosition = CharacterSettings.CameraTransform.position;
             var count = Physics.OverlapSphereNonAlloc(
                 sensorPosition,
                 _maxDistance,
@@ -266,7 +265,7 @@ namespace Nitou.TCC.CharacterControl.Check
                 QueryTriggerInteraction.Collide);
 
             if (_useScreenCheck)
-                GeometryUtility.CalculateFrustumPlanes(_settings.CameraMain, CameraPlanes);
+                GeometryUtility.CalculateFrustumPlanes(CharacterSettings.CameraMain, CameraPlanes);
 
             // コライダー、オブジェクト座標、コライダー境界までの距離を取得する
 
@@ -383,12 +382,6 @@ namespace Nitou.TCC.CharacterControl.Check
             var count = Physics.RaycastNonAlloc(ray, Hits, distance, _raycastHitLayer, QueryTriggerInteraction.Ignore);
             count -= Array.Exists(Hits, h => h.collider == targetCollider) ? 1 : 0;
             return count > 0;
-        }
-
-        private void GatherComponents()
-        {
-            _settings = GetComponentInParent<CharacterSettings>();
-            _transform = _settings.GetComponent<ITransform>();
         }
 
         private Transform GetClosest(Vector3 position, List<Transform> targets)

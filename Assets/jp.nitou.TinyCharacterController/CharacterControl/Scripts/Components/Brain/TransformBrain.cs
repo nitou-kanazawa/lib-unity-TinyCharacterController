@@ -1,5 +1,5 @@
-using Nitou.BatchProcessor;
 using UnityEngine;
+using Nitou.BatchProcessor;
 using Nitou.TCC.CharacterControl.Shared;
 using Nitou.TCC.Foundation;
 

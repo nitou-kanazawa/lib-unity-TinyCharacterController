@@ -23,7 +23,7 @@ namespace Nitou.TCC.CharacterControl.Effect
     /// </summary>
     [AddComponentMenu(MenuList.MenuEffect + nameof(Gravity))]
     [DisallowMultipleComponent]
-    public sealed class Gravity : MonoBehaviour,
+    public sealed class Gravity : ComponentBase,
                                   IGravity, IGravityEvent,
                                   IEffect,
                                   IEarlyUpdateComponent
@@ -34,15 +34,14 @@ namespace Nitou.TCC.CharacterControl.Effect
             Ground = 1,
         }
 
-        [Title("Parameters")]
         /// <summary>
         /// 重力の倍率．
         /// Mulply by the ti<see cref="Physics.gravity"/> value.
         /// </summary>
+        [Title("Parameters")]
         [Tooltip("Gravity multiplier")]
         [PropertyRange(0, 10)]
-        [SerializeField, Indent]
-        float _gravityScale = 1f;
+        [SerializeField, Indent] private float _gravityScale = 1f;
 
         // Events
         private readonly Subject<float> _onLandingSubject = new();
@@ -50,7 +49,6 @@ namespace Nitou.TCC.CharacterControl.Effect
 
         // 
         private IGroundContact _groundCheck;
-        private CharacterSettings _settings;
         private State _state;
         private Vector3 _impactPower;
         private Vector3 _velocity;
@@ -111,12 +109,13 @@ namespace Nitou.TCC.CharacterControl.Effect
 
         // ----------------------------------------------------------------------------
         // LifeCycle Event
-        private void Awake()
-        {
-            _settings = GetComponentInParent<CharacterSettings>();
-            _settings.TryGetActorComponent(CharacterComponent.Check, out _groundCheck);
-        }
 
+        protected override void OnComponentInitialized()
+        {
+            base.OnComponentInitialized();
+            CharacterSettings.TryGetActorComponent(CharacterComponent.Check, out _groundCheck);
+        }
+        
         private void Start()
         {
             _state = IsGrounded ? State.Ground : State.Air;
@@ -181,7 +180,7 @@ namespace Nitou.TCC.CharacterControl.Effect
             var fallSpeed = Physics.gravity * (_gravityScale * dt);
             var angle = Vector3.Angle(Vector3.up, _groundCheck.GroundSurfaceNormal);
 
-            if (angle > 45 && _velocity.y < 0 && _groundCheck.DistanceFromGround < _settings.Radius * 0.5f)
+            if (angle > 45 && _velocity.y < 0 && _groundCheck.DistanceFromGround < CharacterSettings.Radius * 0.5f)
             {
                 _velocity += Vector3.ProjectOnPlane(fallSpeed, _groundCheck.GroundSurfaceNormal);
             }

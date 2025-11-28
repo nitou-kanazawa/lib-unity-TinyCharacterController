@@ -15,23 +15,23 @@ namespace Nitou.TCC.CharacterControl.Components
     [AddComponentMenu(MenuList.MenuControl + nameof(ManualTurn))]
     // [RequireComponent(typeof(CharacterSettings))]
     [DisallowMultipleComponent]
-    public class ManualTurn : MonoBehaviour, ITurn
+    public sealed class ManualTurn : ComponentBase,
+                                     ITurn
     {
         [SerializeField]
         private Vector3 _direction = Vector3.forward;
 
-        [FormerlySerializedAs("_turnPriority")]
         [Space]
         [Header("キャラクターの向きの設定")]
-        [SerializeField]
-        public int TurnPriority;
+        [SerializeField] public int TurnPriority;
 
-        [ Range(-1, 50)]
-        [FormerlySerializedAs("_turnSpeed")]
+        [Range(-1, 50)]
         public int TurnSpeed = 30;
 
         int IPriority<ITurn>.Priority => (_direction == Vector3.zero) ? 0 : TurnPriority;
         int ITurn.TurnSpeed => TurnSpeed;
+
+        float ITurn.YawAngle => Vector3.SignedAngle(Vector3.forward, _direction, Vector3.up);
 
         public void SetRotation(Quaternion rotation)
         {
@@ -44,7 +44,5 @@ namespace Nitou.TCC.CharacterControl.Components
             _direction = dir;
             _direction.y = 0;
         }
-
-        float ITurn.YawAngle => Vector3.SignedAngle(Vector3.forward, _direction, Vector3.up);
     }
 }

@@ -14,7 +14,7 @@ namespace Nitou.TCC.CharacterControl.Effect
     /// </summary>
     [AddComponentMenu(MenuList.MenuEffect + nameof(AdditionalVelocity))]
     [DisallowMultipleComponent]
-    public sealed class AdditionalVelocity : MonoBehaviour,
+    public sealed class AdditionalVelocity : ComponentBase,
                                              IEffect
     {
         [SerializeField] private Vector3 _velocity;

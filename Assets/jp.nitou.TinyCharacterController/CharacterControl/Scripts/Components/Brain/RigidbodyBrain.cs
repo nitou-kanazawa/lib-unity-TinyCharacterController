@@ -1,9 +1,8 @@
+using UnityEngine;
+using Unity.Mathematics;
 using Nitou.BatchProcessor;
 using Nitou.TCC.CharacterControl.Interfaces.Components;
 using Nitou.TCC.CharacterControl.Shared;
-using Nitou.TCC.Foundation;
-using Unity.Mathematics;
-using UnityEngine;
 
 namespace Nitou.TCC.CharacterControl.Core
 {

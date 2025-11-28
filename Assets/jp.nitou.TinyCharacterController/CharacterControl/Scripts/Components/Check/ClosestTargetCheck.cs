@@ -13,14 +13,13 @@ namespace Nitou.TCC.CharacterControl.Check
     /// </summary>
     [AddComponentMenu(MenuList.MenuCheck + nameof(ClosestTargetCheck))]
     [DisallowMultipleComponent]
-    public sealed class ClosestTargetCheck : MonoBehaviour
+    public sealed class ClosestTargetCheck : ComponentBase
     {
         /// <summary>
         /// The tag that will be targeted for the search.
         /// </summary>
-        [SerializeField]
         // [TagSelector]
-        private string _tag;
+        [SerializeField] private string _tag;
 
         /// <summary>
         /// The range of search.
@@ -33,9 +32,8 @@ namespace Nitou.TCC.CharacterControl.Check
         [SerializeField] private LayerMask _layer;
 
         // references
-        private CharacterSettings _characterSettings;
         private ITransform _transform;
-        
+
         private int _preInstanceId;
         
         private static readonly Collider[] Results = new Collider[100];
@@ -60,9 +58,9 @@ namespace Nitou.TCC.CharacterControl.Check
 
         #region Lifecycle Events
 
-        private void Awake()
+        protected override void OnComponentInitialized()
         {
-            GatherComponents();
+            CharacterSettings.TryGetComponent(out _transform);
         }
 
         private void Update()
@@ -88,14 +86,6 @@ namespace Nitou.TCC.CharacterControl.Check
         }
 
         #endregion
-
-        private void GatherComponents()
-        {
-            _characterSettings = GetComponentInParent<CharacterSettings>() ?? throw new System.NullReferenceException(nameof(_characterSettings));
-
-            // Components
-            _characterSettings.TryGetComponent(out _transform);
-        }
 
         private Collider ClosestCollider(Vector3 position, Collider[] colliders, int count)
         {

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -7,6 +8,7 @@ using Nitou.TCC.CharacterControl.Interfaces.Components;
 using Nitou.TCC.CharacterControl.Core;
 using Nitou.TCC.CharacterControl.Interfaces.Core;
 using Nitou.TCC.CharacterControl.Shared;
+using R3;
 #if TCC_USE_NGIZMOS
 using Nitou.Gizmo;
 #endif
@@ -20,14 +22,14 @@ namespace Nitou.TCC.CharacterControl.Check
     /// </summary>
     [AddComponentMenu(MenuList.MenuCheck + nameof(SightCheck))]
     [DisallowMultipleComponent]
-    public sealed class SightCheck : MonoBehaviour, 
+    public sealed class SightCheck : ComponentBase,
                                      IEarlyUpdateComponent
     {
         /// <summary>
         /// 検出に使用する頭の位置．
         /// </summary>
-        [Title("Sight Settings")] [SerializeField, Indent]
-        public Transform _headTransform;
+        [Title("Sight Settings")]
+        [SerializeField, Indent] public Transform _headTransform;
 
         /// <summary>
         /// 視界の範囲．
@@ -53,14 +55,17 @@ namespace Nitou.TCC.CharacterControl.Check
         /// true の場合、障害物の存在を確認する．
         /// 障害物検出には <see cref="CharacterSettings._environmentLayer"/> が使用される．
         /// </summary>
-        [Title("Options")] public bool RaycastCheck = true;
+        [Title("Options")]
+        public bool RaycastCheck = true;
+
+        private Subject<bool> _onChangeInsightAnyTargetStateObject = new();
 
         /// <summary>
-        /// オブジェクトが視界に入った、または出たときにイベントを呼び出す．
+        /// 一度に検出できるオブジェクトの最大数．
         /// </summary>
-        public UnityEvent<bool> OnChangeInsightAnyTargetState;
+        private const int CAPACITY = 100;
 
-        private CharacterSettings _settings;
+        private static readonly Collider[] Results = new Collider[CAPACITY];
 
 
         // ----------------------------------------------------------------------------
@@ -84,19 +89,18 @@ namespace Nitou.TCC.CharacterControl.Check
         public bool IsInsightAnyTarget => InsightTargets.Count > 0;
 
         /// <summary>
-        /// 一度に検出できるオブジェクトの最大数．
+        /// オブジェクトが視界に入った、または出たときにイベントを呼び出す．
         /// </summary>
-        private const int CAPACITY = 100;
-
-        private static readonly Collider[] Results = new Collider[CAPACITY];
+        public Observable<bool> OnChangeInsightAnyTargetStateObject => _onChangeInsightAnyTargetStateObject;
 
 
         // ----------------------------------------------------------------------------
-        // Lifecycle Events
-        private void Awake()
+
+        #region Lifecycle Events
+
+        private void OnDestroy()
         {
-            // 関連コンポーネントのリストを収集する
-            GatherComponents();
+            _onChangeInsightAnyTargetStateObject.Dispose();
         }
 
         void IEarlyUpdateComponent.OnUpdate(float deltaTime)
@@ -119,7 +123,7 @@ namespace Nitou.TCC.CharacterControl.Check
                 var col = Results[i];
 
                 // 検出されたオブジェクトが自身のコライダーまたはタグリストにない場合は処理をスキップする
-                if (_settings.IsOwnCollider(col) ||
+                if (CharacterSettings.IsOwnCollider(col) ||
                     col.gameObject.ContainTag(_targetTagList) == false)
                     continue;
 
@@ -143,9 +147,10 @@ namespace Nitou.TCC.CharacterControl.Check
 
             // 視界の状態が変化した場合は通知する
             if (IsInsightAnyTarget != isAnyInsightTargetPreviousFrame)
-                OnChangeInsightAnyTargetState.Invoke(IsInsightAnyTarget);
+                _onChangeInsightAnyTargetStateObject.OnNext(IsInsightAnyTarget);
         }
 
+        #endregion
 
         // ----------------------------------------------------------------------------
         // Private Method
@@ -168,7 +173,7 @@ namespace Nitou.TCC.CharacterControl.Check
             var hits = new RaycastHit[CAPACITY];
 
             // センサーからターゲットへの視界がクリアかどうかを確認する
-            var count = Physics.RaycastNonAlloc(position, direction, hits, distance, _settings.EnvironmentLayer,
+            var count = Physics.RaycastNonAlloc(position, direction, hits, distance, CharacterSettings.EnvironmentLayer,
                 QueryTriggerInteraction.Ignore);
 
             // 検出されたコライダーがターゲットのコライダーまたは自身に属する場合は処理をスキップする
@@ -177,7 +182,7 @@ namespace Nitou.TCC.CharacterControl.Check
             {
                 var hit = hits[i];
                 // コライダーがターゲットまたは自身に属する場合は処理をスキップする
-                if (targetCollider == hit.collider || _settings.IsOwnCollider(hit.collider))
+                if (targetCollider == hit.collider || CharacterSettings.IsOwnCollider(hit.collider))
                     continue;
 
                 // 障害物に遮られているため検索処理を中断する
@@ -187,14 +192,6 @@ namespace Nitou.TCC.CharacterControl.Check
 
             // 遮られている場合は false を返す
             return isCollide;
-        }
-
-        /// <summary>
-        /// コンポーネントのリストを収集する．
-        /// </summary>
-        private void GatherComponents()
-        {
-            _settings = gameObject.GetComponentInParent<CharacterSettings>();
         }
 
 
@@ -213,20 +210,22 @@ namespace Nitou.TCC.CharacterControl.Check
             VisibleLayerMask = LayerMask.GetMask("Default");
         }
 
+#if TCC_USE_NGIZMOS
         // TODO: Gizmosの修正
-        /*
-        private void OnDrawGizmosSelected() {
+        private void OnDrawGizmosSelected()
+        {
             // ゲームがプレイ中でない場合は何もしない
             if (Application.isPlaying == false)
                 return;
 
             // 視界内のオブジェクトを Gizmos を使用して表現する
-            foreach (var obj in InsightTargets) {
+            foreach (var obj in InsightTargets)
+            {
                 var position = obj.transform.position;
-                Gizmos_.DrawSphere(position, 1f, Colors.Yellow);
+                NGizmo.DrawSphere(position, 1f, Colors.Yellow);
             }
         }
-        */
+#endif
 #endif
     }
 }

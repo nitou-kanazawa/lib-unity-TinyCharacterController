@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -27,7 +28,7 @@ namespace Nitou.TCC.CharacterControl.Check
         /// <summary>
         /// 検出に使用する頭の位置．
         /// </summary>
-        [Title("Sight Settings")] 
+        [Title("Sight Settings")]
         [SerializeField, Indent] public Transform _headTransform;
 
         /// <summary>
@@ -54,19 +55,19 @@ namespace Nitou.TCC.CharacterControl.Check
         /// true の場合、障害物の存在を確認する．
         /// 障害物検出には <see cref="CharacterSettings._environmentLayer"/> が使用される．
         /// </summary>
-        [Title("Options")] 
+        [Title("Options")]
         public bool RaycastCheck = true;
 
         private Subject<bool> _onChangeInsightAnyTargetStateObject = new();
-        
+
         /// <summary>
         /// 一度に検出できるオブジェクトの最大数．
         /// </summary>
         private const int CAPACITY = 100;
-        
+
         private static readonly Collider[] Results = new Collider[CAPACITY];
 
-        
+
         // ----------------------------------------------------------------------------
         // Property
 
@@ -91,10 +92,16 @@ namespace Nitou.TCC.CharacterControl.Check
         /// オブジェクトが視界に入った、または出たときにイベントを呼び出す．
         /// </summary>
         public Observable<bool> OnChangeInsightAnyTargetStateObject => _onChangeInsightAnyTargetStateObject;
-        
+
 
         // ----------------------------------------------------------------------------
-        // Lifecycle Events
+
+        #region Lifecycle Events
+
+        private void OnDestroy()
+        {
+            _onChangeInsightAnyTargetStateObject.Dispose();
+        }
 
         void IEarlyUpdateComponent.OnUpdate(float deltaTime)
         {
@@ -143,6 +150,7 @@ namespace Nitou.TCC.CharacterControl.Check
                 _onChangeInsightAnyTargetStateObject.OnNext(IsInsightAnyTarget);
         }
 
+        #endregion
 
         // ----------------------------------------------------------------------------
         // Private Method

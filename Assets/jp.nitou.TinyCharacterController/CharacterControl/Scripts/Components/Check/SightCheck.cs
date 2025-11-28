@@ -202,20 +202,22 @@ namespace Nitou.TCC.CharacterControl.Check
             VisibleLayerMask = LayerMask.GetMask("Default");
         }
 
+#if TCC_USE_NGIZMOS
         // TODO: Gizmosの修正
-        /*
-        private void OnDrawGizmosSelected() {
+        private void OnDrawGizmosSelected()
+        {
             // ゲームがプレイ中でない場合は何もしない
             if (Application.isPlaying == false)
                 return;
 
             // 視界内のオブジェクトを Gizmos を使用して表現する
-            foreach (var obj in InsightTargets) {
+            foreach (var obj in InsightTargets)
+            {
                 var position = obj.transform.position;
-                Gizmos_.DrawSphere(position, 1f, Colors.Yellow);
+                NGizmo.DrawSphere(position, 1f, Colors.Yellow);
             }
         }
-        */
+#endif
 #endif
     }
 }

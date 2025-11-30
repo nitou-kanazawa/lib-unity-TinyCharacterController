@@ -14,60 +14,60 @@ using Nitou.Gizmo;
 namespace Nitou.TCC.CharacterControl.Control
 {
     /// <summary>
-    /// Component for Navmesh-based movement of a character.
+    /// Navmeshベースのキャラクター移動コンポーネント。
     ///
-    /// Uses the component specified by <see cref="_agent"/> to perform a path search to
-    /// the coordinates specified by <see cref="SetTargetPosition(Vector3)"/> and move the character
-    /// in the context of <see cref="IMove"/>.
+    /// <see cref="_agent"/>で指定されたコンポーネントを使用して、
+    /// <see cref="SetTargetPosition(Vector3)"/>で指定された座標への経路探索を実行し、
+    /// <see cref="IMove"/>のコンテキストでキャラクターを移動させます。
     /// 
-    /// If MovePriority is high, the character moves on the shortest path set by NavmeshAgent.
-    /// /// If TurnPriority is high, the character will turn in the direction of the destination.
+    /// MovePriorityが高い場合、キャラクターはNavmeshAgentによって設定された最短経路で移動します。
+    /// TurnPriorityが高い場合、キャラクターは目的地の方向に向きを変えます。
     /// </summary>
     [AddComponentMenu(MenuList.MenuControl + nameof(MoveNavmeshControl))]
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Transform))]
     // [RequireInterface(typeof(IBrain))]
     public sealed class MoveNavmeshControl : ComponentBase,
-                                      IMove,
-                                      ITurn,
-                                      IUpdateComponent,
-                                      IComponentCondition
+                                             IMove,
+                                             ITurn,
+                                             IUpdateComponent,
+                                             IComponentCondition
     {
         /// <summary>
-        /// Agent used to control character movement.
-        /// Used to calculate paths asynchronously.
-        /// Also, the component used in this setting cannot be shared by multiple components.
-        /// The Agent set here should be registered as a child object of the character.
+        /// キャラクターの移動を制御するために使用されるエージェント。
+        /// 非同期で経路を計算するために使用されます。
+        /// また、この設定で使用されるコンポーネントは複数のコンポーネントで共有できません。
+        /// ここで設定するAgentは、キャラクターの子オブジェクトとして登録する必要があります。
         /// </summary>
         [SerializeField, Indent] private NavMeshAgent _agent;
 
         /// <summary>
-        /// Maximum character movement speed
+        /// キャラクターの最大移動速度
         /// </summary>
         [Title("Settings")]
         [SerializeField, Indent] private float _speed = 4;
 
         /// <summary>
-        /// Character turn speed.
+        /// キャラクターの回転速度
         /// </summary>
         [Range(-1, 50)]
         [SerializeField, Indent] public int TurnSpeed = 8;
 
         /// <summary>
-        /// Character move priority.
+        /// キャラクターの移動優先度
         /// </summary>
         [Title("movement and orientation")]
         [GUIColor("green")]
         [SerializeField, Indent] public int MovePriority = 1;
 
         /// <summary>
-        /// Character Turn Priority.
+        /// キャラクターの回転優先度
         /// </summary>
         [GUIColor("green")]
         [SerializeField, Indent] public int TurnPriority = 1;
 
         /// <summary>
-        /// Callback when destination is reached
+        /// 目的地に到達したときのコールバック
         /// </summary>
         public UnityEvent OnArrivedAtDestination;
 
@@ -75,13 +75,15 @@ namespace Nitou.TCC.CharacterControl.Control
         private Vector3 _moveVelocity;
 
 
+        #region Peoperty
+
         /// <summary>
-        /// True if the character has reached the target point.
+        /// キャラクターが目標地点に到達した場合にtrue
         /// </summary>
         public bool IsArrived { get; private set; } = true;
 
         /// <summary>
-        /// Character movement speed
+        /// キャラクターの移動速度
         /// </summary>
         public float Speed
         {
@@ -94,38 +96,12 @@ namespace Nitou.TCC.CharacterControl.Control
         }
 
         /// <summary>
-        /// Set a target point to move to.
-        /// </summary>
-        /// <param name="position">Target position</param>
-        public void SetTargetPosition(Vector3 position)
-        {
-            _agent.isStopped = false;
-            _agent.SetDestination(position);
-            IsArrived = false;
-        }
-
-        /// <summary>
-        /// Set the target point to move to.
-        /// and, the character maintains the <see cref="distance"/> distance.
-        /// Use when you do not necessarily want to move to the same coordinates as the target, for example in melee combat.
-        /// </summary>
-        /// <param name="position">Position of target</param>
-        /// <param name="distance">distance from the target</param>.
-        public void SetTargetPosition(Vector3 position, float distance)
-        {
-            var deltaPosition = Transform.Position - position;
-            deltaPosition.y = 0;
-            var direction = deltaPosition.normalized * distance;
-            SetTargetPosition(position + direction);
-        }
-
-        /// <summary>
-        /// Current Speed.
+        /// 現在の速度
         /// </summary>
         public float CurrentSpeed => IsArrived ? 0 : _speed;
 
         /// <summary>
-        /// Movement vector
+        /// 移動ベクトル
         /// </summary>
         public Vector3 MoveVelocity => _moveVelocity;
 
@@ -136,6 +112,8 @@ namespace Nitou.TCC.CharacterControl.Control
         float ITurn.YawAngle => _yawAngle;
 
         int IUpdateComponent.Order => Order.Control;
+
+        #endregion
 
 
         #region Lifecycle Events
@@ -187,7 +165,7 @@ namespace Nitou.TCC.CharacterControl.Control
                 }
                 else
                 {
-                    // Process stopped because speed is 0 or target point has been reached.
+                    // 速度が0または目標地点に到達したため、処理を停止
                     if (IsArrived == false)
                     {
                         OnArrivedAtDestination?.Invoke();
@@ -206,12 +184,37 @@ namespace Nitou.TCC.CharacterControl.Control
 
         #endregion
 
+        /// <summary>
+        /// 移動先の目標地点を設定します。
+        /// </summary>
+        /// <param name="position">目標位置</param>
+        public void SetTargetPosition(Vector3 position)
+        {
+            _agent.isStopped = false;
+            _agent.SetDestination(position);
+            IsArrived = false;
+        }
+
+        /// <summary>
+        /// 移動先の目標地点を設定します。
+        /// また、キャラクターは<see cref="distance"/>の距離を維持します。
+        /// 目標と同じ座標に移動する必要がない場合に使用します（例：近接戦闘など）。
+        /// </summary>
+        /// <param name="position">目標の位置</param>
+        /// <param name="distance">目標からの距離</param>
+        public void SetTargetPosition(Vector3 position, float distance)
+        {
+            var deltaPosition = Transform.Position - position;
+            deltaPosition.y = 0;
+            var direction = deltaPosition.normalized * distance;
+            SetTargetPosition(position + direction);
+        }
 
         void IComponentCondition.OnConditionCheck(List<string> messageList)
         {
             if (_agent != null && _agent.transform.parent != transform)
             {
-                messageList.Add("Please place the agent as a child object of the character.");
+                messageList.Add("エージェントをキャラクターの子オブジェクトとして配置してください。");
             }
         }
 

@@ -23,7 +23,6 @@ namespace Nitou.TCC.CharacterControl.Core
         private readonly CameraManager _cameraManager = new();
         private readonly CollisionManager _collisionManager = new();
 
-        // 
         protected Quaternion Rotation;
         protected Vector3 Position;
 
@@ -32,7 +31,8 @@ namespace Nitou.TCC.CharacterControl.Core
 
 
         // ----------------------------------------------------------------------------
-        // Property
+
+        #region Properties
 
         /// <summary>
         /// 現在の移動速度．
@@ -106,6 +106,8 @@ namespace Nitou.TCC.CharacterControl.Core
         }
 
         int IEarlyUpdateComponent.Order => Order.PrepareEarlyUpdate;
+
+        #endregion
 
 
         // ----------------------------------------------------------------------------

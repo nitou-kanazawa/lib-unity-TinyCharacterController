@@ -19,8 +19,8 @@ namespace Nitou.TCC.CharacterControl.Check
     /// 地面との衝突検出コンポーネント.地面が存在するかどうかや接触している面の向きなど,
     /// 接触しているオブジェクトに関する情報を判断し、地面オブジェクトの変化を通知する.
     /// </summary>
-    [DisallowMultipleComponent]
     [AddComponentMenu(MenuList.MenuCheck + nameof(GroundCheck))]
+    [DisallowMultipleComponent]
     public sealed class GroundCheck : ComponentBase,
                                       IGroundContact, IGroundObject,
                                       IEarlyUpdateComponent
@@ -243,24 +243,8 @@ namespace Nitou.TCC.CharacterControl.Check
         }
 
 #if TCC_USE_NGIZMOS
-        // TODO: Gizmosの修正
         private void OnDrawGizmosSelected()
         {
-            void DrawHitRangeGizmos(Vector3 startPosition, Vector3 endPosition)
-            {
-                var leftOffset = new Vector3(CharacterSettings.Radius, 0, 0);
-                var rightOffset = new Vector3(-CharacterSettings.Radius, 0, 0);
-                var forwardOffset = new Vector3(0, 0, CharacterSettings.Radius);
-                var backOffset = new Vector3(0, 0, -CharacterSettings.Radius);
-
-                Gizmos.DrawLine(startPosition + leftOffset, endPosition + leftOffset);
-                Gizmos.DrawLine(startPosition + rightOffset, endPosition + rightOffset);
-                Gizmos.DrawLine(startPosition + forwardOffset, endPosition + forwardOffset);
-                Gizmos.DrawLine(startPosition + backOffset, endPosition + backOffset);
-                NGizmo.DrawSphere(startPosition, CharacterSettings.Radius, Color.yellow);
-                NGizmo.DrawSphere(endPosition, CharacterSettings.Radius, Color.yellow);
-            }
-
             if (CharacterSettings == null)
                 GatherCharacterSettings();
 
@@ -294,6 +278,21 @@ namespace Nitou.TCC.CharacterControl.Check
                 var bottomPosition = new Vector3 { y = CharacterSettings.Radius - _ambiguousDistance };
                 DrawHitRangeGizmos(position + topPosition, position + bottomPosition);
             }
+        }
+
+        private void DrawHitRangeGizmos(in Vector3 startPosition, in Vector3 endPosition)
+        {
+            var leftOffset = new Vector3(CharacterSettings.Radius, 0, 0);
+            var rightOffset = new Vector3(-CharacterSettings.Radius, 0, 0);
+            var forwardOffset = new Vector3(0, 0, CharacterSettings.Radius);
+            var backOffset = new Vector3(0, 0, -CharacterSettings.Radius);
+
+            Gizmos.DrawLine(startPosition + leftOffset, endPosition + leftOffset);
+            Gizmos.DrawLine(startPosition + rightOffset, endPosition + rightOffset);
+            Gizmos.DrawLine(startPosition + forwardOffset, endPosition + forwardOffset);
+            Gizmos.DrawLine(startPosition + backOffset, endPosition + backOffset);
+            NGizmo.DrawSphere(startPosition, CharacterSettings.Radius, Color.yellow);
+            NGizmo.DrawSphere(endPosition, CharacterSettings.Radius, Color.yellow);
         }
 #endif
 #endif

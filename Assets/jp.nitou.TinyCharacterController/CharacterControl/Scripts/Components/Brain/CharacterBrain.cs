@@ -151,7 +151,8 @@ namespace Nitou.TCC.CharacterControl.Core
         void IActorSettingUpdateReceiver.OnUpdateSettings(CharacterSettings settings)
         {
             // Controller が設定されていない場合は取得する
-            if (_controller == null) TryGetComponent(out _controller);
+            if (_controller == null) 
+                TryGetComponent(out _controller);
 
             // 高さ、中心点、幅を取得する
             _controller.height = settings.Height - _controller.skinWidth * 2;

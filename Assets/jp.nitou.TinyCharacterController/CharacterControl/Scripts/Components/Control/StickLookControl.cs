@@ -4,7 +4,7 @@ using Nitou.TCC.CharacterControl.Interfaces.Core;
 using Nitou.TCC.CharacterControl.Shared;
 using Sirenix.OdinInspector;
 
-namespace Nitou.TCC.CharacterControl.Components
+namespace Nitou.TCC.CharacterControl.Control
 {
     /// <summary>
     /// Update the character's orientation to the direction specified by <see cref="Look"/>.
@@ -12,8 +12,9 @@ namespace Nitou.TCC.CharacterControl.Components
     /// If <see cref="TurnPriority"/> is high, the character is turned in the direction of the stick movement.
     /// </summary>
     [AddComponentMenu(MenuList.MenuControl + nameof(StickLookControl))]
+    [DisallowMultipleComponent]
     public sealed class StickLookControl : MonoBehaviour,
-                                    ITurn
+                                           ITurn
     {
         private CharacterSettings _settings;
 
@@ -27,8 +28,8 @@ namespace Nitou.TCC.CharacterControl.Components
         /// <summary>
         /// Speed to change orientation
         /// </summary>
-        [SerializeField, Indent] [Range(-1, 50)]
-        private int _turnSpeed;
+        [Range(-1, 50)]
+        [SerializeField, Indent] private int _turnSpeed;
 
         private float _yawAngle;
 
@@ -45,6 +46,7 @@ namespace Nitou.TCC.CharacterControl.Components
         int ITurn.TurnSpeed => _turnSpeed;
         float ITurn.YawAngle => _yawAngle;
 
+        
         private void Awake()
         {
             _settings = GetComponentInParent<CharacterSettings>();

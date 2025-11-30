@@ -11,7 +11,7 @@ using Sirenix.OdinInspector;
 using Nitou.Gizmo;
 #endif
 
-namespace Nitou.TCC.CharacterControl.Components
+namespace Nitou.TCC.CharacterControl.Control
 {
     /// <summary>
     /// Component for Navmesh-based movement of a character.
@@ -217,7 +217,6 @@ namespace Nitou.TCC.CharacterControl.Components
 
 
 #if UNITY_EDITOR
-
         private void Reset()
         {
             if (_agent == null)

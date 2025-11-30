@@ -211,7 +211,6 @@ namespace Nitou.TCC.CharacterControl.Check
         }
 
 #if TCC_USE_NGIZMOS
-        // TODO: Gizmosの修正
         private void OnDrawGizmosSelected()
         {
             // ゲームがプレイ中でない場合は何もしない

@@ -1,11 +1,9 @@
 using System;
 using Nitou.TCC.CharacterControl.Interfaces.Core;
 using Nitou.TCC.CharacterControl.Shared;
-using Nitou.TCC.Foundation;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Nitou.TCC.CharacterControl.Components
+namespace Nitou.TCC.CharacterControl.Control
 {
     /// <summary>
     /// キャラクターの向きを手動で設定するコンポーネント．
@@ -13,7 +11,6 @@ namespace Nitou.TCC.CharacterControl.Components
     /// </summary>
     [Obsolete("Recommends Manual Control")]
     [AddComponentMenu(MenuList.MenuControl + nameof(ManualTurn))]
-    // [RequireComponent(typeof(CharacterSettings))]
     [DisallowMultipleComponent]
     public sealed class ManualTurn : ComponentBase,
                                      ITurn

@@ -1,6 +1,9 @@
 using UnityEngine;
 using Sirenix.OdinInspector;
-// using nitou.Attributes;
+using Nitou.TCC.CharacterControl.Core;
+using Nitou.TCC.CharacterControl.Interfaces.Components;
+using Nitou.TCC.CharacterControl.Interfaces.Core;
+using Nitou.TCC.CharacterControl.Shared;
 using Nitou.TCC.Foundation;
 #if TCC_USE_NGIZMOS
 using Nitou.Gizmo;
@@ -8,11 +11,6 @@ using Nitou.Gizmo;
 
 namespace Nitou.TCC.CharacterControl.Control
 {
-    using CharacterControl.Interfaces.Core;
-    using CharacterControl.Interfaces.Components;
-    using CharacterControl.Core;
-    using CharacterControl.Shared;
-
     [AddComponentMenu(MenuList.MenuControl + nameof(MoveControl))]
     [DisallowMultipleComponent]
     // [RequireInterface(typeof(IGroundContact))]
@@ -62,7 +60,7 @@ namespace Nitou.TCC.CharacterControl.Control
         /// Threshold to determine if the character is in motion.
         /// If the value falls below this threshold, set <see cref="IsMove"/> to False.
         /// </summary>
-        [Range(0, 1)] 
+        [Range(0, 1)]
         [SerializeField, Indent] private float _moveStopThreshold = 0.2f;
 
 
@@ -86,7 +84,7 @@ namespace Nitou.TCC.CharacterControl.Control
         /// If it's 0, orientation changes immediately after stopping the movement.
         /// If it's 1, the orientation is updated until it reaches the target orientation.
         /// </summary>
-        [Range(0, 1)] 
+        [Range(0, 1)]
         [SerializeField, Indent] private float _turnStopThreshold = 0;
 
         // references
@@ -254,8 +252,9 @@ namespace Nitou.TCC.CharacterControl.Control
 
 
         // ----------------------------------------------------------------------------
+
         #region Lifecycle Events
-        
+
         private void OnDestroy() {
         }
 
@@ -267,6 +266,7 @@ namespace Nitou.TCC.CharacterControl.Control
                 ProcessTurn(dt);
             }
         }
+
         #endregion
 
 
@@ -335,7 +335,7 @@ namespace Nitou.TCC.CharacterControl.Control
             CharacterSettings.TryGetComponent(out _transform);
             CharacterSettings.TryGetComponent(out _brain);
             _hasGroundCheck = CharacterSettings.TryGetActorComponent(CharacterComponent.Check, out _groundCheck);
-        } 
+        }
 
         // ----------------------------------------------------------------------------
 #if UNITY_EDITOR && TCC_USE_NGIZMOS

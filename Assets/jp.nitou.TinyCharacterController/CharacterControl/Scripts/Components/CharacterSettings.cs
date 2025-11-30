@@ -32,7 +32,7 @@ namespace Nitou.TCC.CharacterControl.Core
         [Title("Environment Settings")]
         [SerializeField, Indent] private LayerMask _environmentLayer;
 
-        // Camera
+        // カメラ
         private Camera _camera;
         private Transform _cameraTransform;
 
@@ -89,7 +89,7 @@ namespace Nitou.TCC.CharacterControl.Core
         public MovementReference MovementReference => _movementReference;
 
         /// <summary>
-        /// Layer for recognizing terrain colliders.
+        /// 地形コライダーを認識するためのレイヤー。
         /// </summary>
         public LayerMask EnvironmentLayer => _environmentLayer;
 
@@ -103,14 +103,14 @@ namespace Nitou.TCC.CharacterControl.Core
         public bool HasCamera => _camera != null;
 
         /// <summary>
-        ///     Gets character's camera information.
-        ///     Uses Camera.Main if no camera is set.
+        ///     キャラクターのカメラ情報を取得する。
+        ///     カメラが設定されていない場合はCamera.Mainを使用する。
         /// </summary>
         public Camera CameraMain
         {
             get
             {
-                // Return the cached camera if it's already registered.
+                // 既に登録されているキャッシュされたカメラを返す。
                 if (_camera != null)
                     return _camera;
 
@@ -120,20 +120,20 @@ namespace Nitou.TCC.CharacterControl.Core
 
             set
             {
-                // Update the camera and _cameraTransform.
+                // カメラと_cameraTransformを更新する。
                 _camera = value;
                 _cameraTransform = _camera != null ? _camera.transform : null;
             }
         }
 
         /// <summary>
-        ///     MainCamera's Transform.
+        ///     MainCameraのTransform。
         /// </summary>
         public Transform CameraTransform
         {
             get
             {
-                // Get the camera's Transform if already registered.
+                // 既に登録されているカメラのTransformを取得する。
                 if (_cameraTransform != null)
                     return _cameraTransform;
 
@@ -151,19 +151,19 @@ namespace Nitou.TCC.CharacterControl.Core
 
         private void Awake()
         {
-            // Get a list of colliders.
+            // コライダーのリストを取得する。
             GatherOwnColliders();
 
-            // Update the camera's Transform.
+            // カメラのTransformを更新する。
             ApplyMainCameraTransform();
         }
 
         /// <summary>
-        ///     Callback when the component's values change.
+        ///     コンポーネントの値が変更されたときのコールバック。
         /// </summary>
         private void OnValidate()
         {
-            // Ensure values don't go below the minimum.
+            // 値が最小値を下回らないようにする。
             _height = Mathf.Max(MIN_HEIGHT, _height);
             _radius = Mathf.Max(MIN_RADIUS, _radius);
             _mass = Mathf.Max(MIN_MASS, _mass);
@@ -180,7 +180,7 @@ namespace Nitou.TCC.CharacterControl.Core
         #endregion
 
         // ----------------------------------------------------------------------------
-        // Public Method
+        // パブリックメソッド
 
         /// <summary>
         /// 対象コライダーがボディ配下のものか確認する．
@@ -191,7 +191,7 @@ namespace Nitou.TCC.CharacterControl.Core
         }
 
         /// <summary>
-        /// Retrieves the closest RaycastHit excluding the character's own colliders.
+        /// キャラクター自身のコライダーを除外して、最も近いRaycastHitを取得する。
         /// </summary>
         public bool ClosestHit(RaycastHit[] hits, int count, float maxDistance, out RaycastHit closestHit)
         {
@@ -203,16 +203,16 @@ namespace Nitou.TCC.CharacterControl.Core
             {
                 var hit = hits[i];
 
-                // Skip if the current Raycast's distance is greater than the current minimum,
-                // or if it belongs to the character's collider list, or if it's null.
+                // 現在のRaycastの距離が現在の最小値より大きい場合、
+                // またはキャラクターのコライダーリストに属している場合、またはnullの場合はスキップする。
                 if (hit.distance > min || IsOwnCollider(hit.collider) || hit.collider == null)
                     continue;
 
-                // Update the closest Raycast.
+                // 最も近いRaycastを更新する。
                 min = hit.distance;
                 closestHit = hit;
 
-                // Set to true if at least one closest Raycast is found.
+                // 少なくとも1つの最も近いRaycastが見つかった場合はtrueに設定する。
                 isHit = true;
             }
 
@@ -221,7 +221,7 @@ namespace Nitou.TCC.CharacterControl.Core
 
 
         // ----------------------------------------------------------------------------
-        // Private Method
+        // プライベートメソッド
 
         /// <summary>
         /// 自身のボディ配下コライダー情報を更新する．
@@ -233,14 +233,14 @@ namespace Nitou.TCC.CharacterControl.Core
         }
 
         /// <summary>
-        ///     Updates <see cref="Camera.main" /> settings for <see cref="_camera" /> and <see cref="_cameraTransform" />.
+        ///     <see cref="Camera.main" />の設定を<see cref="_camera" />と<see cref="_cameraTransform" />に更新する。
         /// </summary>
         private void ApplyMainCameraTransform()
         {
-            // Get objects with the MainCamera tag.
+            // MainCameraタグを持つオブジェクトを取得する。
             _camera = Camera.main;
 
-            // Update the CameraTransform if a camera is acquired.
+            // カメラが取得された場合、CameraTransformを更新する。
             if (_camera != null && _cameraTransform == null)
             {
                 _cameraTransform = _camera.transform;
@@ -248,7 +248,7 @@ namespace Nitou.TCC.CharacterControl.Core
         }
 
         /// <summary>
-        ///     Updates components with <see cref="IActorSettingUpdateReceiver" />.
+        ///     <see cref="IActorSettingUpdateReceiver" />を持つコンポーネントを更新する。
         /// </summary>
         private void UpdateSettings()
         {

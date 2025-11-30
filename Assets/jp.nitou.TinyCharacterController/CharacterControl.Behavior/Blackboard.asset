@@ -1,0 +1,107 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dd922ae02c94c87a66e46a10a7319b9, type: 3}
+  m_Name: Blackboard
+  m_EditorClassIdentifier: Unity.Behavior.Authoring::Unity.Behavior.BehaviorBlackboardAuthoringAsset
+  AssetID:
+    m_Value0: 14132905154307314081
+    m_Value1: 5598932645013753465
+  m_Variables:
+  - rid: 496368608253050972
+  - rid: 496368608253050956
+  - rid: 496368608253050959
+  m_VersionTimestamp: 639001145422134388
+  m_CommandBuffer:
+    m_Commands: []
+  m_RuntimeBlackboardAsset: {fileID: 9194502020579174462}
+  references:
+    version: 2
+    RefIds:
+    - rid: 496368608253050956
+      type: {class: 'TypedVariableModel`1[[UnityEngine.Transform, UnityEngine.CoreModule]]', ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        ID:
+          m_Value0: 789190975243301822
+          m_Value1: 1498301649031051126
+        Name: New Transform
+        IsExposed: 1
+        m_IsShared: 0
+        m_Value: {fileID: 0}
+    - rid: 496368608253050959
+      type: {class: 'TypedVariableModel`1[[Nitou.TCC.CharacterControl.Check.GroundCheck, Nitou.TCC.CharacterControl]]', ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        ID:
+          m_Value0: 8163889110888694815
+          m_Value1: 12865977825506575650
+        Name: New Ground Check
+        IsExposed: 1
+        m_IsShared: 0
+        m_Value: {fileID: 0}
+    - rid: 496368608253050972
+      type: {class: 'TypedVariableModel`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        ID:
+          m_Value0: 9282898708061790840
+          m_Value1: 9084045326032552380
+        Name: Target
+        IsExposed: 1
+        m_IsShared: 0
+        m_Value: {fileID: 0}
+--- !u!114 &9194502020579174462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c02bb70996b49eba31d0c206e28da24, type: 3}
+  m_Name: Blackboard
+  m_EditorClassIdentifier: Unity.Behavior::Unity.Behavior.RuntimeBlackboardAsset
+  VersionTimestamp: 639001145422134388
+  AssetID:
+    m_Value0: 14132905154307314081
+    m_Value1: 5598932645013753465
+  m_Blackboard:
+    m_Variables:
+    - rid: 496368608253050973
+    - rid: 496368608253050958
+    - rid: 496368608253050960
+  m_SharedBlackboardVariableGuids: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 496368608253050958
+      type: {class: 'BlackboardVariable`1[[UnityEngine.Transform, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 789190975243301822
+          m_Value1: 1498301649031051126
+        Name: New Transform
+        m_Value: {fileID: 0}
+    - rid: 496368608253050960
+      type: {class: 'BlackboardVariable`1[[Nitou.TCC.CharacterControl.Check.GroundCheck, Nitou.TCC.CharacterControl]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 8163889110888694815
+          m_Value1: 12865977825506575650
+        Name: New Ground Check
+        m_Value: {fileID: 0}
+    - rid: 496368608253050973
+      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 9282898708061790840
+          m_Value1: 9084045326032552380
+        Name: Target
+        m_Value: {fileID: 0}

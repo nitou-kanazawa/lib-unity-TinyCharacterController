@@ -1,5 +1,8 @@
 namespace Nitou.TCC.CharacterControl.Shared
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class Order
     {
         public const int GameObjectPool = -1000;
@@ -17,9 +20,12 @@ namespace Nitou.TCC.CharacterControl.Shared
         // ----------------------------------
 
         public const int Check = -200;
+
         public const int Gravity = -100;
+
         // 自己完結
         public const int Effect = -50;
+
         // Control
         public const int Control = 5;
 
@@ -27,9 +33,9 @@ namespace Nitou.TCC.CharacterControl.Shared
         // 計算結果を反映 ( ExecuteOrder )
         // ----------------------------------
 
-        public const int EarlyUpdateBrain = -101;   // InputSystemより前
-        public const int UpdateBrain = 10;          // Brainの更新タイミング
-        public const int PostUpdate = 100;          // Brainの後
-        public const int UpdateIK = 50;             // Ikの更新タイミング
+        public const int EarlyUpdateBrain = -101; // InputSystemより前
+        public const int UpdateBrain = 10; // Brainの更新タイミング
+        public const int PostUpdate = 100; // Brainの後
+        public const int UpdateIK = 50; // Ikの更新タイミング
     }
 }

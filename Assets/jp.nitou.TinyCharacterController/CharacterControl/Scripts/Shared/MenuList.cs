@@ -1,5 +1,8 @@
 namespace Nitou.TCC.CharacterControl.Shared
 {
+    /// <summary>
+    /// エディタメニュー用の文字列を管理．
+    /// </summary>
     internal static class MenuList
     {
         // 

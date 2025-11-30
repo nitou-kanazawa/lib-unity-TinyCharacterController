@@ -19,8 +19,8 @@ namespace Nitou.TCC.CharacterControl.Check
     /// CharacterSettings で設定された高さを考慮して上方向の検出を行う．
     /// 完全な接触だけでなく、わずかに曖昧な検出も考慮し、衝突時に UnityEvent を呼び出す．
     /// </summary>
-    [DisallowMultipleComponent]
     [AddComponentMenu(MenuList.MenuCheck + nameof(HeadContactCheck))]
+    [DisallowMultipleComponent]
     public sealed class HeadContactCheck : ComponentBase,
                                     IOverheadDetection,
                                     IEarlyUpdateComponent,
@@ -142,7 +142,6 @@ namespace Nitou.TCC.CharacterControl.Check
             if (IsObjectOverhead)
             {
                 // コライダーが検出されたときの動作
-
                 SetPropertiesWhenInRange(closestHit, offset);
 
                 // オブジェクトがヒットしたのでイベントを実行する
@@ -152,7 +151,6 @@ namespace Nitou.TCC.CharacterControl.Check
             else
             {
                 // コライダーが検出されなかった
-
                 SetPropertiesWhenOutOfRange();
             }
 
@@ -172,6 +170,7 @@ namespace Nitou.TCC.CharacterControl.Check
 
         #endregion
 
+        
         // ----------------------------------------------------------------------------
         // Private Method
 
@@ -240,7 +239,6 @@ namespace Nitou.TCC.CharacterControl.Check
 
         // ----------------------------------------------------------------------------
 #if UNITY_EDITOR && TCC_USE_NGIZMOS
-        // TODO: Gizmosの修正
         private void OnDrawGizmosSelected()
         {
             if (CharacterSettings == null)

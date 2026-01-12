@@ -49,14 +49,14 @@ Unity公式サンプルの[Project_TCC](https://github.com/unity3d-jp/Project_TC
 2. 「+」ボタン > Add package from git URL
 3. 以下のURLを入力する
 ```
-https://github.com/nitou-kanazawa/lib-unity-TinyCharacterController.git?path=Assets/TinyCharacterController
+https://github.com/nitou-kanazawa/lib-unity-TinyCharacterController.git?path=Assets/jp.nitou.TinyCharacterController
 ```
 
 あるいはPackages/manifest.jsonを開き、dependenciesブロックに以下を追記
 ```
 {
     "dependencies": {
-        "com.nitou.tiny-character-controller": "https://github.com/nitou-kanazawa/<リポジトリ名>.git?path=<パッケージパス>"
+        "com.nitou.tiny-character-controller": "https://github.com/nitou-kanazawa/lib-unity-TinyCharacterController.git?path=Assets/jp.nitou.TinyCharacterController"
     }
 }
 ```

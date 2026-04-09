@@ -12,10 +12,10 @@ using Nitou.Gizmo;
 namespace Nitou.TCC.CharacterControl.Control
 {
     /// <summary>
-    /// This component controls the behavior of jumping.
-    /// When the Jump method is executed, it controls the Gravity and moves upwards.
-    /// The Priority only works during the jump operation.
-    /// The TurnPriority is only effective when the movement is set to the horizontal direction.
+    /// ジャンプの動作を制御するコンポーネント．
+    /// Jump メソッドを実行すると Gravity を制御して上方向に移動する．
+    /// Priority はジャンプ操作中のみ機能する．
+    /// TurnPriority は移動方向が水平方向に設定されている場合のみ有効となる．
     /// </summary>
     [AddComponentMenu(MenuList.MenuControl + nameof(JumpControl))]
     [DisallowMultipleComponent]
@@ -23,65 +23,65 @@ namespace Nitou.TCC.CharacterControl.Control
     // [RequireInterface(typeof(IGroundContact))]
     // [RequireInterface(typeof(IOverheadDetection))]
     public sealed class JumpControl : ComponentBase,
-                               IMove,
-                               ITurn,
-                               IUpdateComponent
+                                      IMove,
+                                      ITurn,
+                                      IUpdateComponent
     {
         /// <summary>
-        /// Jump height.
+        /// ジャンプの高さ．
         /// </summary>
         [Title("Settings")]
         [Tooltip("JumpHeight")]
         [SerializeField, Indent] public float JumpHeight = 3;
 
         /// <summary>
-        /// Number of jumps in the air
+        /// 空中ジャンプの最大回数．
         /// </summary>
         [Tooltip("Areal Jump Count.")]
         [SerializeField, Indent] public int MaxAerialJumpCount = 0;
 
         /// <summary>
-        /// Aerodynamic drag
+        /// 空気抵抗（減速率）．
         /// </summary>
         [SerializeField, Indent] public float Drag = 0;
 
         /// <summary>
-        /// The speed at which the character will change direction.
-        /// If this value is -1, the character will change direction immediately.
+        /// キャラクターが方向を変える速度．
+        /// -1 の場合、即座に向きを変える．
         /// </summary>
         [PropertyRange(-1, 50)]
         [SerializeField, Indent] private int _turnSpeed;
 
         /// <summary>
-        /// The time that <see cref="Jump"/> can be entered ahead of time.
-        /// If a jump is possible within the time, it will be automatically jumped.
+        /// <see cref="Jump"/> を先行入力できる時間．
+        /// この時間内にジャンプ可能になった場合、自動的にジャンプする．
         /// </summary>
         [Title("Input Settings")]
         [PropertyRange(0, 1)]
         [SerializeField, Indent] private float _standbyTime = 0.05f;
 
         /// <summary>
-        /// Move Priority
+        /// 移動プライオリティ．
         /// </summary>
         [Title("Priority Settings")]
         [GUIColor("green")]
         [SerializeField, Indent] private int _movePriority;
 
         /// <summary>
-        /// Turn Priority
+        /// 旋回プライオリティ．
         /// </summary>
         [GUIColor("green")]
         [SerializeField, Indent] private int _turnPriority;
 
         /// <summary>
-        /// Callback called when a jump is requested.
-        /// Called if the jump is feasible, regardless of <see cref="IsAllowJump"/>.
+        /// ジャンプがリクエストされたときのコールバック．
+        /// <see cref="IsAllowJump"/> に関わらず、ジャンプが実行可能な場合に呼び出される．
         /// </summary>
         [Title("Callbacks")]
         public UnityEvent OnReadyToJump;
 
         /// <summary>
-        /// Callback called just before jumping.
+        /// ジャンプ直前に呼び出されるコールバック．
         /// </summary>
         public UnityEvent OnJump;
 
@@ -91,11 +91,11 @@ namespace Nitou.TCC.CharacterControl.Control
         private IGravity _gravity;
         private IOverheadDetection _head;
 
-        // 
-        private float _requestJump = -1; // Time at which the jump was requested. Request invalid state at -1
-        private bool _requestJumpIncrement = false; // Determines if the number of jumps should be increased.
-        private float _leaveTime = 0; // Time away from the ground. Used to determine that the ground is still ground even if it leaves the _standbyTime time.
-        private float _readyTime = 0; // Time after which a jump is possible.
+        //
+        private float _requestJump = -1; // ジャンプがリクエストされた時刻．-1 はリクエスト無効状態．
+        private bool _requestJumpIncrement = false; // ジャンプ回数を増加させるかどうか．
+        private float _leaveTime = 0; // 地面から離れた経過時間．_standbyTime 内に離れた場合も接地と判定するために使用する．
+        private float _readyTime = 0; // ジャンプ可能になってからの経過時間．
         private Vector3 _velocity;
         private float _yawAngle;
 
@@ -109,48 +109,45 @@ namespace Nitou.TCC.CharacterControl.Control
         int IUpdateComponent.Order => Order.Control;
 
         /// <summary>
-        /// Callback called just before jumping.
+        /// 空中ジャンプ回数．
         /// </summary>
         public int AerialJumpCount { get; private set; } = 0;
 
         /// <summary>
-        /// True if a jump starts on this frame
+        /// このフレームでジャンプが開始した場合 True．
         /// </summary>
         public bool IsJumpStart { get; private set; } = false;
 
         /// <summary>
-        /// True if a jump starts on this frame
+        /// このフレームでジャンプ準備が開始した場合 True．
         /// </summary>
         public bool IsReadyToJumpStart { get; private set; }
 
         /// <summary>
-        /// True if ready to jump
+        /// ジャンプ準備中の場合 True．
         /// </summary>
         public bool IsReadyToJump { get; private set; } = false;
 
         /// <summary>
-        /// True if jumping
+        /// ジャンプ中の場合 True．
         /// </summary>
         public bool IsJumping { get; private set; } = false;
 
         /// <summary>
-        /// The elapsed time between when the jump is ready and when Allow becomes True.
-        /// Use this when you want to change the intensity of the jump with the delay time.
+        /// ジャンプ準備から Allow が True になるまでの経過時間．
+        /// 遅延時間でジャンプの強度を変えたいときに使用する．
         /// </summary>
         public float TimeSinceReady => IsReadyToJump ? _readyTime : 0;
 
         /// <summary>
-        /// The elapsed time between when the jump is ready and when Allow becomes True.
-        /// Use this when you want to change the intensity of the jump with the delay time.
+        /// ジャンプを許可するかどうか．
         /// </summary>
         public bool IsAllowJump { get; set; } = true;
 
         /// <summary>
-        /// Direction of jump.
-        /// Usually use up (0,1,0).
-        /// If you are doing a wall jump or dash jump, set a vector in that direction.
-        /// This setting does not take the character's direction into account.
-        /// This value is normalized when used.
+        /// ジャンプの方向．通常は上方向 (0,1,0) を使用する．
+        /// 壁ジャンプやダッシュジャンプの場合はその方向のベクトルを設定する．
+        /// キャラクターの向きは考慮されない．使用時には正規化される．
         /// </summary>
         public Vector3 JumpDirection { get; set; } = Vector3.up;
 
@@ -190,24 +187,24 @@ namespace Nitou.TCC.CharacterControl.Control
             IsJumpStart = false;
             IsReadyToJumpStart = false;
 
-            // Calculates time off the ground.　Used for judging aerial jumps.
+            // 地面から離れた経過時間を計算する．空中ジャンプの判定に使用する．
             _leaveTime = (_groundCheck.IsFirmlyOnGround && _gravity.FallSpeed <= 0) ? 0 : _leaveTime + deltaTime;
             if (IsReadyToJump)
                 _readyTime += deltaTime;
 
-            // Damping jump vectors
+            // ジャンプベクトルを減衰させる．
             _velocity = _leaveTime == 0 ? Vector3.zero : Vector3.Lerp(_velocity, Vector3.zero, Drag * Time.deltaTime);
 
             CalculateContactEnvironment();
 
-            // Prepare to jump if possible
+            // 可能であればジャンプの準備をする．
             if (Time.time < _requestJump && IsCanJump && IsReadyToJump == false)
             {
                 ReadyJump();
                 _readyTime = 0;
             }
 
-            // Jump if jumping is allowed
+            // ジャンプが許可されている場合はジャンプする．
             if (IsReadyToJump && IsAllowJump)
             {
                 ForceJump(_requestJumpIncrement);
@@ -221,11 +218,12 @@ namespace Nitou.TCC.CharacterControl.Control
         // Public Method
 
         /// <summary>
-        /// Requests a jump and jumps at the timing when a jump becomes possible.
-        /// If a request comes in at a timing when jumping is not possible, maintain the jump request for the time of _standbyTime. (In other words, the jump is processed at the moment it becomes possible to jump.)
-        /// Note that it does not jump immediately.
+        /// ジャンプをリクエストし、ジャンプ可能なタイミングでジャンプする．
+        /// ジャンプ不可のタイミングでリクエストが来た場合、_standbyTime の間ジャンプリクエストを保持する．
+        /// （つまり、ジャンプ可能になった瞬間に処理される．）
+        /// 即座にジャンプしない点に注意する．
         /// </summary>
-        /// <param name="incrementJumpCount">Count the number of jumps</param>.
+        /// <param name="incrementJumpCount">ジャンプ回数をカウントするかどうか</param>
         public void Jump(bool incrementJumpCount = true)
         {
             _requestJumpIncrement = incrementJumpCount;
@@ -233,33 +231,31 @@ namespace Nitou.TCC.CharacterControl.Control
         }
 
         /// <summary>
-        /// Forces a jump, ignoring AllowJump and JumpCount.
-        /// This process is executed immediately.
+        /// AllowJump と JumpCount を無視して強制的にジャンプする．
+        /// この処理は即座に実行される．
         /// </summary>
-        /// <param name="incrementJumpCount">The number of jumps is +1. </param>
+        /// <param name="incrementJumpCount">ジャンプ回数を +1 するかどうか</param>
         public void ForceJump(bool incrementJumpCount = true)
         {
-            // +1 to the number of jumps if already in the air; if not off the ground,
-            // the number of jumps in the air is not counted.
+            // 空中の場合はジャンプ回数を +1 する．地面から離れていない場合は空中ジャンプ回数を数えない．
             if (incrementJumpCount && _leaveTime > 0)
                 AerialJumpCount += 1;
 
             IsJumpStart = true;
             OnJump?.Invoke();
 
-            // Initialize
+            // 初期化
             _requestJump = -1;
             IsReadyToJump = false;
             _readyTime = 0;
 
-
-            // Calculate jump strength based on jump direction and jump force.
-            // Vectors are for XZ axis only; use Gravity values for Y axis.
+            // ジャンプ方向と力に基づいてジャンプ強度を計算する．
+            // ベクトルは XZ 軸のみ；Y 軸は Gravity の値を使用する．
             var direction = JumpDirection.normalized;
             _velocity = new Vector3(direction.x, 0, direction.z) * HeightToJumpPower;
             _gravity.SetVelocity(new Vector3(0, direction.y, 0) * HeightToJumpPower);
 
-            // If the velocity is not zero, calculate the yaw angle
+            // 速度がゼロでない場合はヨー角を計算する．
             if (_velocity != Vector3.zero)
                 _yawAngle = Vector3.SignedAngle(Vector3.forward, _velocity, Vector3.up);
 
@@ -267,7 +263,7 @@ namespace Nitou.TCC.CharacterControl.Control
         }
 
         /// <summary>
-        /// Reset the number of jumps, the vector, and the decision during a jump
+        /// ジャンプ回数・ベクトル・ジャンプ中の判定をリセットする．
         /// </summary>
         public void ResetJump()
         {
@@ -281,7 +277,6 @@ namespace Nitou.TCC.CharacterControl.Control
 
         /// ----------------------------------------------------------------------------
         // Private Method
-
         private void ReadyJump()
         {
             IsReadyToJump = true;
@@ -291,13 +286,13 @@ namespace Nitou.TCC.CharacterControl.Control
 
         private void CalculateContactEnvironment()
         {
-            // If anything comes in contact with the head, the speed is reduced to zero.
+            // 頭部に何かが接触した場合、速度をゼロにする．
             if (_head.IsHeadContact && _gravity.FallSpeed > 0)
             {
                 _gravity.SetVelocity(Vector3.zero);
             }
 
-            // Set the number of jumps to 0 when you land.
+            // 着地時にジャンプ回数をリセットする．
             if (_groundCheck.IsFirmlyOnGround && _gravity.FallSpeed <= 0)
             {
                 ResetJump();

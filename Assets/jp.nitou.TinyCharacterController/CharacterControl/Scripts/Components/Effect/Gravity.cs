@@ -35,8 +35,7 @@ namespace Nitou.TCC.CharacterControl.Effect
         }
 
         /// <summary>
-        /// 重力の倍率．
-        /// Mulply by the ti<see cref="Physics.gravity"/> value.
+        /// 重力の倍率．<see cref="Physics.gravity"/> の値に乗算される．
         /// </summary>
         [Title("Parameters")]
         [Tooltip("Gravity multiplier")]
@@ -142,7 +141,7 @@ namespace Nitou.TCC.CharacterControl.Effect
             ApplyGravity(deltaTime);
             CalculateGroundState();
 
-            // If in contact with the ground, set acceleration to 0
+            // 地面に接触している場合、加速度をゼロにする．
             if (IsGroundedStrictly)
                 _velocity = Vector3.zero;
         }

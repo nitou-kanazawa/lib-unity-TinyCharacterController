@@ -13,9 +13,9 @@ namespace Nitou.TCC.CharacterControl.Core
     /// 正しく機能するには、<see cref="UnityEngine.AI.NavMeshAgent"/> が必要．
     /// </summary>
     [AddComponentMenu(MenuList.MenuBrain + "Navmesh Brain")]
+    [DefaultExecutionOrder(Order.UpdateBrain)]
     [DisallowMultipleComponent]
     [RequireComponent(typeof(NavMeshAgent))]
-    [DefaultExecutionOrder(Order.UpdateBrain)]
     [RequireComponent(typeof(CharacterSettings))]
     public sealed class NavmeshBrain : BrainBase, IActorSettingUpdateReceiver
     {

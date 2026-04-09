@@ -13,15 +13,13 @@ namespace Nitou.TCC.CharacterControl.Core
     /// <see cref="UnityEngine.CapsuleCollider"/> の高さと幅は <see cref="CharacterSettings.Height"/> と <see cref="CharacterSettings.Radius"/> によって決定される．
     /// 正しく機能するには、<see cref="IGravity"/> と <see cref="IGroundContact"/> が必要．
     /// </summary>
-    [AddComponentMenu(MenuList.MenuBrain + nameof(RigidbodyBrain))]
-    [DisallowMultipleComponent]
+    [AddComponentMenu(MenuList.MenuBrain + "Rigidbody Brain")]
     [DefaultExecutionOrder(Order.UpdateBrain)]
+    [DisallowMultipleComponent]
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(CharacterSettings))]
     [RequireComponent(typeof(CapsuleCollider))]
-    // [RequireInterface(typeof(IGravity))]
-    // [RequireInterface(typeof(IGroundContact))]
-    public class RigidbodyBrain : BrainBase, IActorSettingUpdateReceiver
+    public sealed class RigidbodyBrain : BrainBase, IActorSettingUpdateReceiver
     {
         /// <summary>
         /// キャラクターが移動できる軸の設定．
@@ -87,62 +85,62 @@ namespace Nitou.TCC.CharacterControl.Core
 
         private void Reset()
         {
-            // Collect components used in calculations.
-            // Do not use caching as this method might be called outside of runtime.
-            TryGetComponent(out Rigidbody rig);
+            // 計算で使用するコンポーネントを収集する．
+            // このメソッドはランタイム外から呼ばれる可能性があるためキャッシュを使用しない．
+            TryGetComponent(out Rigidbody rigidbody);
             TryGetComponent(out CharacterSettings settings);
             TryGetComponent(out CapsuleCollider col);
 
-            // Update Rigidbody properties
-            rig.constraints = RigidbodyConstraints.FreezeRotation;
-            rig.useGravity = false;
-            rig.linearDamping = 5;
-            rig.mass = settings.Mass;
+            // Rigidbody のプロパティを更新する．
+            rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+            rigidbody.useGravity = false;
+            rigidbody.linearDamping = 5;
+            rigidbody.mass = settings.Mass;
 
-            // Update collider shape
+            // コライダーの形状を更新する．
             UpdateColliderSettings(col, settings);
         }
 
         private void OnValidate()
         {
-            // Collect components used in calculations.
-            // Do not use caching as this method might be called outside of runtime.
+            // 計算で使用するコンポーネントを収集する．
+            // このメソッドはランタイム外から呼ばれる可能性があるためキャッシュを使用しない．
             TryGetComponent(out CharacterSettings settings);
             TryGetComponent(out CapsuleCollider col);
             TryGetComponent(out _rigidbody);
 
-            // Update settings outside of components
+            // コンポーネント外の設定を更新する．
             UpdateColliderSettings(col, settings);
 
-            // Update the axis
+            // 軸を更新する．
             SetFreezeAxis(_freezeAxis.x, _freezeAxis.y, _freezeAxis.z);
         }
 
         private void Awake()
         {
-            // Collect components
+            // コンポーネントを収集する．
             GatherComponents();
 
             Initialize();
 
-            // Add a component that aggregates pre-processing
-            // The initial status is set to disabled to account for the possibility of the Brain being disabled.
+            // 事前処理をまとめるコンポーネントを追加する．
+            // Brain が無効化される可能性を考慮して、初期状態は無効化しておく．
             _earlyUpdate = gameObject.AddComponent<EarlyFixedUpdateBrain>();
             _earlyUpdate.enabled = false;
 
-            // Update FreezeAxis
+            // FreezeAxis を更新する．
             SetFreezeAxis(_freezeAxis.x, _freezeAxis.y, _freezeAxis.z);
         }
 
         private void OnEnable()
         {
-            // Activate TCC-related components
+            // TCC 関連コンポーネントを有効化する．
             _earlyUpdate.enabled = true;
         }
 
         private void OnDisable()
         {
-            // Deactivate TCC-related components
+            // TCC 関連コンポーネントを無効化する．
             _earlyUpdate.enabled = false;
         }
 
@@ -193,7 +191,6 @@ namespace Nitou.TCC.CharacterControl.Core
             _rigidbody.constraints = initialConstraints;
         }
 
-
         /// <summary>
         /// Get components.
         /// </summary>
@@ -206,13 +203,13 @@ namespace Nitou.TCC.CharacterControl.Core
         /// <summary>
         /// Update collider settings based on <see cref="settings"/>.
         /// </summary>
-        /// <param name="caps">Capsule collider size</param>
+        /// <param name="capsule">Capsule collider size</param>
         /// <param name="settings">Character settings</param>
-        private static void UpdateColliderSettings(CapsuleCollider caps, CharacterSettings settings)
+        private static void UpdateColliderSettings(CapsuleCollider capsule, CharacterSettings settings)
         {
-            caps.radius = settings.Radius;
-            caps.height = settings.Height;
-            caps.center = new Vector3(0, settings.Height / 2, 0);
+            capsule.radius = settings.Radius;
+            capsule.height = settings.Height;
+            capsule.center = new Vector3(0, settings.Height / 2, 0);
         }
 
 
@@ -227,29 +224,24 @@ namespace Nitou.TCC.CharacterControl.Core
         /// <param name="deltaTime">Delta time</param>
         protected override void ApplyPosition(in Vector3 total, float deltaTime)
         {
-            // var totalVelocity = WallCorrection(total);
-            // totalVelocity = Vector3.Scale(_lockAxis, totalVelocity) ;
-
             var totalVelocity = Vector3.Scale(_lockAxis, total);
 
-            // Get the movement vector on the XZ plane
+            // XZ 平面上の移動ベクトルを取得する．
             var horizontal = totalVelocity;
             horizontal.y = 0;
 
             var lastPosition = Position;
 
-            // Overcome obstacles based on FootStep
+            // FootStep の値に基づいて障害物を乗り越える．
             lastPosition += CalculateFootStep(lastPosition, horizontal, deltaTime);
 
-            // If grounded, adjust position to adhere to the ground
+            // 接地している場合、地面に沿って位置を補正する．
             lastPosition += FitGround(totalVelocity, lastPosition);
 
-            // If there's a wall in the movement direction, adjust the position to avoid penetration
+            // 移動方向に壁がある場合、貫通を防ぐように位置を補正する．
             lastPosition += CalculateSkinWidth(lastPosition, horizontal);
 
             // 位置を適用する．
-
-            // _rigidbody.MovePosition( lastPosition );
             _rigidbody.position = lastPosition;
             _rigidbody.linearVelocity = totalVelocity;
         }
@@ -387,7 +379,7 @@ namespace Nitou.TCC.CharacterControl.Core
         /// <returns>Correction offset</returns>
         private Vector3 FitGround(in Vector3 velocity, in Vector3 position)
         {
-            // If grounded and falling, adjust to the position on the ground
+            // 接地かつ落下中の場合、地面上の位置に合わせる．
             if (_groundCheck.IsFirmlyOnGround && velocity.y < 0)
             {
                 return new Vector3(0, -_groundCheck.DistanceFromGround, 0);
@@ -424,7 +416,6 @@ namespace Nitou.TCC.CharacterControl.Core
             return targetAngle > groundAngle ? new Vector3(0, offset, 0) : Vector3.zero;
         }
 
-
         /// <summary>
         /// 目的地に障害物がある場合、移動方向を補正する．
         /// </summary>
@@ -455,16 +446,17 @@ namespace Nitou.TCC.CharacterControl.Core
             return result;
         }
 
+
         /// <summary>
-        /// Called when CharacterSettings values change.
+        /// CharacterSettings の値が変更されたときに呼び出される．
         /// </summary>
-        /// <param name="settings">Updated Settings</param>
+        /// <param name="settings">更新された Settings</param>
         void IActorSettingUpdateReceiver.OnUpdateSettings(CharacterSettings settings)
         {
             var capsuleCollider = GetComponent<CapsuleCollider>();
             var rig = GetComponent<Rigidbody>();
 
-            // Update values
+            // 値を更新する．
             UpdateColliderSettings(capsuleCollider, settings);
             rig.mass = settings.Mass;
         }

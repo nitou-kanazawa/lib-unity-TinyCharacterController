@@ -357,7 +357,7 @@ namespace Nitou.TCC.CharacterControl.Control
                 NGizmo.DrawLine(p1, p2, Colors.Green);
             }
 
-            // show line about Move velocities.
+            // 移動速度のラインを表示する．
             NGizmo.DrawRay(position, MoveVelocity, Colors.Green);
         }
 #endif

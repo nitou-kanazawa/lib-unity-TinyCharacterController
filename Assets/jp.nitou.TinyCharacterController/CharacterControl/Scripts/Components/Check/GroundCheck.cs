@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using Nitou.TCC.CharacterControl.Core;
 using Nitou.TCC.CharacterControl.Interfaces.Components;
@@ -147,7 +146,7 @@ namespace Nitou.TCC.CharacterControl.Check
             var origin = new Vector3(0, offset, 0) + (_transform?.Position ?? transform.position);
             var groundCheckDistance = _ambiguousDistance + offset;
 
-            // Perform ground detection while ignoring the character's own collider.
+            // キャラクター自身のコライダーを無視して地面検出を実行する．
             var groundCheckCount = Physics.SphereCastNonAlloc(
                 origin, CharacterSettings.Radius, Vector3.down, _hits,
                 groundCheckDistance,
@@ -155,7 +154,7 @@ namespace Nitou.TCC.CharacterControl.Check
 
             var isHit = ClosestHit(_hits, groundCheckCount, groundCheckDistance, out _groundCheckHit);
 
-            // fill the properties of the component based on the information of the ground.
+            // 地面情報をもとにコンポーネントのプロパティを設定する．
             if (isHit)
             {
                 var inLimitAngle = Vector3.Angle(Vector3.up, _groundCheckHit.normal) < _maxSlope;
@@ -179,7 +178,7 @@ namespace Nitou.TCC.CharacterControl.Check
                 GroundObject = null;
             }
 
-            // If the object has changed, invoke _onChangeGroundObject.
+            // 地面オブジェクトが切り替わった場合はイベントを呼び出す．
             IsChangeGroundObject = preGroundObject != GroundObject;
             if (IsChangeGroundObject)
             {
@@ -220,10 +219,11 @@ namespace Nitou.TCC.CharacterControl.Check
             closestHit = new RaycastHit();
             var isHit = false;
 
-            foreach (var hit in hits.Take(count))
+            for (var i = 0; i < count; i++)
             {
-                var isOverOriginHeight = (hit.distance == 0);
-                if (isOverOriginHeight || hit.distance > min || CharacterSettings.IsOwnCollider(hit.collider) || hit.collider == null)
+                var hit = hits[i];
+                // distance == 0 はSphereCastの原点がコライダー内にある場合（接地判定の誤検知）
+                if (hit.distance == 0 || hit.distance > min || hit.collider == null || CharacterSettings.IsOwnCollider(hit.collider))
                     continue;
 
                 min = hit.distance;

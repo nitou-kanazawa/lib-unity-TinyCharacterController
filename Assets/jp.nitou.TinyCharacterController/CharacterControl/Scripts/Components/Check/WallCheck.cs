@@ -41,12 +41,12 @@ namespace Nitou.TCC.CharacterControl.Check
         private static readonly RaycastHit[] Hits = new RaycastHit[5];
 
         /// <summary>
-        /// If there is contact, it returns True.
+        /// 接触がある場合は True を返す．
         /// </summary>
         public bool IsContact { get; private set; }
 
         /// <summary>
-        /// Returns normal vector of the contact surface. If there is no contact, it returns Vector3.Zero.
+        /// 接触面の法線ベクトルを返す．接触がない場合は Vector3.Zero を返す．
         /// </summary>
         public Vector3 Normal => _normal;
 
@@ -63,17 +63,17 @@ namespace Nitou.TCC.CharacterControl.Check
         private Subject<Unit> _onWallStuckSubject = new();
 
         /// <summary>
-        /// Invoke when touch with a wall.
+        /// 壁に接触したときに呼び出される．
         /// </summary>
         public Observable<Unit> OnWallContacted => _onWallContactedSubject;
 
         /// <summary>
-        /// Invoke when leave from a wall.
+        /// 壁から離れたときに呼び出される．
         /// </summary>
         public Observable<Unit> OnWallLeft => _onWallLeftSubject;
 
         /// <summary>
-        /// Invoke when contact with a wall.
+        /// 壁に接触し続けているときに呼び出される．
         /// </summary>
         public Observable<Unit> OnWallStuck => _onWallStuckSubject;
 
@@ -96,7 +96,7 @@ namespace Nitou.TCC.CharacterControl.Check
 
         void IEarlyUpdateComponent.OnUpdate(float deltaTime)
         {
-            // If the component is invalid, do not update the process.
+            // コンポーネントが無効な場合は更新処理を行わない．
             if (enabled == false)
                 return;
 
@@ -118,15 +118,15 @@ namespace Nitou.TCC.CharacterControl.Check
         #endregion
 
         /// <summary>
-        /// Immediately performs wall determination.
-        /// The results of this calculation are processed independently of the component calculations. This means that the calculation results are not saved.
-        /// The calculation ignores colliders in the same component.
+        /// 壁判定を即座に実行する．
+        /// この計算結果はコンポーネントの計算とは独立して処理され、計算結果は保存されない．
+        /// 同じコンポーネントのコライダーは無視される．
         /// </summary>
-        /// <param name="direction">direction</param>
-        /// <param name="normal">result normal</param>
-        /// <param name="point">result hit point</param>
-        /// <param name="contactCollider">return contact object.  if no contact return null.</param>
-        /// <returns>is contact any collider</returns>
+        /// <param name="direction">判定する方向</param>
+        /// <param name="normal">接触面の法線（結果）</param>
+        /// <param name="point">ヒット地点（結果）</param>
+        /// <param name="contactCollider">接触したオブジェクト．接触なしの場合は null を返す．</param>
+        /// <returns>いずれかのコライダーに接触しているか</returns>
         public bool HitCheck(Vector3 direction, out Vector3 normal, out Vector3 point, out Collider contactCollider)
         {
             var distance = _settings.Radius + _wallDetectionDistance;
@@ -136,11 +136,11 @@ namespace Nitou.TCC.CharacterControl.Check
             var count = Physics.SphereCastNonAlloc(ray, _settings.Radius, Hits, distance, _settings.EnvironmentLayer,
                 QueryTriggerInteraction.Ignore);
 
-            // find most closest target.
+            // 最も近いヒットを取得する．
             var hasClosestHit = _settings.ClosestHit(Hits, count, distance, out var hit);
             if (hasClosestHit)
             {
-                // apply limit angle.
+                // 角度制限を適用する．
                 var angle = Vector3.Angle(Vector3.up, hit.normal);
                 if (angle > _wallAngleRange.x && angle < _wallAngleRange.y &&
                     Vector3.Distance(hit.point, centerPosition) < distance)

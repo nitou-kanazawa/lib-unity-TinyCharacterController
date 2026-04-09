@@ -144,7 +144,7 @@ namespace Nitou.TCC.CharacterControl.Control
             var plane = new Plane(_planeAxis, _transform.Position + _planeAxis * _planeOffset);
             var ray = _camera.ScreenPointToRay(_mousePosition);
 
-            // If the cursor position does not make contact with the plane, the process is aborted.
+            // カーソル位置がプレーンに接触しない場合は処理を中断する．
             if (!plane.Raycast(ray, out var distance))
                 return;
 
@@ -154,7 +154,7 @@ namespace Nitou.TCC.CharacterControl.Control
             CursorPosition = contactPosition;
             LimitedPosition = (Vector3.Distance(position, contactPosition) > _maxDistance) ? Vector3.MoveTowards(position, contactPosition, _maxDistance) : contactPosition;
 
-            // Pre-calculate character orientation
+            // キャラクターの向きを事前計算する．
             var deltaPosition = LimitedPosition - position;
             YawRotation = Quaternion.LookRotation(Vector3.Scale(deltaPosition, new Vector3(1, 0, 1)), Vector3.up);
             PitchRotation = Quaternion.LookRotation(Vector3.Scale(deltaPosition, new Vector3(1, 1, 0)), Vector3.up);

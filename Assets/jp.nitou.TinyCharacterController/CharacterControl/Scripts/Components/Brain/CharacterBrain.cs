@@ -13,8 +13,8 @@ namespace Nitou.TCC.CharacterControl.Core
     /// Agentの高さと幅は <see cref="CharacterSettings.Height"/> と <see cref="CharacterSettings.Radius"/> によって決定される．
     /// </summary>
     [AddComponentMenu(MenuList.MenuBrain + "Character Brain")]
-    [DisallowMultipleComponent]
     [DefaultExecutionOrder(Order.UpdateBrain)]
+    [DisallowMultipleComponent]
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(CharacterSettings))]
     public sealed class CharacterBrain : BrainBase, IActorSettingUpdateReceiver
@@ -47,6 +47,12 @@ namespace Nitou.TCC.CharacterControl.Core
         private static readonly Collider[] Colliders = new Collider[5];
         private IGroundContact _groundCheck;
         private bool _hasGroundCheck;
+
+        /// <summary>
+        /// CharacterController.Move() に渡す速度のY成分がゼロのとき、
+        /// 接地判定フラグが意図せずリセットされる Unity 内部の不具合を回避するための最小値．
+        /// </summary>
+        private const float MinVerticalVelocityForCCBugWorkaround = 0.001f;
 
 
         // ----------------------------------------------------------------------------
@@ -81,7 +87,7 @@ namespace Nitou.TCC.CharacterControl.Core
             base.Initialize();
             GatherComponents();
 
-            // Apply LockAxis.
+            // LockAxis を適用する．
             SetFreezeAxis(_freezeAxis.x, _freezeAxis.y, _freezeAxis.z);
 
             _controller.detectCollisions = _detectCollisions;
@@ -89,13 +95,13 @@ namespace Nitou.TCC.CharacterControl.Core
 
         private void OnEnable()
         {
-            // Activate the component for pre-calculation.
+            // 事前計算コンポーネントを有効化する．
             _earlyUpdate.enabled = true;
         }
 
         private void OnDisable()
         {
-            // Deactivate the component for pre-calculation.
+            // 事前計算コンポーネントを無効化する．
             _earlyUpdate.enabled = false;
         }
 
@@ -106,15 +112,15 @@ namespace Nitou.TCC.CharacterControl.Core
 
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {
-            // If push is disabled, do not perform pushing when colliding.
+            // プッシュが無効の場合、衝突時に押し出しを行わない．
             if (_pushable == false)
                 return;
 
-            // push other character brain.
+            // 他のキャラクターブレインを押し出す．
             if (hit.collider.TryGetComponent(out CharacterBrain brain))
                 brain.PushedOtherController(hit.moveDirection * TotalVelocity.magnitude, Settings.Mass);
 
-            // On contact with an object, if the object is operating with a rigidbody, push it out.
+            // オブジェクトと接触したとき、Rigidbody で動作している場合は押し出す．
             var body = hit.collider.attachedRigidbody;
             if (body == null || body.isKinematic)
                 return;
@@ -151,7 +157,7 @@ namespace Nitou.TCC.CharacterControl.Core
         void IActorSettingUpdateReceiver.OnUpdateSettings(CharacterSettings settings)
         {
             // Controller が設定されていない場合は取得する
-            if (_controller == null) 
+            if (_controller == null)
                 TryGetComponent(out _controller);
 
             // 高さ、中心点、幅を取得する
@@ -250,7 +256,7 @@ namespace Nitou.TCC.CharacterControl.Core
 
             if (_controller.enabled)
             {
-                // Since CharacterController is enabled, it cannot be moved by Transform.
+                // CharacterController が有効なため、Transform では移動できない．
                 _controller.Move(position - CachedTransform.position);
             }
             else
@@ -292,7 +298,7 @@ namespace Nitou.TCC.CharacterControl.Core
             var rate = (mass / Settings.Mass) / max;
 
             var velocity = Vector3.Scale(direction, new Vector3(1, 0f, 1)) * rate * Time.deltaTime;
-            velocity.y = 0.001f; // CharacterController のバグを回避
+            velocity.y = MinVerticalVelocityForCCBugWorkaround;
 
             _controller.Move(velocity);
         }
@@ -302,14 +308,14 @@ namespace Nitou.TCC.CharacterControl.Core
 #if UNITY_EDITOR
         private void Reset()
         {
-            // Update settings such as CharacterController.
+            // CharacterController などの設定を更新する．
             var settings = GetComponent<CharacterSettings>();
             ((IActorSettingUpdateReceiver)this).OnUpdateSettings(settings);
         }
 
         private void OnValidate()
         {
-            // Update the settings to match the Inspector for changes during gameplay.
+            // ゲームプレイ中の変更に対応するため、インスペクターに合わせて設定を更新する．
             SetFreezeAxis(_freezeAxis.x, _freezeAxis.y, _freezeAxis.z);
         }
 #endif

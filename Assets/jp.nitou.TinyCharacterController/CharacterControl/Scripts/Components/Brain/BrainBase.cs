@@ -126,7 +126,7 @@ namespace Nitou.TCC.CharacterControl.Core
             _effectManager.Initialize(go);
             _collisionManager.Initialize(go);
 
-            // gather all components.
+            // コンポーネントを収集する．
             TryGetComponent(out CachedTransform);
             TryGetComponent(out Settings);
         }
@@ -136,29 +136,24 @@ namespace Nitou.TCC.CharacterControl.Core
         /// </summary>
         protected void UpdateBrain()
         {
-            //if (!Settings.HasCamera) {
-            //    Debug.LogWarning("Camera not found", gameObject);
-            //    return;
-            //}
-
-            // If executed at the timing of FixedUpdate, deltaTime returns the value of FixedUpdate.
+            // FixedUpdate タイミングで実行される場合、deltaTime は FixedUpdate の値を返す．
             var deltaTime = Time.deltaTime;
 
-            // Update coordinates
+            // 各コンポーネントの座標を更新する．
             _updateComponentManager.Process(deltaTime);
 
-            // update highestPriority
+            // 最高優先度コンポーネントを更新する．
             _moveManager.UpdateHighestMoveControl(deltaTime);
             _turnManager.UpdateHighestTurnControl(deltaTime);
 
-            // update velocity and angle.
+            // 速度と角度を更新する．
             _effectManager.CalculateVelocity();
             _moveManager.CalculateVelocity();
             _turnManager.CalculateAngle(deltaTime);
 
             TotalVelocity = _moveManager.Velocity + _effectManager.Velocity;
 
-            // Update the position.
+            // 位置を更新する．
             if (_warpManager.WarpedPosition)
             {
                 if (_warpManager.IsMove)
@@ -173,7 +168,7 @@ namespace Nitou.TCC.CharacterControl.Core
                 ApplyPosition(TotalVelocity, deltaTime);
             }
 
-            // Update the direction.
+            // 向きを更新する．
             if (_warpManager.WarpedRotation)
             {
                 SetRotationDirectly(_warpManager.Rotation);
@@ -183,8 +178,8 @@ namespace Nitou.TCC.CharacterControl.Core
                 ApplyRotation(Quaternion.AngleAxis(_turnManager.NextYawAngle, Vector3.up));
             }
 
-            // Update the camera's position and direction.
-            // To prevent jitter, process the camera after updating the character's position.
+            // カメラの位置と向きを更新する．
+            // ジッターを防ぐために、キャラクター位置の更新後にカメラを処理する．
             _cameraManager.Process(deltaTime);
 
             _warpManager.ResetWarp();

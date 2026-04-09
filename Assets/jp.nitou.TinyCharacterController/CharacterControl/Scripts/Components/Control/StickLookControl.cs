@@ -53,9 +53,9 @@ namespace Nitou.TCC.CharacterControl.Control
         }
 
         /// <summary>
-        /// Turns in the direction specified by the stick. The direction is compensated by the camera orientation.
+        /// スティックで指定した方向を向く．方向はカメラの向きを基準に補正される．
         /// </summary>
-        /// <param name="rightStick">X faces left and right on the screen space, Y faces up and down on the screen space</param>.
+        /// <param name="rightStick">スクリーン空間で X が左右、Y が上下に対応する入力値</param>
         public void Look(Vector2 rightStick)
         {
             var rotation = Quaternion.AngleAxis(_settings.CameraTransform.rotation.eulerAngles.y, Vector3.up);

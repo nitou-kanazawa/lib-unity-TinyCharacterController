@@ -147,6 +147,7 @@ namespace Nitou.TCC.CharacterControl.Core
 
 
         // ----------------------------------------------------------------------------
+
         #region Lifecycle Events
 
         private void Awake()
@@ -177,6 +178,7 @@ namespace Nitou.TCC.CharacterControl.Core
             _environmentLayer = LayerMaskUtil.OnlyDefault();
         }
 #endif
+
         #endregion
 
         // ----------------------------------------------------------------------------
@@ -274,11 +276,9 @@ namespace Nitou.TCC.CharacterControl.Core
 
     public static class CharacterSettingsExtensions
     {
-  
-        
     }
-    
-    
+
+
     public static class CharacterComponentUtils
     {
         /// <summary>

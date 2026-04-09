@@ -1,14 +1,9 @@
 {
-  "name": "$name$",
-  "version": "$version$",
-  "description": "$END$",
-  "main": "$main$",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/nitou-kanazawa/lib-unity-TinyCharacterController.git"
-  },
-  "private": true
+  "name": "jp.nitou.abilitysystem",
+  "displayName": "Gameplay Ability System",
+  "version": "0.1.0",
+  "unity": "6000.2",
+  "description": "A unified framework for developing ability-based games",
+  "dependencies": {},
+  "publishConfig": {}
 }

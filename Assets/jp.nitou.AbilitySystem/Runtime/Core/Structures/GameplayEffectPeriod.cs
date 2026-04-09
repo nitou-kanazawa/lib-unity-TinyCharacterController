@@ -1,18 +1,19 @@
-using System;
-
-namespace Nitou.AbilitySystem
+namespace Nitou.AbilitySystem.Core
 {
-    [Serializable]
-    public class GameplayEffectPeriod
+    /// <summary>
+    /// ゲームプレイ効果の周期処理を表す構造体です。
+    /// </summary>
+    public struct GameplayEffectPeriod
     {
         /// <summary>
-        /// Period at which to tick this GE
+        /// 周期処理の間隔（秒）。
         /// </summary>
         public float Period;
 
         /// <summary>
-        /// Whether to execute GE on first application (true) or wait until the first tick (false)
+        /// 適用時に即座に実行するかどうか。
         /// </summary>
         public bool ExecuteOnApplication;
     }
 }
+

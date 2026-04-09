@@ -1,12 +1,19 @@
-using System;
-using Nitou.AbilitySystem.Data;
-
-namespace Nitou.AbilitySystem
+namespace Nitou.AbilitySystem.Core
 {
-    [Serializable]
+    /// <summary>
+    /// 条件付きで適用されるゲームプレイ効果を表す構造体です。
+    /// </summary>
     public struct ConditionalGameplayEffectContainer
     {
-        public GameplayEffectAsset GameplayEffect;
-        public GameplayTagAsset[] RequiredSourceTags;
+        /// <summary>
+        /// 適用するゲームプレイ効果定義。
+        /// </summary>
+        public IGameplayEffectDefinition GameplayEffect;
+
+        /// <summary>
+        /// ソースに必要なタグ。
+        /// </summary>
+        public IGameplayTag[] RequiredSourceTags;
     }
 }
+

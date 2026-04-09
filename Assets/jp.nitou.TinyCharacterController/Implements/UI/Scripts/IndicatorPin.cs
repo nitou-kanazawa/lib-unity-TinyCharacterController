@@ -8,9 +8,9 @@ using Nitou.Gizmo;
 namespace Nitou.TCC.UI.UI
 {
     /// <summary>
-    /// Component for synchronizing UI with 3D space coordinates.
-    /// Adjusts the position of the UI to align with the coordinates specified in <see cref="WorldPosition"/>.
-    /// Uses <see cref="CanvasGroup"/> to hide the UI when it goes off-screen.
+    /// UIを3D空間の座標と同期させるコンポーネント。
+    /// <see cref="WorldPosition"/>で指定した座標にUIの位置を調整します。
+    /// <see cref="CanvasGroup"/>を使用して、画面外に出た場合にUIを非表示にします。
     /// </summary>
     [RequireComponent(typeof(CanvasGroup))]
     [RequireComponent(typeof(RectTransform))]
@@ -18,20 +18,20 @@ namespace Nitou.TCC.UI.UI
     public sealed class IndicatorPin : ComponentBase
     {
         /// <summary>
-        /// Timing at which the component is updated.
-        /// Set to Update if the camera moves during the Update frame, or FixedUpdate if it moves during the Physics frame.
+        /// コンポーネントの更新タイミング。
+        /// カメラがUpdateフレームで移動する場合はUpdate、物理フレームで移動する場合はFixedUpdateに設定します。
         /// </summary>
         [EnumToggleButtons]
         [SerializeField] private UpdateTiming _cameraUpdateTiming;
 
         /// <summary>
-        /// World coordinates of the UI.
+        /// UIのワールド座標。
         /// </summary>
         [SerializeField] private Vector3 _worldPosition;
 
         /// <summary>
-        /// Offset for the world coordinates of the UI.
-        /// The UI is displayed at the position defined by <see cref="_worldPosition"/> with <see cref="_positionOffset"/> added to it.
+        /// UIのワールド座標に対するオフセット。
+        /// UIは<see cref="_worldPosition"/>に<see cref="_positionOffset"/>を加算した位置に表示されます。
         /// </summary>
         [SerializeField] private Vector3 _positionOffset;
 
@@ -41,39 +41,39 @@ namespace Nitou.TCC.UI.UI
 
 
         /// <summary>
-        /// Position where the UI is displayed.
+        /// UIが表示される位置。
         /// </summary>
         public Vector3 WorldPosition
         {
             get => _worldPosition;
             set
             {
-                // If the coordinates haven't been updated, exit the processing.
+                // 座標が更新されていない場合は処理を終了する。
                 if (_worldPosition == value)
                     return;
 
                 _worldPosition = value;
                 IsChangePosition = true;
 
-                // Update the system's coordinates
+                // システムの座標を更新する
                 if (IsRegistered)
                     IndicatorPinSystem.GetInstance(_cameraUpdateTiming).SetPosition(Index, CorrectedPosition);
             }
         }
 
         /// <summary>
-        /// UI's world coordinates adjusted with the offset.
+        /// オフセットを適用したUIのワールド座標。
         /// </summary>
         public Vector3 CorrectedPosition => _worldPosition + _positionOffset;
 
         /// <summary>
-        /// UI size.
+        /// UIのサイズ。
         /// </summary>
         public Vector2 UiSize => _transform.sizeDelta;
 
 
         /// <summary>
-        /// True if UI coordinates have changed, automatically set to False after updating.
+        /// UI座標が変更されている場合はTrue。更新後は自動的にFalseに設定されます。
         /// </summary>
         public bool IsChangePosition { get; private set; }
 
@@ -104,11 +104,11 @@ namespace Nitou.TCC.UI.UI
 
         private void OnValidate()
         {
-            // Cancel update if the component is not registered.
+            // コンポーネントが登録されていない場合は更新をキャンセルする。
             if (IsRegistered == false)
                 return;
 
-            // Reflect UI coordinates.
+            // UI座標を反映する。
             IndicatorPinSystem.GetInstance(_cameraUpdateTiming).SetPosition(Index, CorrectedPosition);
         }
 
@@ -118,12 +118,12 @@ namespace Nitou.TCC.UI.UI
         // ----------------------------------------------------------------------------
 
         /// <summary>
-        /// Apply changes to the UI.
+        /// UIに変更を適用する。
         /// </summary>
-        /// <param name="isVisible"></param>
+        /// <param name="isVisible">UIが表示されているかどうか</param>
         public void ApplyUi(bool isVisible)
         {
-            // Transform updates are handled on the system side.
+            // Transformの更新はシステム側で処理される。
 
             if (isVisible)
             {
@@ -145,7 +145,7 @@ namespace Nitou.TCC.UI.UI
 #if UNITY_EDITOR && TCC_USE_NGIZMOS
         private void OnDrawGizmosSelected()
         {
-            // Show the world coordinates where the UI is displayed.
+            // UIが表示されるワールド座標を表示する。
             var position = _worldPosition + _positionOffset;
             NGizmo.DrawSphere(position, 0.2f, Color.cyan);
         }

@@ -10,16 +10,16 @@ using Nitou.BatchProcessor;
 namespace Nitou.TCC.UI.UI
 {
     /// <summary>
-    /// A system for batch processing <see cref="IndicatorPin"/> components.
-    /// Aggregates <see cref="IndicatorPin"/> components and calculates their coordinates in bulk based on information from <see cref="Camera.main"/>.
-    /// Coordinates are asynchronously applied to Transforms.
+    /// <see cref="IndicatorPin"/>コンポーネントをバッチ処理するシステム。
+    /// <see cref="IndicatorPin"/>コンポーネントを集約し、<see cref="Camera.main"/>の情報に基づいて一括で座標を計算します。
+    /// 座標は非同期でTransformに適用されます。
     /// </summary>
     [BurstCompile]
     public sealed class IndicatorPinSystem : SystemBase<IndicatorPin, IndicatorPinSystem>,
                                              IPostUpdate
     {
         /// <summary>
-        /// Apply Transform updates.
+        /// Transformの更新を適用する。
         /// </summary>
         [BurstCompile]
         private struct ApplyUiPositionJob : IJobParallelForTransform
@@ -68,20 +68,20 @@ namespace Nitou.TCC.UI.UI
             if (CameraUtility.TryGetMainCamera(out var camera) == false)
                 return;
 
-            // Prepare the elements needed for calculations
+            // 計算に必要な要素を準備する
             var uiPositions = new NativeArray<float3>(Components.Count, Allocator.TempJob);
             var uiVisible = new NativeArray<bool>(Components.Count, Allocator.Temp);
             PrepareProcess(camera, out var screenSize, out var cameraWorldToCameraMatrix);
 
-            // Calculate UI coordinates
+            // UI座標を計算する
             CalculateUi(
                 screenSize, camera.projectionMatrix, cameraWorldToCameraMatrix,
                 ref uiPositions, ref uiVisible);
 
-            // Update UI visibility and coordinates
+            // UIの表示状態と座標を更新する
             _handle = ApplyUi(cameraWorldToCameraMatrix, uiPositions.AsReadOnly(), uiVisible);
 
-            // Release the buffer
+            // バッファを解放する
             uiPositions.Dispose(_handle);
             uiVisible.Dispose();
         }
@@ -90,25 +90,25 @@ namespace Nitou.TCC.UI.UI
 
 
         /// <summary>
-        /// Update a specific element.
+        /// 特定の要素を更新する。
         /// </summary>
-        /// <param name="index">Element's ID</param>
-        /// <param name="position">New world position of the target</param>
+        /// <param name="index">要素のID</param>
+        /// <param name="position">ターゲットの新しいワールド座標</param>
         public void SetPosition(int index, in Vector3 position)
         {
-            // Force completion if a job is in progress
+            // ジョブ処理中の場合は強制完了させる
             _handle.Complete();
 
-            // Overwrite the element
+            // 要素を上書きする
             _positions[index] = position;
         }
 
         protected override void OnRegisterComponent(IndicatorPin component, int index)
         {
-            // Force completion if a job is in progress
+            // ジョブ処理中の場合は強制完了させる
             _handle.Complete();
 
-            // Add the element
+            // 要素を追加する
             _transforms.Add(component.transform);
             _positions.Add(component.CorrectedPosition);
             _uiSize.Add(component.UiSize);
@@ -116,10 +116,10 @@ namespace Nitou.TCC.UI.UI
 
         protected override void OnUnregisterComponent(IndicatorPin component, int index)
         {
-            // Force completion if a job is in progress
+            // ジョブ処理中の場合は強制完了させる
             _handle.Complete();
 
-            // Remove the element
+            // 要素を削除する
             _transforms.RemoveAtSwapBack(index);
             _positions.RemoveAtSwapBack(index);
             _uiSize.RemoveAtSwapBack(index);
@@ -127,34 +127,34 @@ namespace Nitou.TCC.UI.UI
 
 
         /// <summary>
-        /// Calculate UI coordinates.
+        /// UIの座標を計算する。
         /// </summary>
-        /// <param name="screenSize"></param>
-        /// <param name="projectionMatrix"></param>
-        /// <param name="cameraWorldToCameraMatrix"></param>
-        /// <param name="uiPositions"></param>
-        /// <param name="uiVisible"></param>
+        /// <param name="screenSize">スクリーンサイズ</param>
+        /// <param name="projectionMatrix">投影行列</param>
+        /// <param name="cameraWorldToCameraMatrix">カメラのワールド行列</param>
+        /// <param name="uiPositions">UI座標のリスト</param>
+        /// <param name="uiVisible">UI表示フラグのリスト</param>
         private void CalculateUi(in int2 screenSize,
                                  in Matrix4x4 projectionMatrix, in Matrix4x4 cameraWorldToCameraMatrix,
                                  ref NativeArray<float3> uiPositions, ref NativeArray<bool> uiVisible)
         {
             CalculatePositionSampler.Begin();
-            // Calculate UI coordinates
+            // UI座標を計算する
             CalculateUiPosition(
                 _positions.AsArray(),
                 screenSize, projectionMatrix, cameraWorldToCameraMatrix,
                 ref uiPositions);
-            // Determine UI visibility
+            // UIの表示状態を判定する
             CalculateUiVisible(uiPositions, _uiSize.AsArray(), screenSize, ref uiVisible);
             CalculatePositionSampler.End();
         }
 
         /// <summary>
-        /// Apply UI updates.
+        /// UIの更新を適用する。
         /// </summary>
-        /// <param name="cameraWorldToCameraMatrix">Camera matrix</param>
-        /// <param name="uiPositions">List of UI coordinates</param>
-        /// <param name="uiVisible">List of UI visibility flags</param>
+        /// <param name="cameraWorldToCameraMatrix">カメラ行列</param>
+        /// <param name="uiPositions">UI座標のリスト</param>
+        /// <param name="uiVisible">UI表示フラグのリスト</param>
         private JobHandle ApplyUi(
             in Matrix4x4 cameraWorldToCameraMatrix,
             in NativeArray<float3>.ReadOnly uiPositions,
@@ -162,7 +162,7 @@ namespace Nitou.TCC.UI.UI
         {
             ApplyUiSampler.Begin();
 
-            // Update UI coordinates
+            // UI座標を更新する
             var handle = new ApplyUiPositionJob
             {
                 positions = uiPositions
@@ -174,7 +174,7 @@ namespace Nitou.TCC.UI.UI
             {
                 var component = Components[i];
 
-                // If the camera matrix has changed or the coordinates have changed, consider the UI as changed
+                // カメラ行列が変更されているか、座標が変更されている場合はUIを変更とみなす
                 if (component.IsChangePosition || isChangeCameraMatrix)
                     Components[i].ApplyUi(uiVisible[i]);
             }
@@ -185,10 +185,10 @@ namespace Nitou.TCC.UI.UI
         }
 
         /// <summary>
-        /// Update the camera matrix.
+        /// カメラ行列を更新する。
         /// </summary>
-        /// <param name="cameraWorldToCameraMatrix">New matrix</param>
-        /// <returns>True if the matrix has changed</returns>
+        /// <param name="cameraWorldToCameraMatrix">新しい行列</param>
+        /// <returns>行列が変更されている場合はTrue</returns>
         private bool UpdateCameraMatrix(Matrix4x4 cameraWorldToCameraMatrix)
         {
             var isChangeCameraMatrix = !_preFrameCameraMatrix.Equals(cameraWorldToCameraMatrix);
@@ -206,11 +206,11 @@ namespace Nitou.TCC.UI.UI
         private static readonly CustomSampler ApplyUiSampler = CustomSampler.Create("Apply Ui");
 
         /// <summary>
-        /// Prepare elements for calculations.
+        /// 計算用の要素を準備する。
         /// </summary>
-        /// <param name="camera">Camera</param>
-        /// <param name="screenSize">Screen size</param>
-        /// <param name="cameraWorldToCameraMatrix">Camera's world matrix</param>
+        /// <param name="camera">カメラ</param>
+        /// <param name="screenSize">スクリーンサイズ</param>
+        /// <param name="cameraWorldToCameraMatrix">カメラのワールド行列</param>
         private static void PrepareProcess(in Camera camera, out int2 screenSize, out Matrix4x4 cameraWorldToCameraMatrix)
         {
             PrepareBufferSampler.Begin();
@@ -220,25 +220,25 @@ namespace Nitou.TCC.UI.UI
         }
 
         /// <summary>
-        /// Calculate screen coordinates from world coordinates in batch processing.
+        /// ワールド座標からスクリーン座標をバッチ処理で計算する。
         /// </summary>
-        /// <param name="positions">List of world coordinates</param>
-        /// <param name="screenSize">Screen size</param>
-        /// <param name="projectionMatrix">Camera's projection matrix</param>
-        /// <param name="worldMatrix">Camera's world matrix</param>
-        /// <param name="uiPositions">Updated UI coordinates</param>
+        /// <param name="positions">ワールド座標のリスト</param>
+        /// <param name="screenSize">スクリーンサイズ</param>
+        /// <param name="projectionMatrix">カメラの投影行列</param>
+        /// <param name="worldMatrix">カメラのワールド行列</param>
+        /// <param name="uiPositions">更新されるUI座標</param>
         [BurstCompile]
         private static void CalculateUiPosition(
             in NativeArray<float3> positions, in int2 screenSize,
             in Matrix4x4 projectionMatrix, in Matrix4x4 worldMatrix,
             ref NativeArray<float3> uiPositions)
         {
-            // Prepare the camera matrix
+            // カメラ行列を準備する
             var matrix = projectionMatrix * worldMatrix;
 
             for (var i = 0; i < positions.Length; i++)
             {
-                // Convert UI coordinates to screen coordinates and apply
+                // UI座標をスクリーン座標に変換して適用する
                 CameraUtility.WorldToScreenPosition(
                     positions[i], matrix, screenSize, out var screenPosition);
                 uiPositions[i] = screenPosition;
@@ -246,12 +246,12 @@ namespace Nitou.TCC.UI.UI
         }
 
         /// <summary>
-        /// Determine whether UI elements are within the screen boundaries in batch processing.
+        /// UI要素が画面境界内にあるかどうかをバッチ処理で判定する。
         /// </summary>
-        /// <param name="uiPositions">UI coordinates</param>
-        /// <param name="uiSizes">UI sizes</param>
-        /// <param name="screenSize">Screen size</param>
-        /// <param name="uiVisible">List of UI visibility</param>
+        /// <param name="uiPositions">UI座標</param>
+        /// <param name="uiSizes">UIサイズ</param>
+        /// <param name="screenSize">スクリーンサイズ</param>
+        /// <param name="uiVisible">UIの表示状態のリスト</param>
         [BurstCompile]
         private static void CalculateUiVisible(
             in NativeArray<float3> uiPositions, in NativeArray<float2> uiSizes,
@@ -264,12 +264,12 @@ namespace Nitou.TCC.UI.UI
         }
 
         /// <summary>
-        /// Check if UI elements are within the screen boundaries.
+        /// UI要素が画面境界内にあるかどうかをチェックする。
         /// </summary>
-        /// <param name="screenPosition">UI coordinates</param>
-        /// <param name="uiSize">UI size</param>
-        /// <param name="screenSize">Screen size</param>
-        /// <returns></returns>
+        /// <param name="screenPosition">UI座標</param>
+        /// <param name="uiSize">UIサイズ</param>
+        /// <param name="screenSize">スクリーンサイズ</param>
+        /// <returns>画面内にある場合はTrue</returns>
         [BurstCompile]
         private static bool InRange(in float3 screenPosition, in float2 uiSize, in int2 screenSize)
         {

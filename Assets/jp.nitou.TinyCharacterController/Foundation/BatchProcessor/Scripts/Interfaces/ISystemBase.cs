@@ -8,4 +8,13 @@ namespace Nitou.BatchProcessor
         int Order { get; }
     }
 
+    public interface IEarlyUpdate : ISystemBase
+    {
+        void OnUpdate();
+    }
+
+    public interface IPostUpdate : ISystemBase
+    {
+        void OnLateUpdate();
+    }
 }

@@ -6,8 +6,8 @@ using UnityEngine;
 namespace Nitou.TCC.CharacterControl.Control
 {
     /// <summary>
-    /// Components that directly set the movement or orientation.
-    /// Sets the direction of movement and orientation, and uses those values to move the character.
+    /// 移動方向と向きを直接設定するコンポーネント．
+    /// 設定された値を使用してキャラクターを移動・回転させる．
     /// </summary>
     [AddComponentMenu(MenuList.MenuControl + nameof(ManualControl))]
     [DisallowMultipleComponent]
@@ -16,35 +16,32 @@ namespace Nitou.TCC.CharacterControl.Control
                                         IMove
     {
         /// <summary>
-        /// Move priority.
-        /// If this value is higher than the other components,
-        /// the character moves by the <see cref="MoveVelocity"/> value.
+        /// 移動の優先度．
+        /// 他のコンポーネントより優先度が高い場合、<see cref="MoveVelocity"/> の値でキャラクターが移動する．
         /// </summary>
         [Title("Move Settings")]
         [SerializeField, Indent] public int MovePriority;
 
         /// <summary>
-        /// Movement vector of the character.
+        /// キャラクターの移動ベクトル．
         /// </summary>
         [SerializeField, Indent] public Vector3 MoveVelocity;
 
         /// <summary>
-        /// Turn Priority.
-        /// If this value is higher than the other values,
-        /// the character turns toward <see cref="TurnAngle"/>.
+        /// 回転の優先度．
+        /// 他のコンポーネントより優先度が高い場合、<see cref="TurnAngle"/> の方向にキャラクターが向く．
         /// </summary>
         [Title("Turn Settings")]
         [SerializeField, Indent] public int TurnPriority;
 
         /// <summary>
-        /// Sets the speed at which the direction is changed.
-        /// Basic is 0 to 30, negative is not complementary and changes instantly.
+        /// 向きを変える速度．0〜30 が基本で、負の値は補間なしで即座に向きを変える．
         /// </summary>
         [Range(-1, 50)]
         [SerializeField, Indent] public int TurnSpeed = 35;
 
         /// <summary>
-        /// The direction in which the character faces. World Coordinates
+        /// キャラクターが向く方向（ワールド座標）．
         /// </summary>
         [SerializeField, Indent] private float _turnAngle;
 
@@ -53,7 +50,7 @@ namespace Nitou.TCC.CharacterControl.Control
         #region Property
 
         /// <summary>
-        /// The direction in which the character faces. World Coordinates
+        /// キャラクターが向く方向（ワールド座標）．
         /// </summary>
         public float TurnAngle
         {
@@ -66,8 +63,7 @@ namespace Nitou.TCC.CharacterControl.Control
         }
 
         /// <summary>
-        /// The direction in which the character faces. World Coordinates.
-        /// Ignore the Y axis.
+        /// キャラクターが向く方向（ワールド座標・Y軸無視）．
         /// </summary>
         public Vector3 TurnDirection
         {
@@ -80,8 +76,7 @@ namespace Nitou.TCC.CharacterControl.Control
         }
 
         /// <summary>
-        /// Character rotation.
-        /// Ignore the Y axis.
+        /// キャラクターの回転（Y軸無視）．
         /// </summary>
         public Quaternion TurnRotation
         {

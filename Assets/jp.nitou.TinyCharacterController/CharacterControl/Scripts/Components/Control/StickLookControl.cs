@@ -7,9 +7,9 @@ using Sirenix.OdinInspector;
 namespace Nitou.TCC.CharacterControl.Control
 {
     /// <summary>
-    /// Update the character's orientation to the direction specified by <see cref="Look"/>.
+    /// <see cref="Look"/> で指定された方向にキャラクターの向きを更新するコンポーネント．
     ///
-    /// If <see cref="TurnPriority"/> is high, the character is turned in the direction of the stick movement.
+    /// <see cref="TurnPriority"/> が高い場合、スティックの入力方向にキャラクターを回転させる．
     /// </summary>
     [AddComponentMenu(MenuList.MenuControl + nameof(StickLookControl))]
     [DisallowMultipleComponent]
@@ -19,14 +19,13 @@ namespace Nitou.TCC.CharacterControl.Control
         private CharacterSettings _settings;
 
         /// <summary>
-        /// Rotation priority. When the priority is higher than the priority of other components,
-        /// it turns in the direction specified by the stick.
+        /// 回転の優先度．他のコンポーネントより優先度が高い場合、スティックで指定した方向を向く．
         /// </summary>
         [GUIColor("green")]
         [SerializeField, Indent] private int _turnPriority;
 
         /// <summary>
-        /// Speed to change orientation
+        /// 向きを変える速度．
         /// </summary>
         [Range(-1, 50)]
         [SerializeField, Indent] private int _turnSpeed;

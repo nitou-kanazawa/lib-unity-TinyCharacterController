@@ -46,16 +46,16 @@ namespace Nitou.TCC.CharacterControl.Control
 
         [SerializeField, Indent] private float _planeOffset;
 
-        [Title("Character orientation control")] 
-        [GUIColor("green")] 
+        [Title("Character orientation control")]
+        [GUIColor("green")]
         [SerializeField, Indent] private int _turnPriority = 1;
 
-        [PropertyRange(-1, 100)] 
+        [PropertyRange(-1, 100)]
         [SerializeField, Indent] private int _turnSpeed = 30;
 
 
         private Vector2 _mousePosition;
-        
+
         private ITransform _transform;
         private CharacterSettings _characterSettings;
 
@@ -67,7 +67,8 @@ namespace Nitou.TCC.CharacterControl.Control
         int IUpdateComponent.Order => Order.Control;
 
         /// <summary>
-        /// カーソルに向く速度。値が-1の場合、向きは固定されます。
+        /// カーソルに向く速度。
+        /// 値が-1の場合、向きは固定されます。
         /// </summary>
         public int TurnSpeed
         {
@@ -125,8 +126,8 @@ namespace Nitou.TCC.CharacterControl.Control
         int IPriority<ITurn>.Priority => _turnPriority;
 
 
-        // ----------------------------------------------------------------------------
-        // Lifecycle Events
+        #region Lifecycle Events
+
         private void Awake()
         {
             // ActorSettings
@@ -160,6 +161,7 @@ namespace Nitou.TCC.CharacterControl.Control
             PitchRotation = Quaternion.LookRotation(Vector3.Scale(deltaPosition, new Vector3(1, 1, 0)), Vector3.up);
         }
 
+        #endregion
 
         // ----------------------------------------------------------------------------
         // Public Method
@@ -184,7 +186,6 @@ namespace Nitou.TCC.CharacterControl.Control
         }
 
 
-        // ----------------------------------------------------------------------------
 #if UNITY_EDITOR && TCC_USE_NGIZMOS
         private void OnDrawGizmosSelected()
         {

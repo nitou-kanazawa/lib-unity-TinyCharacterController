@@ -5,32 +5,32 @@ using UnityEngine;
 namespace Nitou.TCC.CharacterControl.Control
 {
     /// <summary>
-    /// Components that face the direction of <see cref="Target"/>.
-    /// 
-    /// If priority is higher than the others, the character will face the Target.
-    /// If Target is not set, the <see cref="Priority"/> of this component is 0.
+    /// <see cref="Target"/> の方向を向くコンポーネント．
+    ///
+    /// 他のコンポーネントより優先度が高い場合、キャラクターは Target の方向を向く．
+    /// Target が設定されていない場合、このコンポーネントの <see cref="Priority"/> は 0 になる．
     /// </summary>
     [AddComponentMenu(MenuList.MenuControl + nameof(LookTargetControl))]
     [DisallowMultipleComponent]
     public sealed class LookTargetControl : MonoBehaviour,
-                                     ITurn
+                                            ITurn
     {
         /// <summary>
-        /// Transform of the target to point at.
-        /// If this value is null, priority is disabled.
+        /// 向く対象の Transform．
+        /// null の場合、優先度は無効になる．
         /// </summary>
         // [AllowsNull]
         public Transform Target;
 
         /// <summary>
-        /// Priority of turn.
+        /// 回転の優先度．
         /// </summary>
         [Header("Turn Priority and Speed")]
         public int Priority = 10;
 
         /// <summary>
-        /// Speed of orientation change.
-        /// If this value is -1, it immediately faces the target.
+        /// 向きを変える速度．
+        /// -1 の場合は即座に対象の方向を向く．
         /// </summary>
         [SerializeField, Range(-1, 30)]
         public int TurnSpeed = 15;

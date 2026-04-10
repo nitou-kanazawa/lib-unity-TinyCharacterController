@@ -10,10 +10,10 @@ namespace Nitou.TCC.CharacterControl.Control
     /// ※<see cref="ManualControl"/>の使用を推奨．
     /// </summary>
     [Obsolete("Recommends Manual Control")]
-    [AddComponentMenu(MenuList.MenuControl + nameof(ManualTurn))]
+    [AddComponentMenu(MenuList.MenuControl + nameof(ManualTurnControl))]
     [DisallowMultipleComponent]
-    public sealed class ManualTurn : ComponentBase,
-                                     ITurn
+    public sealed class ManualTurnControl : ComponentBase,
+                                            ITurn
     {
         [SerializeField]
         private Vector3 _direction = Vector3.forward;

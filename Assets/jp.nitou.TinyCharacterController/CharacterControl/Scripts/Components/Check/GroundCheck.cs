@@ -56,8 +56,6 @@ namespace Nitou.TCC.CharacterControl.Check
         private const int MAX_COLLISION_SIZE = 5;
 
 
-        // ----------------------------------------------------------------------------
-
         #region Properties
 
         /// <summary>
@@ -123,8 +121,6 @@ namespace Nitou.TCC.CharacterControl.Check
         #endregion
 
 
-        // ----------------------------------------------------------------------------
-
         #region Lifecycle Events
 
         protected override void OnComponentInitialized()
@@ -189,8 +185,6 @@ namespace Nitou.TCC.CharacterControl.Check
 
         #endregion
 
-        // ----------------------------------------------------------------------------
-        // Public Method
 
         /// <summary>
         /// アクター自身にアタッチされているコライダーを無視して Raycast を実行する．
@@ -209,9 +203,6 @@ namespace Nitou.TCC.CharacterControl.Check
             return CharacterSettings.ClosestHit(_hits, groundCheckCount, distance, out hit);
         }
 
-
-        // ----------------------------------------------------------------------------
-        // Private Method
 
         private bool ClosestHit(IReadOnlyList<RaycastHit> hits, int count, float maxDistance, out RaycastHit closestHit)
         {
@@ -239,7 +230,8 @@ namespace Nitou.TCC.CharacterControl.Check
 #if UNITY_EDITOR
         private void Reset()
         {
-            _ambiguousDistance = GetComponentInParent<CharacterSettings>().Height * 0.35f;
+            GatherCharacterSettings();
+            _ambiguousDistance = CharacterSettings.Height * 0.35f;
         }
 
 #if TCC_USE_NGIZMOS

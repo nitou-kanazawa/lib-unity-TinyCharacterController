@@ -8,6 +8,7 @@ using Nitou.TCC.CharacterControl.Core;
 using Nitou.TCC.CharacterControl.Interfaces.Core;
 using Nitou.TCC.CharacterControl.Shared;
 using Nitou.TCC.Foundation;
+using Sirenix.OdinInspector;
 #if TCC_USE_NGIZMOS
 using Nitou.Gizmo;
 #endif
@@ -27,18 +28,18 @@ namespace Nitou.TCC.CharacterControl.Check
         /// <summary>
         /// センサーの中心点．
         /// </summary>
-        [SerializeField] private Vector3 _sensorOffset = new(0, 0.5f, 0);
+        [SerializeField, Indent] private Vector3 _sensorOffset = new(0, 0.5f, 0);
 
         /// <summary>
         /// センサーが検出できるレイヤー．
         /// </summary>
-        [SerializeField] private LayerMask _hitLayer;
+        [SerializeField, Indent] private LayerMask _hitLayer;
 
         /// <summary>
         /// Environment Layer で無視するレイヤー．
         /// 透明な窓など、移動可能だが検出不可にしたいオブジェクトを指定するために使用される．
         /// </summary>
-        [SerializeField] private LayerMask _transparentLayer;
+        [SerializeField, Indent] private LayerMask _transparentLayer;
 
         /// <summary>
         /// センサーが検索するターゲットを指定するプロパティ．
@@ -46,7 +47,7 @@ namespace Nitou.TCC.CharacterControl.Check
         ///
         /// この設定はコンポーネントのセンサーの範囲を決定する．
         /// </summary>
-        [SerializeField] private SearchRangeSettings[] _searchData;
+        [SerializeField, Indent] private SearchRangeSettings[] _searchData;
 
         //
         private readonly List<string> _tags = new();
@@ -58,7 +59,7 @@ namespace Nitou.TCC.CharacterControl.Check
         //
         private ITransform _transform;
 
-        // 
+        // 検出用
         private static readonly Collider[] OverlapSphereResult = new Collider[CAPACITY];
         private static readonly RaycastHit[] Hits = new RaycastHit[30];
         private static readonly Plane[] CameraPlanes = new Plane[6];
@@ -424,11 +425,11 @@ namespace Nitou.TCC.CharacterControl.Check
         [System.Serializable]
         public class SearchRangeSettings
         {
-            [Header("Settings")]
             /// <summary>
             /// ターゲットオブジェクトのタグ．
             /// </summary>
-            // [TagSelector]
+            [Header("Settings")]
+            [TagSelector]
             public string Tag;
 
             /// <summary>
@@ -436,10 +437,10 @@ namespace Nitou.TCC.CharacterControl.Check
             /// </summary>
             public float Range;
 
-            [Header("Options")]
             /// <summary>
             /// カメラの視界外にあるオブジェクトを除外する．
             /// </summary>
+            [Header("Options")]
             public bool ExcludeOutOfView;
 
             /// <summary>
@@ -457,10 +458,10 @@ namespace Nitou.TCC.CharacterControl.Check
             /// </summary>
             public bool CalculateNearest = true;
 
-            [Header("Event")]
             /// <summary>
             /// 最も近いターゲットが変化したときにトリガーされるイベント．
             /// </summary>
+            [Header("Event")]
             public UnityEvent OnChangeClosestTarget;
 
             /// <summary>
@@ -472,14 +473,12 @@ namespace Nitou.TCC.CharacterControl.Check
         #endregion
 
 
-        /// ----------------------------------------------------------------------------
 #if UNITY_EDITOR
         private readonly Color[] _colors = new[]
         {
             Color.yellow, Color.red, Color.blue, Color.green,
             Color.cyan, Color.white, Color.magenta,
         };
-
 
 #if TCC_USE_NGIZMOS
         private void OnDrawGizmosSelected()
@@ -506,7 +505,8 @@ namespace Nitou.TCC.CharacterControl.Check
             {
                 var currentColor = _colors[i % _colors.Length];
                 var targets = _searchTargets[i].Targets;
-                UnityEditor.Handles.DrawOutline(targets.Select(c => c.gameObject).ToArray(), currentColor, 0.4f);
+                var validGameObjects = targets.Where(c => c != null).Select(c => c.gameObject).ToArray();
+                DrawOutline(validGameObjects, currentColor);
 
                 var colliders = _searchTargets[i].Colliders;
                 var closest = _searchTargets[i].ClosestTarget.CurrentTransform;
@@ -518,6 +518,22 @@ namespace Nitou.TCC.CharacterControl.Check
                     Gizmos.color = new Color(currentColor.r, currentColor.g, currentColor.b, 0.4f);
                     Gizmos.DrawCube(colliders[index].bounds.center, colliders[index].bounds.size);
                 }
+            }
+        }
+
+        private void DrawOutline(in GameObject[] validGameObjects, Color color)
+        {
+            // 修正後
+            var sceneView = UnityEditor.SceneView.currentDrawingSceneView;
+            bool isSceneViewReady = sceneView != null
+                                    && sceneView.camera != null
+                                    && sceneView.camera.activeTexture != null;
+
+            if (validGameObjects.Length > 0
+                && Event.current.type == EventType.Repaint
+                && isSceneViewReady)
+            {
+                UnityEditor.Handles.DrawOutline(validGameObjects, color, 0.4f);
             }
         }
 #endif

@@ -21,6 +21,13 @@ namespace Nitou.TCC.CharacterControl.Check
     public sealed class AnimatorModifierCheck : MonoBehaviour,
                                                 IAnimationModifierUpdate
     {
+        private enum UpdateMode
+        {
+            Update = 0,
+            FixedUpdate = 1
+        }
+        
+        
         /// <summary>
         /// 更新タイミングを指定する．
         /// Animator が Physics で動作している場合は FixedUpdate、それ以外の場合は Update を指定する．
@@ -35,12 +42,14 @@ namespace Nitou.TCC.CharacterControl.Check
         private readonly List<PropertyName> _removedKeyList = new();
         private readonly List<PropertyName> _addedKeyList = new();
 
+        
         /// <summary>
         /// キーが追加または削除されたときのコールバック．
         /// </summary>
         public UnityEvent OnChangeKey;
-
-
+        
+        #region Property
+        
         /// <summary>
         /// フレーム中にキーが追加または削除されたかどうかを判定する．
         /// </summary>
@@ -51,8 +60,8 @@ namespace Nitou.TCC.CharacterControl.Check
         /// </summary>
         public List<PropertyName> CurrentKeys => _currentKeyList;
 
-
-        /// ----------------------------------------------------------------------------
+        #endregion
+        
 
         #region Lifecycle Events
 
@@ -111,9 +120,8 @@ namespace Nitou.TCC.CharacterControl.Check
         #endregion
 
 
-        // ----------------------------------------------------------------------------
-        // Public Method
-
+        #region Public Method
+        
         /// <summary>
         /// キーが保持されているかどうかを確認する．
         /// </summary>
@@ -158,6 +166,8 @@ namespace Nitou.TCC.CharacterControl.Check
         /// <returns>このフレーム中に追加された場合は true</returns>
         public bool IsAdded(string key) => IsAdded(new PropertyName(key));
 
+        #endregion Public Method
+        
 
         // ----------------------------------------------------------------------------
         // Private Method
@@ -195,14 +205,6 @@ namespace Nitou.TCC.CharacterControl.Check
             }
 
             _behaviours.Add(hash, behaviours);
-        }
-
-
-        // ----------------------------------------------------------------------------
-        private enum UpdateMode
-        {
-            Update = 0,
-            FixedUpdate = 1
         }
     }
 }

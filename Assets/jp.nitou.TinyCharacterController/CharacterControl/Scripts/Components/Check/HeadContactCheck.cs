@@ -71,8 +71,6 @@ namespace Nitou.TCC.CharacterControl.Check
         private static readonly RaycastHit[] Result = new RaycastHit[MAX_CONTACT_SIZE];
 
 
-        // ----------------------------------------------------------------------------
-
         #region Properites
 
         /// <inheritdoc/>
@@ -117,8 +115,6 @@ namespace Nitou.TCC.CharacterControl.Check
 
         #endregion
 
-
-        // ----------------------------------------------------------------------------
 
         #region Lifecycle Events
 
@@ -170,9 +166,6 @@ namespace Nitou.TCC.CharacterControl.Check
 
         #endregion
 
-        
-        // ----------------------------------------------------------------------------
-        // Private Method
 
         /// <summary>
         /// 範囲外のときにプロパティを設定する．
@@ -237,7 +230,6 @@ namespace Nitou.TCC.CharacterControl.Check
         }
 
 
-        // ----------------------------------------------------------------------------
 #if UNITY_EDITOR && TCC_USE_NGIZMOS
         private void OnDrawGizmosSelected()
         {

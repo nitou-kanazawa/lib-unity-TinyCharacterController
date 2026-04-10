@@ -11,14 +11,13 @@ using UnityEngine;
 namespace Nitou.TCC.CharacterControl.Check
 {
     /// <summary>
-    /// A component that performs collision detection with walls is implemented.
-    /// It detects walls in the direction of the character's movement.
-    /// When a collision with a wall occurs, callbacks are triggered during the collision,
-    /// while in contact with the wall, and when the character moves away from the wall.
+    /// 壁との衝突判定を行うコンポーネント．
+    /// キャラクターの移動方向に対して壁を検出する．
+    /// 壁との衝突が発生したとき、接触中、壁から離れたときにコールバックを呼び出す．
     /// </summary>
     [AddComponentMenu(MenuList.MenuCheck + nameof(WallCheck))]
     [DisallowMultipleComponent]
-    public sealed class WallCheck : MonoBehaviour,
+    public sealed class WallCheck : ComponentBase,
                                     IEarlyUpdateComponent, IWallCheck
     {
         [Title("Settings")]
@@ -28,12 +27,9 @@ namespace Nitou.TCC.CharacterControl.Check
         [Range(0.01f, 1f)]
         [SerializeField, Indent] private float _wallDetectionDistance = 0.1f;
 
-        private int _order;
-        
         // References
         private IBrain _brain;
         private ITransform _transform;
-        private CharacterSettings _settings;
 
         private Vector3 _normal;
         private Vector3 _hitPoint;
@@ -80,11 +76,10 @@ namespace Nitou.TCC.CharacterControl.Check
 
         #region Lifecycle Events
 
-        private void Awake()
+        protected override void OnComponentInitialized()
         {
-            TryGetComponent(out _brain);
-            TryGetComponent(out _transform);
-            TryGetComponent(out _settings);
+            CharacterSettings.TryGetComponent(out _transform);
+            CharacterSettings.TryGetComponent(out _brain);
         }
 
         private void OnDestroy()
@@ -117,6 +112,7 @@ namespace Nitou.TCC.CharacterControl.Check
 
         #endregion
 
+
         /// <summary>
         /// 壁判定を即座に実行する．
         /// この計算結果はコンポーネントの計算とは独立して処理され、計算結果は保存されない．
@@ -129,15 +125,15 @@ namespace Nitou.TCC.CharacterControl.Check
         /// <returns>いずれかのコライダーに接触しているか</returns>
         public bool HitCheck(Vector3 direction, out Vector3 normal, out Vector3 point, out Collider contactCollider)
         {
-            var distance = _settings.Radius + _wallDetectionDistance;
-            var halfHeight = _settings.Height * 0.5f;
+            var distance = CharacterSettings.Radius + _wallDetectionDistance;
+            var halfHeight = CharacterSettings.Height * 0.5f;
             var centerPosition = _transform.Position + Vector3.up * halfHeight;
             var ray = new Ray(centerPosition, direction);
-            var count = Physics.SphereCastNonAlloc(ray, _settings.Radius, Hits, distance, _settings.EnvironmentLayer,
+            var count = Physics.SphereCastNonAlloc(ray, CharacterSettings.Radius, Hits, distance, CharacterSettings.EnvironmentLayer,
                 QueryTriggerInteraction.Ignore);
 
             // 最も近いヒットを取得する．
-            var hasClosestHit = _settings.ClosestHit(Hits, count, distance, out var hit);
+            var hasClosestHit = CharacterSettings.ClosestHit(Hits, count, distance, out var hit);
             if (hasClosestHit)
             {
                 // 角度制限を適用する．
@@ -158,7 +154,7 @@ namespace Nitou.TCC.CharacterControl.Check
             return false;
         }
 
-
+#if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
             if (Application.isPlaying == false)
@@ -167,17 +163,18 @@ namespace Nitou.TCC.CharacterControl.Check
             if (IsContact)
                 NGizmo.DrawCollider(in _contactObject, Color.yellow);
 
-            var distance = _settings.Radius + 0.1f;
-            var halfHeight = _settings.Height * 0.5f;
+            var distance = CharacterSettings.Radius + 0.1f;
+            var halfHeight = CharacterSettings.Height * 0.5f;
             var centerPosition = _transform.Position + Vector3.up * halfHeight;
             var direction = _brain.ControlVelocity.normalized;
             var position = centerPosition + direction * distance;
 
             Gizmos.color = Color.yellow;
-            Gizmos.DrawSphere(position, _settings.Radius);
+            Gizmos.DrawSphere(position, CharacterSettings.Radius);
 
             Gizmos.color = IsContact ? Color.red : Color.white;
-            Gizmos.DrawWireSphere(position, _settings.Radius);
+            Gizmos.DrawWireSphere(position, CharacterSettings.Radius);
         }
+#endif
     }
 }

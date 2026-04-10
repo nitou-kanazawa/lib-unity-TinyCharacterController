@@ -12,7 +12,7 @@ namespace Nitou.TCC.CharacterControl.Core
     /// <see cref="UnityEngine.CharacterController"/> を使用して動作する Brain．
     /// Agentの高さと幅は <see cref="CharacterSettings.Height"/> と <see cref="CharacterSettings.Radius"/> によって決定される．
     /// </summary>
-    [AddComponentMenu(MenuList.MenuBrain + "Character Brain")]
+    [AddComponentMenu(MenuList.MenuBrain + nameof(CharacterBrain))]
     [DefaultExecutionOrder(Order.UpdateBrain)]
     [DisallowMultipleComponent]
     [RequireComponent(typeof(CharacterController))]

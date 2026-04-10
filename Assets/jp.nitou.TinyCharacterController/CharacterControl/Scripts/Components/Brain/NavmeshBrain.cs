@@ -12,7 +12,7 @@ namespace Nitou.TCC.CharacterControl.Core
     /// Agentの高さと幅は <see cref="CharacterSettings.Height"/> と <see cref="CharacterSettings.Radius"/> によって決定される．
     /// 正しく機能するには、<see cref="UnityEngine.AI.NavMeshAgent"/> が必要．
     /// </summary>
-    [AddComponentMenu(MenuList.MenuBrain + "Navmesh Brain")]
+    [AddComponentMenu(MenuList.MenuBrain + nameof(NavmeshBrain))]
     [DefaultExecutionOrder(Order.UpdateBrain)]
     [DisallowMultipleComponent]
     [RequireComponent(typeof(NavMeshAgent))]

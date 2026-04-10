@@ -9,7 +9,7 @@ namespace Nitou.TCC.CharacterControl.Core
     /// <see cref="UnityEngine.Transform"/> を使用して動作する Brain．
     /// コライダーの接触による移動制限はない．
     /// </summary>
-    [AddComponentMenu(MenuList.MenuBrain + "Transform Brain")]
+    [AddComponentMenu(MenuList.MenuBrain +  nameof(TransformBrain))]
     [DefaultExecutionOrder(Order.UpdateBrain)]
     [DisallowMultipleComponent]
     [RequireComponent(typeof(CharacterSettings))]

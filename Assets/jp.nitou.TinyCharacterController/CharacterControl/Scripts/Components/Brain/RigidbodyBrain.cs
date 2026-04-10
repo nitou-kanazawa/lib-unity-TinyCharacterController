@@ -13,7 +13,7 @@ namespace Nitou.TCC.CharacterControl.Core
     /// <see cref="UnityEngine.CapsuleCollider"/> の高さと幅は <see cref="CharacterSettings.Height"/> と <see cref="CharacterSettings.Radius"/> によって決定される．
     /// 正しく機能するには、<see cref="IGravity"/> と <see cref="IGroundContact"/> が必要．
     /// </summary>
-    [AddComponentMenu(MenuList.MenuBrain + "Rigidbody Brain")]
+    [AddComponentMenu(MenuList.MenuBrain +  nameof(RigidbodyBrain))]
     [DefaultExecutionOrder(Order.UpdateBrain)]
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Rigidbody))]

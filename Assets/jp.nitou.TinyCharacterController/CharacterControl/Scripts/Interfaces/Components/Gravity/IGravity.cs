@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Nitou.TCC.CharacterControl.Interfaces.Components
 {
     /// <summary>
-    /// Interface for accessing the results of gravity's behavior
+    /// 重力の動作結果にアクセスするためのインターフェース．
     /// </summary>
     public interface IGravity
     {
@@ -13,12 +13,12 @@ namespace Nitou.TCC.CharacterControl.Interfaces.Components
         float FallSpeed { get; }
 
         /// <summary>
-        /// Override gravity acceleration
+        /// 重力加速度を上書きする．
         /// </summary>
         void SetVelocity(Vector3 velocity);
 
         /// <summary>
-        /// Multiplier for the gravity acting on the character
+        /// キャラクターに作用する重力の倍率．
         /// </summary>
         float GravityScale { get; }
 

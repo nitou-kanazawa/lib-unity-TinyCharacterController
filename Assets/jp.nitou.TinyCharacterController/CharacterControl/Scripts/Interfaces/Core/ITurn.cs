@@ -1,11 +1,10 @@
-
-namespace Nitou.TCC.CharacterControl.Interfaces.Core {
-
+namespace Nitou.TCC.CharacterControl.Interfaces.Core
+{
     /// <summary>
     /// キャラクターの方向制御インターフェース．
     /// </summary>
-    public interface ITurn : IPriority<ITurn> {
-
+    public interface ITurn : IPriority<ITurn>
+    {
         /// <summary>
         /// 方向の回転速度．
         /// </summary>

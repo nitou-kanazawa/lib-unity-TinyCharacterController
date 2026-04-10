@@ -3,10 +3,8 @@ using UnityEngine;
 namespace Nitou.TCC.CharacterControl.Interfaces.Components{
     
     /// <summary>
-    /// This interface returns the behavior when an object above is in contact.
-    ///
-    /// It returns whether the object is in contact or not, the position of the contact with the object,
-    /// and if implemented, it returns the GameObject above.
+    /// 頭上のオブジェクトとの接触時の動作を返すインターフェース．
+    /// 接触の有無・接触位置・接触オブジェクトを返す．
     /// </summary>
     public interface IOverheadDetection{
 
@@ -16,20 +14,18 @@ namespace Nitou.TCC.CharacterControl.Interfaces.Components{
         bool IsHeadContact { get;  }
 
         /// <summary>
-        /// Returns True if the collider is within the range of the decision.
-        /// Different from IsHitCollision, it is used to determine if there is an object overhead.
+        /// コライダーが判定範囲内にある場合は True を返す．
+        /// IsHitCollision とは異なり、頭上にオブジェクトがあるかどうかの判定に使用する．
         /// </summary>
         bool IsObjectOverhead { get; }
 
         /// <summary>
-        /// Return the collider that the head is in contact with.
-        /// If nothing is in contact, return null.
+        /// 頭が接触しているコライダーを返す．何も接触していない場合は null を返す．
         /// </summary>
         GameObject ContactedObject { get;  }
-    
+
         /// <summary>
-        /// 接触位置．
-        /// If no contact is made, the maximum distance at which contact can be made.
+        /// 接触位置．接触していない場合は接触可能な最大距離の位置を返す．
         /// </summary>
         Vector3 ContactPoint { get; }
     }

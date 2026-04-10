@@ -5,38 +5,38 @@ namespace Nitou.TCC.CharacterControl.Interfaces.Components
     public interface IPooledObject
     {
         /// <summary>
-        /// The corresponding GameObject.
+        /// 対応する GameObject．
         /// </summary>
         GameObject GameObject { get; }
 
         /// <summary>
-        /// An instance ID to identify the object.
+        /// オブジェクトを識別するインスタンス ID．
         /// </summary>
         int InstanceId { get; }
 
         /// <summary>
-        /// True if the object is used.
+        /// オブジェクトが使用中の場合は True．
         /// </summary>
         bool IsUsed { get; }
 
         /// <summary>
-        /// オブジェクトの初期化処理.
-        /// GameObjectPoolによって呼び出される.
+        /// オブジェクトの初期化処理．
+        /// GameObjectPool によって呼び出される．
         /// </summary>
         void Initialize(IGameObjectPool owner, bool hasRigidbody);
 
         /// <summary>
-        /// Release the component.
+        /// コンポーネントを返却する．
         /// </summary>
         void Release();
 
         /// <summary>
-        /// Called when the object is retrieved.
+        /// オブジェクトが取得されたときに呼び出される．
         /// </summary>
         void OnGet();
 
         /// <summary>
-        /// Called when the object is released.
+        /// オブジェクトが返却されたときに呼び出される．
         /// </summary>
         void OnRelease();
     }

@@ -3,37 +3,37 @@ using UnityEngine;
 namespace Nitou.TCC.CharacterControl.Interfaces.Components
 {
     /// <summary>
-    /// Interface for accessing information about objects in the line of sight.
+    /// 視線上のオブジェクト情報にアクセスするためのインターフェース．
     /// </summary>
     public interface IAimCheck
     {
         /// <summary>
-        /// True if there is an object in the line of sight.
+        /// 視線上にオブジェクトがある場合は True．
         /// </summary>
         bool IsHit { get; }
 
         /// <summary>
-        /// Starting point for issuing a RayCast.
+        /// RayCast の発射起点．
         /// </summary>
         Vector3 Origin { get; }
 
         /// <summary>
-        /// Direction from Origin to the point in the line of sight.
+        /// Origin から視線上の点への方向．
         /// </summary>
         Vector3 Direction { get; }
 
         /// <summary>
-        /// Position of the point in the line of sight.
+        /// 視線上の点の位置．
         /// </summary>
         Vector3 Point { get; }
 
         /// <summary>
-        /// Distance to the point in the line of sight.
+        /// 視線上の点までの距離．
         /// </summary>
         float Distance { get; }
 
         /// <summary>
-        /// Normal vector at the point in the line of sight.
+        /// 視線上の点における法線ベクトル．
         /// </summary>
         Vector3 Normal { get; }
     }

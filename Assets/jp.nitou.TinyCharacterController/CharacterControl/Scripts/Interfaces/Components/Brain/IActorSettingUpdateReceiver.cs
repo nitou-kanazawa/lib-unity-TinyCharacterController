@@ -1,16 +1,16 @@
 using Nitou.TCC.CharacterControl.Core;
 using UnityEngine;
 
-namespace Nitou.TCC.CharacterControl.Interfaces.Components {
-
+namespace Nitou.TCC.CharacterControl.Interfaces.Components
+{
     /// <summary>
-    /// Callback called when CharacterSettings values change.
-    /// Mainly used for changing CharacterController or Collider sizes.
+    /// CharacterSettings の値が変化したときに呼び出されるコールバック．
+    /// 主に CharacterController やコライダーのサイズ変更に使用する．
     /// </summary>
-    public interface IActorSettingUpdateReceiver {
-
+    public interface IActorSettingUpdateReceiver
+    {
         /// <summary>
-        /// CharacterSettings values have changed
+        /// CharacterSettings の値が変化したときに呼び出される．
         /// </summary>
         void OnUpdateSettings(CharacterSettings settings);
     }

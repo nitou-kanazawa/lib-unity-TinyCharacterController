@@ -3,7 +3,7 @@ using R3;
 namespace Nitou.TCC.CharacterControl.Interfaces.Components
 {
     /// <summary>
-    /// Callback events for landing and leaving
+    /// 着地・離陸のコールバックイベント．
     /// </summary>
     public interface IGravityEvent
     {

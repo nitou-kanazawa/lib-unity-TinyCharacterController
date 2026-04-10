@@ -1,62 +1,62 @@
 using Nitou.TCC.CharacterControl.Interfaces.Core;
 using UnityEngine;
 
-namespace Nitou.TCC.CharacterControl.Interfaces.Components {
-
+namespace Nitou.TCC.CharacterControl.Interfaces.Components
+{
     /// <summary>
-    /// Interface for accessing the behavior results of the Brain
+    /// Brain の動作結果にアクセスするためのインターフェース．
     /// </summary>
-    public interface IBrain {
-        
+    public interface IBrain
+    {
         /// <summary>
-        /// Velocity based on the character's direction
+        /// キャラクターの向きを基準とした速度．
         /// </summary>
         Vector3 LocalVelocity { get; }
 
         /// <summary>
-        /// Velocity of the currently active Control
+        /// 現在アクティブな Control の速度．
         /// </summary>
         Vector3 ControlVelocity { get; }
 
         /// <summary>
-        /// Total Velocity of Effects
+        /// Effect の合計速度．
         /// </summary>
         Vector3 EffectVelocity { get; }
 
         /// <summary>
-        /// Final Velocity
+        /// 最終的な速度（ControlVelocity + EffectVelocity）．
         /// </summary>
         Vector3 TotalVelocity { get; }
 
-        
+
         /// <summary>
-        /// Move of the currently selected Control by the character
+        /// 現在選択されている Move コンポーネント．
         /// </summary>
         IMove CurrentMove { get; }
 
         /// <summary>
-        /// Turn of the currently selected Control by the character
+        /// 現在選択されている Turn コンポーネント．
         /// </summary>
         ITurn CurrentTurn { get; }
 
 
         /// <summary>
-        /// Current character movement speed
+        /// 現在のキャラクターの移動速度．
         /// </summary>
         float CurrentSpeed { get; }
 
         /// <summary>
-        /// Speed at which the character's direction is updated. If -1, it is updated immediately.
+        /// キャラクターの向きを更新する速度．-1 の場合は即座に更新される．
         /// </summary>
         int TurnSpeed { get; }
 
         /// <summary>
-        /// Character's orientation
+        /// キャラクターの向き（Yaw角）．
         /// </summary>
         float YawAngle { get; }
 
         /// <summary>
-        /// Difference between the character's orientation in the current frame and the previous frame
+        /// 現在フレームと前フレームのキャラクターの向きの差分．
         /// </summary>
         float DeltaTurnAngle { get; }
     }

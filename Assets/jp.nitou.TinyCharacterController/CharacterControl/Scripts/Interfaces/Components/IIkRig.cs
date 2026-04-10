@@ -10,7 +10,7 @@ namespace Nitou.TCC.CharacterControl.Interfaces.Components
         float Weight { get; }
 
         /// <summary>
-        /// Determines if the rig is usable.
+        /// リグが使用可能かどうか．
         /// </summary>
         bool IsValid { get; }
 
@@ -20,13 +20,13 @@ namespace Nitou.TCC.CharacterControl.Interfaces.Components
         void Initialize(Animator animator);
 
         /// <summary>
-        /// Calculate weights and other factors before calculating IK.
-        /// Update is not used to ensure IK works even when the object is inactive.
+        /// IK 計算前に重みなどを計算する．
+        /// オブジェクトが非アクティブの場合でも IK が機能するよう Update は使用しない．
         /// </summary>
         void OnPreProcess(float deltaTime);
 
         /// <summary>
-        /// Called at the timing of OnAnimatorIk.
+        /// OnAnimatorIk のタイミングで呼び出される．
         /// </summary>
         void OnIkProcess(Vector3 offset);
     }

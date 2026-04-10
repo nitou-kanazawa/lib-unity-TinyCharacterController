@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Nitou.TCC.CharacterControl.Interfaces.Components {
 
     /// <summary>
-    /// Interface for accessing wall detection.
+    /// 壁の検出結果にアクセスするためのインターフェース．
     /// </summary>
     public interface IWallCheck {
 

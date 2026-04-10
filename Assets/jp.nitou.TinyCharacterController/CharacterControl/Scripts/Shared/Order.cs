@@ -1,7 +1,7 @@
 namespace Nitou.TCC.CharacterControl.Shared
 {
     /// <summary>
-    /// 
+    /// ExecutionOrder定義．
     /// </summary>
     public static class Order
     {

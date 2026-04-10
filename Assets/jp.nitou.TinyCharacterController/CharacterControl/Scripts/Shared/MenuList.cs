@@ -5,17 +5,18 @@ namespace Nitou.TCC.CharacterControl.Shared
     /// </summary>
     internal static class MenuList
     {
-        // 
-        private const string MenuHeader = "TCC/";
+        private const string Header = "TCC/";
 
-        // 
-        public const string MenuBrain = MenuHeader + "Brain/";
-        public const string MenuControl = MenuHeader + "Control/";
-        public const string MenuCheck = MenuHeader + "Check/";
-        public const string MenuEffect = MenuHeader + "Effect/";
-        public const string Gimmick = MenuHeader + "Gimmick/";
-        public const string Ik = MenuHeader + "IK/";
-        public const string Utility = MenuHeader + "Utility/";
-        public const string Ui = MenuHeader + "UI/";
+        // 主要コンポ
+        public const string MenuBrain = Header + "Brain/";
+        public const string MenuControl = Header + "Control/";
+        public const string MenuCheck = Header + "Check/";
+        public const string MenuEffect = Header + "Effect/";
+        
+        // その他
+        public const string Gimmick = Header + "Gimmick/";
+        public const string Ik = Header + "IK/";
+        public const string Utility = Header + "Utility/";
+        public const string Ui = Header + "UI/";
     }
 }

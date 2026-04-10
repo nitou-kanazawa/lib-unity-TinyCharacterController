@@ -21,12 +21,9 @@ namespace Nitou.TCC.CharacterControl
         /// </summary>
         protected CharacterSettings CharacterSettings { get; private set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
         protected ITransform Transform { get; private set; }
 
-        
+
         // ----------------------------------------------------------------------------
         // Lifecycle Events
 
@@ -39,7 +36,6 @@ namespace Nitou.TCC.CharacterControl
             InitializeComponent();
         }
 
-        
 
         // ----------------------------------------------------------------------------
         // Private Methods
@@ -71,7 +67,7 @@ namespace Nitou.TCC.CharacterControl
         {
             CharacterSettings = GetComponentInParent<CharacterSettings>();
         }
-        
+
         /// <summary>
         /// CharacterSettings の初期化が成功した後に呼び出される．
         /// 派生クラス固有の追加のコンポーネント参照を収集するために、このメソッドをオーバーライドする．
